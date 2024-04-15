@@ -11,6 +11,10 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://app:app@postgres:5432/app
-      APP_ENV: dev
+      DATABASE_URL: ${DATABASE_URL}
+      APP_ENV: ${APP_ENV}
       APP_SECRET: ${APP_SECRET}
+  frontend:
+    image : react:latest
+    ports:
+      - "3010:3000"
