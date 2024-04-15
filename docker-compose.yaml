@@ -3,7 +3,7 @@ services:
   postgres:
     build: ./app
   symfony:
-    image: ${DOCKER_REGISTRY-}symfony:${SYMFONY_VERSION:-latest}
+    image: bitnami/symfony:latest
     volumes:
       - ./app:/app
     ports:
@@ -15,11 +15,10 @@ services:
       APP_ENV: ${APP_ENV}
       APP_SECRET: ${APP_SECRET}
   frontend:
-    image : react:latest
+    image: react:latest
     ports:
       - "3010:3000"
     volumes:
       - ./frontend:/frontend
     depends_on:
       - symfony
-    
