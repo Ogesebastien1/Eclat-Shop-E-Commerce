@@ -28,13 +28,15 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       APP_ENV: ${APP_ENV}
       APP_SECRET: ${APP_SECRET}
+      SYMFONY_DATABASE_PASSWORD: ${SYMFONY_DATABASE_PASSWORD}
+      SYMFONY_PROJECT_SKELETON: ${SYMFONY_PROJECT_SKELETON}
   frontend:
     image: node:latest
     ports:
       - "3010:3000"
     volumes:
       - ./frontend:/frontend
-    command: /bin/sh -c "npm install && npm run start"
+    command: /bin/sh -c "cd /frontend && npm install && npm run start"
     depends_on:
       - symfony
 
