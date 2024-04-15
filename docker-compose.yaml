@@ -1,7 +1,21 @@
 version: "3"
 services:
-  postgres:
-    build: ./app
+  database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+      # - ./docker/db/data:/var/lib/postgresql/data:rw
   symfony:
     image: bitnami/symfony:latest
     volumes:
@@ -9,16 +23,23 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
+      - database
     environment:
       DATABASE_URL: ${DATABASE_URL}
       APP_ENV: ${APP_ENV}
       APP_SECRET: ${APP_SECRET}
+      SYMFONY_DATABASE_PASSWORD: ${SYMFONY_DATABASE_PASSWORD}
+      SYMFONY_PROJECT_SKELETON: ${SYMFONY_PROJECT_SKELETON}
   frontend:
-    image: react:latest
+    image: node:latest
     ports:
       - "3010:3000"
     volumes:
       - ./frontend:/frontend
+    command: /bin/sh -c "cd /frontend && npm install && npm run start"
     depends_on:
       - symfony
+
+volumes:
+  ###> doctrine/doctrine-bundle ###
+  database_data:
