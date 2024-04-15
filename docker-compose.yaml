@@ -1,0 +1,16 @@
+version: "3"
+services:
+  postgres:
+    build: ./app
+  symfony:
+    image: ${DOCKER_REGISTRY-}symfony:${SYMFONY_VERSION:-latest}
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://app:app@postgres:5432/app
+      APP_ENV: dev
+      APP_SECRET: ${APP_SECRET}
