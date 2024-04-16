@@ -1,15 +1,13 @@
 version: "3"
-
 services:
   # Database service
   database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine # Use the PostgreSQL image
+    image: postgres:latest # Use the PostgreSQL image
+    restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB} # Set the database name
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Set the password
       POSTGRES_USER: ${POSTGRES_USER} # Set the user
-      POSTGRES_ROOT_USER: ${POSTGRES_ROOT_USER} # Set the root user
-      POSTGRES_ROOT_PASSWORD: ${POSTGRES_ROOT_PASSWORD} # Set the root password
     healthcheck: # Check if the database is ready
       test: ["CMD", "pg_isready"] # Use the pg_isready command
       timeout: 5s # Set the timeout to 5 seconds
@@ -21,6 +19,7 @@ services:
   # Symfony service
   symfony:
     image: bitnami/symfony:latest # Use the latest Bitnami Symfony image
+    restart: always
     volumes: # Mount the app directory to the container
       - ./app:/app
     ports: # Map the port 8000 of the container to the port 8000 of the host
@@ -28,15 +27,19 @@ services:
     depends_on: # Depend on the database service
       - database
     environment: # Set the environment variables
-      DATABASE_URL: ${DATABASE_URL} # Use the DATABASE_URL environment variable
+      SYMFONY_DATABASE_HOST: "database" # Use the database service as the host
+      SYMFONY_DATABASE_PORT_NUMBER: "5432" # Use the default PostgreSQL port
+      SYMFONY_DATABASE_NAME: ${POSTGRES_DB} # Use the POSTGRES_DB environment variable
+      SYMFONY_DATABASE_USER: ${POSTGRES_USER} # Use the POSTGRES_USER environment variable
       APP_ENV: ${APP_ENV} # Use the APP_ENV environment variable
       APP_SECRET: ${APP_SECRET} # Use the APP_SECRET environment variable
       SYMFONY_DATABASE_PASSWORD: ${SYMFONY_DATABASE_PASSWORD} # Use the SYMFONY_DATABASE_PASSWORD environment variable
-      SYMFONY_PROJECT_SKELETON: ${SYMFONY_PROJECT_SKELETON} # Use the SYMFONY_PROJECT_SKELETON environment variable
+      SYMFONY_PROJECT_SKELETON: ${SYMFONY_BASE_DIR}/skelet # Use the SYMFONY_PROJECT_SKELETON environment variable
 
   # Frontend service
   frontend:
     image: node:latest # Use the latest Node.js image to run react project
+    restart: always
     ports: # Map the port 3010 of the container to the port 3000 of the host
       - "3010:3000"
     volumes: # Mount the frontend directory to the container
@@ -44,6 +47,17 @@ services:
     command: /bin/sh -c "cd /frontend && npm run start" # Run the npm install and npm run start commands
     depends_on: # Depend on the symfony service
       - symfony
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - database
 
 volumes:
   # Database volume
