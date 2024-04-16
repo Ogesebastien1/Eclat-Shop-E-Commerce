@@ -27,7 +27,6 @@ services:
     depends_on: # Depend on the database service
       - database
     environment: # Set the environment variables
-      SYMFONY_DATABASE_HOST: "database" # Use the database service as the host
       DATABASE_URL: ${DATABASE_URL} # Use the DATABASE_URL environment variable
       SYMFONY_DATABASE_PORT_NUMBER: "5432" # Use the default PostgreSQL port
       SYMFONY_DATABASE_NAME: ${POSTGRES_DB} # Use the POSTGRES_DB environment variable
