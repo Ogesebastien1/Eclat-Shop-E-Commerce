@@ -1,47 +1,50 @@
 version: "3"
+
 services:
+  # Database service
   database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    image: postgres:${POSTGRES_VERSION:-16}-alpine # Use the PostgreSQL image
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_ROOT_USER: ${POSTGRES_ROOT_USER}
-      POSTGRES_ROOT_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
-    healthcheck:
-      test: ["CMD", "pg_isready"]
-      timeout: 5s
-      retries: 5
-      start_period: 60s
-    volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
+      POSTGRES_DB: ${POSTGRES_DB} # Set the database name
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Set the password
+      POSTGRES_USER: ${POSTGRES_USER} # Set the user
+      POSTGRES_ROOT_USER: ${POSTGRES_ROOT_USER} # Set the root user
+      POSTGRES_ROOT_PASSWORD: ${POSTGRES_ROOT_PASSWORD} # Set the root password
+    healthcheck: # Check if the database is ready
+      test: ["CMD", "pg_isready"] # Use the pg_isready command
+      timeout: 5s # Set the timeout to 5 seconds
+      retries: 5 # Retry 5 times
+      start_period: 60s # Start the health check after 60 seconds
+    volumes: # Mount the database_data volume to the container
+      - database_data:/var/lib/postgresql/data
+
+  # Symfony service
   symfony:
-    image: bitnami/symfony:latest
-    volumes:
+    image: bitnami/symfony:latest # Use the latest Bitnami Symfony image
+    volumes: # Mount the app directory to the container
       - ./app:/app
-    ports:
+    ports: # Map the port 8000 of the container to the port 8000 of the host
       - "8000:8000"
-    depends_on:
+    depends_on: # Depend on the database service
       - database
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      APP_ENV: ${APP_ENV}
-      APP_SECRET: ${APP_SECRET}
-      SYMFONY_DATABASE_PASSWORD: ${SYMFONY_DATABASE_PASSWORD}
-      SYMFONY_PROJECT_SKELETON: ${SYMFONY_PROJECT_SKELETON}
+    environment: # Set the environment variables
+      DATABASE_URL: ${DATABASE_URL} # Use the DATABASE_URL environment variable
+      APP_ENV: ${APP_ENV} # Use the APP_ENV environment variable
+      APP_SECRET: ${APP_SECRET} # Use the APP_SECRET environment variable
+      SYMFONY_DATABASE_PASSWORD: ${SYMFONY_DATABASE_PASSWORD} # Use the SYMFONY_DATABASE_PASSWORD environment variable
+      SYMFONY_PROJECT_SKELETON: ${SYMFONY_PROJECT_SKELETON} # Use the SYMFONY_PROJECT_SKELETON environment variable
+
+  # Frontend service
   frontend:
-    image: node:latest
-    ports:
+    image: node:latest # Use the latest Node.js image to run react project
+    ports: # Map the port 3010 of the container to the port 3000 of the host
       - "3010:3000"
-    volumes:
+    volumes: # Mount the frontend directory to the container
       - ./frontend:/frontend
-    command: /bin/sh -c "cd /frontend && npm install && npm run start"
-    depends_on:
+    command: /bin/sh -c "cd /frontend && npm install && npm run start" # Run the npm install and npm run start commands
+    depends_on: # Depend on the symfony service
       - symfony
 
 volumes:
-  ###> doctrine/doctrine-bundle ###
+  # Database volume
   database_data:
