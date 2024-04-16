@@ -10,13 +10,14 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/user', name: 'user', methods: ['POST'])]
-    public function index(Request $request, UserPasswordHasherInterface $passwordHasher, LoggerInterface $logger): Response
+    #[Route('/register', name: 'register', methods: ['POST'])]
+    public function index(Request $request, UserPasswordHasherInterface $passwordHasher, LoggerInterface $logger, EntityManagerInterface $em): Response
     {
         $data = json_decode($request->getContent(), true);
         $login = $data['login'] ?? null;
@@ -49,7 +50,15 @@ class RegistrationController extends AbstractController
         );
         $user->setPassword($hashedPassword);
 
-        // TODO: Save the user to the database and return a response
+        // // Save the user to the database
+        try {
+            // Save the user to the database
+            $em->persist($user);
+            $em->flush();
+        } catch (\Exception $e) {
+            $logger->error('Failed to save user', ['exception' => $e->getMessage()]);
+            return new Response('Failed to save user: ' . $e->getMessage(), 500);
+        }
 
         return new Response('User registered successfully.');
     }
