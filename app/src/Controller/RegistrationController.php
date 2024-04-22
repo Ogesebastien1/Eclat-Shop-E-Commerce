@@ -48,6 +48,7 @@ class RegistrationController extends AbstractController
         $firstname = $data['firstname'] ?? null;
         $lastname = $data['lastname'] ?? null;
         $plaintextPassword = $data['password'] ?? null;
+        $roles = $data['roles'] ?? null;
 
         $logger->info('Request data', ['data' => $request->request->all()]);
 
@@ -64,7 +65,12 @@ class RegistrationController extends AbstractController
             'lastname' => $lastname,
         ]);
 
-        $user = new User($login, $plaintextPassword, $email, $firstname, $lastname);
+        $user = new User();
+        $user->setLogin($login);
+        $user->setEmail($email);
+        $user->setFirstname($firstname);
+        $user->setLastname($lastname);
+        $user->setRoles([$roles]);
 
         // hash the password (based on the security.yaml config for the $user class)
         $hashedPassword = $passwordHasher->hashPassword(
