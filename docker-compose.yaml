@@ -35,6 +35,9 @@ services:
       APP_SECRET: ${APP_SECRET} # Use the APP_SECRET environment variable
       SYMFONY_DATABASE_PASSWORD: ${SYMFONY_DATABASE_PASSWORD} # Use the SYMFONY_DATABASE_PASSWORD environment variable
       SYMFONY_PROJECT_SKELETON: ${SYMFONY_BASE_DIR}/skelet # Use the SYMFONY_PROJECT_SKELETON environment variable
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY} # Use the JWT_SECRET_KEY environment variable
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY} # Use the JWT_PUBLIC_KEY environment variable
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE} # Use the JWT_PASSPHRASE environment variable
 
   # Frontend service
   frontend:
