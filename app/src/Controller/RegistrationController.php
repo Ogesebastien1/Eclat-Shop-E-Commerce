@@ -42,6 +42,9 @@ class RegistrationController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $login = $data['login'] ?? null;
         $email = $data['email'] ?? null;
+        if ($email === null) {
+            return new Response('Email cannot be null.', 400);
+        }        
         $firstname = $data['firstname'] ?? null;
         $lastname = $data['lastname'] ?? null;
         $plaintextPassword = $data['password'] ?? null;
