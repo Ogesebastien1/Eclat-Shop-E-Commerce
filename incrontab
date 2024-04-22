@@ -1,0 +1,1 @@
+/var/www/my_project/entity IN_MODIFY php bin/console doctrine:schema:update --force
