@@ -36,7 +36,7 @@ class RegistrationController extends AbstractController
         }
     }
 
-    #[Route('/register', name: 'register', methods: ['POST'])]
+    #[Route('/api/register', name: 'register', methods: ['POST'])]
     public function index(Request $request, UserPasswordHasherInterface $passwordHasher, LoggerInterface $logger, EntityManagerInterface $em): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -92,7 +92,7 @@ class RegistrationController extends AbstractController
         return new Response('User registered successfully.');
     }
 
-    #[Route('/login', name: 'login', methods: ['POST'])]
+    #[Route('/api/login', name: 'login', methods: ['POST'])]
     public function login(Request $request, UserPasswordHasherInterface $passwordHasher, JWTTokenManagerInterface $JWTManager): Response
     {
         $data = json_decode($request->getContent(), true);
