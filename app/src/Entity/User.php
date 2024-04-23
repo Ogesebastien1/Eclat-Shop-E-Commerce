@@ -17,16 +17,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180)]
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
     private ?string $email = null;
 
-    #[ORM\Column(length: 180)]
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
     private ?string $login = null;
 
-    #[ORM\Column(length: 180)]
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 180)]
+    /**
+     * @var string The hashed password
+     */
+    #[ORM\Column]
     private ?string $lastname = null;
 
     /**
@@ -41,6 +53,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    /**
+     * @see UserInterface
+     *
+     * @return string
+     */
     public function getId(): ?int
     {
         return $this->id;
@@ -53,6 +70,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @see UserInterface
+     *
+     * @return string
+     */
     public function getLogin(): ?string
     {
         return $this->login;
@@ -65,6 +87,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @see UserInterface
+     *
+     * @return string
+     */
     public function getFirstname(): ?string
     {
         return $this->firstname;
@@ -77,11 +104,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @see UserInterface
+     *
+     * @return string
+     */
     public function getLastname(): ?string
     {
         return $this->lastname;
     }
 
+    /**
+     * @see UserInterface
+     *
+     * @return string
+     */
     public function getEmail(): ?string
     {
         return $this->email;
