@@ -1,10 +1,11 @@
 import React from "react";
-import { Button } from "@nextui-org/react";
+import  PrimaryButton from '../components/button';
 
 export const Login = () => {
   return (
     <div>
       <h1>Login</h1>
+      <PrimaryButton />
     </div>
   );
 };
