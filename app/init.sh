@@ -7,7 +7,6 @@ cd /var/www/my_project
 composer install
 
 # Update the database schema
-php bin/console doctrine:schema:drop --force
 php bin/console doctrine:schema:update --force
 
 # Start Symfony server

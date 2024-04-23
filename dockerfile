@@ -24,5 +24,12 @@ COPY ./app /var/www/my_project
 
 RUN chmod +x /var/www/my_project/init.sh
 
+# Add the watch script
+COPY ./watch.sh /var/www/my_project/watch.sh
+RUN chmod +x /var/www/my_project/watch.sh
+
+# Run the watch script in the background
+CMD /var/www/my_project/watch.sh &
+
 # Set init.sh as the entry point
 ENTRYPOINT ["/var/www/my_project/init.sh"]
