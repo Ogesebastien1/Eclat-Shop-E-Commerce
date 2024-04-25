@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use App\Entity\User;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
 
 class UserController extends AbstractController
 {
@@ -18,14 +21,46 @@ class UserController extends AbstractController
     {
         $logger->info('Entering the index method.');
 
+        // Log the request headers
+        $logger->info('Request headers: ' . json_encode($request->headers->all()));
+
         // Get the current user
         $user = $this->getUser();
 
         $logger->info('Got the user from the security context.');
+        // Get the JWT from the request
+        $jwt = $request->headers->get('Authorization');
 
+        // Define the decoding key and the allowed algorithms
+        $publicKey = file_get_contents(__DIR__ . '/../../config/jwt/public.pem');
+
+        // Decode the JWT
+        $decodedJwt = JWT::decode($jwt, new Key($publicKey, 'RS256'));
+        
+        // Log the decoded JWT
+        $logger->info('Decoded JWT: ' . json_encode((array) $decodedJwt));
         // If a user is authenticated, return their data
         if ($user) {
             $logger->info('User is authenticated, returning their data.');
+
+            // Log the user's data
+            $logger->info('User data: ' . json_encode([
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'login' => $user->getLogin(),
+                'firstname' => $user->getFirstname(),
+                'lastname' => $user->getLastname(),
+                'roles' => $user->getRoles(),
+            ]));
+
+            // Get the JWT from the request
+            $jwt = str_replace('Bearer ', '', $request->headers->get('Authorization'));
+
+            // Decode the JWT
+            $decodedJwt = $jwtManager->decode($jwt);
+
+            // Log the decoded JWT
+            $logger->info('Decoded JWT: ' . json_encode($decodedJwt));
 
             return $this->json([
                 'id' => $user->getId(),
