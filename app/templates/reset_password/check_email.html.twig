@@ -1,0 +1,19 @@
+{# This is the base template that other templates extend #}
+{% extends 'base.html.twig' %}
+
+{# Set the title of the page #}
+{% block title %}Password Reset Email Sent{% endblock %}
+
+{# The main content of the page #}
+{% block body %}
+    <p>
+        {# Display a message about the password reset email #}
+        If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.
+        This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+    </p>
+    <p>
+        {# Provide a link to try again if the email wasn't received #}
+        If you don't receive an email please check your spam folder or 
+        <a href="{{ path('app_forgot_password_request') }}">try again</a>.
+    </p>
+{% endblock %}

@@ -1,0 +1,32 @@
+{# This is the template for the password reset request page #}
+{% extends 'base.html.twig' %}
+
+{# Set the title of the page #}
+{% block title %}Reset your password{% endblock %}
+
+{# The main content of the page #}
+{% block body %}
+    {# Display any error messages #}
+    {% for flash_error in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <h1>Reset your password</h1>
+
+    {# Start the form #}
+    {{ form_start(requestForm) }}
+        {# Input field for the email #}
+        {{ form_row(requestForm.email) }}
+
+        <div>
+            <small>
+                {# Instructions for the user #}
+                Enter your email address, and we will send you a
+                link to reset your password.
+            </small>
+        </div>
+
+        {# Submit button #}
+        <button class="btn btn-primary">Send password reset email</button>
+    {{ form_end(requestForm) }}
+{% endblock %}
