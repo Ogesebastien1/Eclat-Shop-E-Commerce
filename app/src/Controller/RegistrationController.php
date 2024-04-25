@@ -14,6 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 
 
 class RegistrationController extends AbstractController
@@ -37,13 +38,13 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/api/register', name: 'register', methods: ['POST'])]
-    public function index(Request $request, UserPasswordHasherInterface $passwordHasher, LoggerInterface $logger, EntityManagerInterface $em): Response
+    public function index(Request $request, UserPasswordHasherInterface $passwordHasher, LoggerInterface $logger, EntityManagerInterface $em, UserRepository $userRepository): Response
     {
         $data = json_decode($request->getContent(), true);
         $login = $data['login'] ?? null;
         $email = $data['email'] ?? null;
         if ($email === null) {
-            return new Response('Email cannot be null.', 400);
+            return new Response('Email cannot be null.', 403);
         }        
         $firstname = $data['firstname'] ?? null;
         $lastname = $data['lastname'] ?? null;
@@ -52,9 +53,21 @@ class RegistrationController extends AbstractController
 
         $logger->info('Request data', ['data' => $request->request->all()]);
 
+        // Check if login already exists
+        $existingUser = $userRepository->findOneBy(['login' => $login]);
+        if ($existingUser !== null) {
+            return new Response('Login already exists.', 403);
+        }
+
+        //check if email already exists
+        $existingUser = $userRepository->findOneBy(['email' => $email]);
+        if ($existingUser !== null) {
+            return new Response('Email already exists.', 403);
+        }
+
         // Check if password is not null
-        if ($plaintextPassword === null) {
-            return new Response('Password cannot be null.', 400);
+        if ($plaintextPassword === null ) {
+            return new Response('Password cannot be null.', 403);
         }
 
         // Log the user data
