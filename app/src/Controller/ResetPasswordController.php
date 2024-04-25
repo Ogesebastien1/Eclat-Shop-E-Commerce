@@ -103,8 +103,6 @@ class ResetPasswordController extends AbstractController
                 $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle'),
                 $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
             ));
-
-            return $this->redirectToRoute('app_forgot_password_request');
         }
 
         if ($email !== "") {
