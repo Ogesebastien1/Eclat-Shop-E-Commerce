@@ -71,7 +71,13 @@ export const Register = () => {
       }}
     >
       <Card className="max-w-[400px]">
-        <CardHeader className="center">
+        <CardHeader className="center flex-col">
+          <div
+            className="bg-zinc-100"
+            style={{ borderRadius: 6, width: "100%", padding: "1rem" }}
+          >
+            <h1>Register</h1>
+          </div>
           <Lottie animationData={animationData} loop={true} />
         </CardHeader>
         <Divider />
@@ -129,13 +135,13 @@ export const Register = () => {
           }}
         >
           <Button
-            color="success"
             style={{
               margin: "1rem",
               width: "100%",
             }}
             onClick={handleRegister}
             disabled={!isFormValid}
+            className="bg-sky-400"
           >
             Register now !
           </Button>
