@@ -12,10 +12,18 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use App\Entity\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-
+use App\Repository\UserRepository;
 
 class UserController extends AbstractController
 {
+
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     #[Route('/api/user', name: 'user', methods: ['GET'])]
     public function index(LoggerInterface $logger, JWTTokenManagerInterface $jwtManager, Request $request): Response
     {
@@ -24,9 +32,7 @@ class UserController extends AbstractController
         // Log the request headers
         $logger->info('Request headers: ' . json_encode($request->headers->all()));
 
-        // Get the current user
-        $user = $this->getUser();
-
+                
         $logger->info('Got the user from the security context.');
         // Get the JWT from the request
         $jwt = $request->headers->get('Authorization');
@@ -36,6 +42,9 @@ class UserController extends AbstractController
 
         // Decode the JWT
         $decodedJwt = JWT::decode($jwt, new Key($publicKey, 'RS256'));
+
+        // Get the current user
+        $user = $this->userRepository->findOneByEmail($decodedJwt->username);
         
         // Log the decoded JWT
         $logger->info('Decoded JWT: ' . json_encode((array) $decodedJwt));
@@ -52,15 +61,6 @@ class UserController extends AbstractController
                 'lastname' => $user->getLastname(),
                 'roles' => $user->getRoles(),
             ]));
-
-            // Get the JWT from the request
-            $jwt = str_replace('Bearer ', '', $request->headers->get('Authorization'));
-
-            // Decode the JWT
-            $decodedJwt = $jwtManager->decode($jwt);
-
-            // Log the decoded JWT
-            $logger->info('Decoded JWT: ' . json_encode($decodedJwt));
 
             return $this->json([
                 'id' => $user->getId(),
