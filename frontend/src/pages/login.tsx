@@ -36,7 +36,7 @@ export const Login = () => {
         }
       );
       window.location.href = "/home";
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.status === 401) {
         alert(error.response.data);
         console.error(error);

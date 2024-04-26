@@ -42,7 +42,7 @@ export const Register = () => {
         }
       );
       window.location.href = "/login";
-    } catch (error) {
+    } catch (error: any) {
       if (error.response.status === 403) {
         alert(error.response.data);
         console.error(error);

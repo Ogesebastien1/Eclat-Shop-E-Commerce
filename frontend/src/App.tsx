@@ -4,12 +4,10 @@ import { Home } from "./pages/home";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
 import { ResetPassword } from "./pages/reset-password";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { ModifiePassword } from "./pages/modifie-password";
+import { Shop } from "./pages/shop";
 
 function App() {
-  const navigate = useNavigate();
   return (
     <div className="App">
       <Routes>
@@ -18,6 +16,7 @@ function App() {
         <Route path="/Register" element={<Register />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/modify-password" element={<ModifiePassword />} />
+        <Route path="/shop" element={<Shop />} />
       </Routes>
     </div>
   );
