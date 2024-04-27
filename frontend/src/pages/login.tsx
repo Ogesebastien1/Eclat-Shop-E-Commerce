@@ -93,6 +93,15 @@ export const Login = () => {
               isRequired
             />
           </div>
+          <Link
+            href="/reset-password"
+            className="center"
+            style={{
+              marginBottom: "1rem",
+            }}
+          >
+            Forgot your password? Reset it now !
+          </Link>
         </CardBody>
         <Divider />
         <CardFooter
