@@ -57,6 +57,12 @@ export const ResetPassword = () => {
         height: "100vh",
       }}
     >
+      <Link
+        href="/"
+        style={{ position: "absolute", top: "1rem", left: "1rem" }}
+      >
+        ← Back to Home
+      </Link>
       <Card className="max-w-[400px]">
         <CardHeader className="center">
           <Lottie animationData={animationData} loop={true} />
@@ -81,11 +87,12 @@ export const ResetPassword = () => {
           }}
         >
           <Button
-            color="success"
             style={{
               marginBottom: "1rem",
+              width: "100%",
             }}
             onClick={handleResetPassword}
+            className="bg-violet-400"
           >
             Reset Password
           </Button>

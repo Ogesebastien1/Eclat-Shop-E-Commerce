@@ -70,6 +70,12 @@ export const Register = () => {
         height: "100vh",
       }}
     >
+      <Link
+        href="/"
+        style={{ position: "absolute", top: "1rem", left: "1rem" }}
+      >
+        ← Back to Home
+      </Link>
       <Card className="max-w-[400px]">
         <CardHeader className="center flex-col">
           <div
