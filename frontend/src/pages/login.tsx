@@ -84,7 +84,7 @@ export const Login = () => {
               isRequired
             />
           </div>
-          <div style={{ marginBottom: "1rem" }}>
+          <div style={{ marginBottom: "0.1rem" }}>
             <Input
               label="Password"
               type="password"
@@ -98,6 +98,8 @@ export const Login = () => {
             className="center"
             style={{
               marginBottom: "1rem",
+              fontSize: "0.8rem",
+              marginLeft: "0.5rem",
             }}
           >
             Forgot your password? Reset it now !
