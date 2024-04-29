@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Card,
@@ -12,11 +12,17 @@ import {
 import Lottie from "lottie-react";
 import animationData from "../assets/password-animation.json";
 import { Button } from "@nextui-org/react";
-import qs from "qs";
 
 export const ModifiePassword = () => {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
+  const [token, setToken] = useState(null); // Add this line
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+    setToken(token);
+  }, []);
 
   const handleResetPassword = async () => {
     // Check if the passwords match
@@ -25,7 +31,6 @@ export const ModifiePassword = () => {
       return;
     }
 
-    const token = localStorage.getItem("resetToken");
     const email = localStorage.getItem("email");
 
     try {
@@ -45,7 +50,7 @@ export const ModifiePassword = () => {
         }
       );
       console.log(response.data);
-      localStorage.removeItem("resetToken");
+      localStorage.removeItem("email");
       window.location.href = "/login";
     } catch (error) {
       console.error(error);

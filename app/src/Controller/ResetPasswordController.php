@@ -161,15 +161,24 @@ class ResetPasswordController extends AbstractController
 
             return new JsonResponse(['message' => 'An error occurred while generating the reset token : ' . $e, 'error_code' => 500], 500);
         }
-        
-        // Return the token in the JSON response
-        if ($resetToken && $resetToken->getToken()) {
-            return new JsonResponse(['message' => 'Password reset email sent.', 'token' => $resetToken->getToken(), 'success_code' => 200]);
-        } else {
-            $this->logger->error('Token not set on ResetPasswordToken object.');
-            return new JsonResponse(['message' => 'An error occurred: token not set.', 'error_code' => 500], 500);
-        }
 
+        $email = $data["content"]['email'] ?? null;
+
+        $email = (new TemplatedEmail())
+            ->from(new Address('MS_xofncP@trial-jy7zpl93p2pl5vx6.mlsender.net', 'STG_16 team'))
+            ->to($user->getEmail())
+            ->subject('Your password reset request')
+            ->htmlTemplate('reset_password/link.html.twig')
+            ->context([
+                'resetToken' => $resetToken,
+            ]);
+
+
+        $mailer->send($email);
+
+        $this->logger->info('Password reset email sent.', ['email' => $user->getEmail()]);
+
+        return new JsonResponse(['message' => 'Password reset email sent.'], 200);
         // Store the token object in session for retrieval in check-email route.
         $this->setTokenObjectInSession($resetToken);
     }

@@ -16,6 +16,7 @@ import qs from "qs";
 
 export const ResetPassword = () => {
   const [email, setEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
 
   const handleResetPassword = async () => {
     try {
@@ -31,17 +32,11 @@ export const ResetPassword = () => {
 
       // Check if the response was successful
       if (response.data.success_code === 200) {
-        // Get the token from the response
-        const token = response.data.token;
-
         // Store the token in local storage or somewhere else where you can access it later
-        localStorage.setItem("resetToken", token);
         localStorage.setItem("email", email);
 
-        console.log("redirection");
-
-        // Redirect to the password change page
-        window.location.href = "/modify-password";
+        setEmailSent(true);
+        console.log(response.data);
       }
     } catch (error) {
       console.error(error);
@@ -69,13 +64,20 @@ export const ResetPassword = () => {
         </CardHeader>
         <Divider />
         <CardBody>
-          <Input
-            label="Email"
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          {emailSent ? (
+            <p>
+              Email has been sent. Please check your inbox. If you don't see the
+              email, check your spam folder.
+            </p>
+          ) : (
+            <Input
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          )}
         </CardBody>
         <Divider />
         <CardFooter
