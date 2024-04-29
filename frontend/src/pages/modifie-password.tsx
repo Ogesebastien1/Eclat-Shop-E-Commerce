@@ -10,8 +10,9 @@ import {
   Input,
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
-import animationData from "../assets/password-animation.json";
+import animationData from "../animations/password-animation.json";
 import { Button } from "@nextui-org/react";
+import { toast } from "react-toastify";
 
 export const ModifiePassword = () => {
   const [password1, setPassword1] = useState("");
@@ -52,8 +53,10 @@ export const ModifiePassword = () => {
       console.log(response.data);
       localStorage.removeItem("email");
       window.location.href = "/login";
+      toast.success("Email has been sent. Please check your inbox.");
     } catch (error) {
       console.error(error);
+      toast.error("An error occurred. Please try again.");
     }
   };
 
