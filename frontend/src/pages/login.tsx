@@ -11,7 +11,8 @@ import {
   Link,
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
-import animationData from "../assets/login-animation.json";
+import animationData from "../animations/login-animation.json";
+import ThemeSwitcher from "../components/themeswitcher";
 
 export const Login = () => {
   const [login, setLogin] = useState("");
@@ -72,12 +73,9 @@ export const Login = () => {
       </Link>
       <Card className="max-w-[400px]">
         <CardHeader className="center flex-col">
-          <div
-            className="bg-zinc-100"
-            style={{ borderRadius: 6, width: "100%", padding: "1rem" }}
-          >
-            <h1>Login</h1>
-          </div>
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-600">
+            LOGIN
+          </h1>
           <Lottie animationData={animationData} loop={true} />
         </CardHeader>
         <Divider />

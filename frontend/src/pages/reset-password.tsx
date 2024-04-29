@@ -10,7 +10,7 @@ import {
   Input,
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
-import animationData from "../assets/password-animation.json";
+import animationData from "../animations/password-animation.json";
 import { Button } from "@nextui-org/react";
 import qs from "qs";
 import { toast } from "react-toastify";
