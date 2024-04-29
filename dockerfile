@@ -1,6 +1,8 @@
 # Dockerfile
 FROM php:8.2-apache
 
+ENV CORS_ALLOW_ORIGIN="*"
+
 # Install necessary packages and pdo_pgsql extension
 RUN apt-get update && apt-get install -y \
     libpq-dev \
