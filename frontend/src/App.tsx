@@ -11,7 +11,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NextUIProvider } from "@nextui-org/react";
 import ThemeSwitcher from "./components/themeswitcher";
-import { ThemeProvider, useTheme } from "./contexts/themeContext";
+import { useTheme } from "./contexts/themeContext";
+import Payment from "./pages/payment";
 
 function App() {
   const { theme } = useTheme();
@@ -34,6 +35,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/modify-password" element={<ModifiePassword />} />
             <Route path="/shop" element={<Shop />} />
+            <Route path="/payment" element={<Payment />} />
           </Routes>
         </div>
       </main>
