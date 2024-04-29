@@ -12,6 +12,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.1",
         "firebase/php-jwt": "^6.10",
+        "fpt/stripe-bundle": "^0.11.0",
         "lexik/jwt-authentication-bundle": "^2.20",
         "namshi/jose": "^7.2",
         "nelmio/cors-bundle": "^2.4",

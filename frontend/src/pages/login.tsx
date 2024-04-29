@@ -36,7 +36,8 @@ export const Login = () => {
           },
         }
       );
-      window.location.href = "/home";
+      localStorage.setItem("token", response.data.token);
+      window.location.href = "/shop";
     } catch (error: any) {
       if (error.response.status === 401) {
         alert(error.response.data);

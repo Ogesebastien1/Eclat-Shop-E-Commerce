@@ -30,6 +30,12 @@
         <!-- ###+ nelmio/cors-bundle ### -->
         <env name="CORS_ALLOW_ORIGIN" value="'^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'"/>
         <!-- ###- nelmio/cors-bundle ### -->
+
+        <!-- ###+ fpt/stripe-bundle ### -->
+        <env name="STRIPE_PUBLISHABLE_KEY" value="pk_***"/>
+        <env name="STRIPE_SECRET_KEY" value="sk_***"/>
+        <env name="STRIPE_WEBHOOK_SIGNATURE_KEY" value="wh_***"/>
+        <!-- ###- fpt/stripe-bundle ### -->
     </php>
 
     <testsuites>
