@@ -13,6 +13,7 @@ import Lottie from "lottie-react";
 import animationData from "../assets/password-animation.json";
 import { Button } from "@nextui-org/react";
 import qs from "qs";
+import { toast } from "react-toastify";
 
 export const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -30,16 +31,13 @@ export const ResetPassword = () => {
         { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
       );
 
-      // Check if the response was successful
-      if (response.data.success_code === 200) {
-        // Store the token in local storage or somewhere else where you can access it later
-        localStorage.setItem("email", email);
-
-        setEmailSent(true);
-        console.log(response.data);
-      }
+      // Store the token in local storage or somewhere else where you can access it later
+      localStorage.setItem("email", email);
+      toast.success("Email has been sent. Please check your inbox.");
+      console.log(response.data);
     } catch (error) {
       console.error(error);
+      toast.success("Email has been sent. Please check your inbox.");
     }
   };
 
@@ -64,20 +62,13 @@ export const ResetPassword = () => {
         </CardHeader>
         <Divider />
         <CardBody>
-          {emailSent ? (
-            <p>
-              Email has been sent. Please check your inbox. If you don't see the
-              email, check your spam folder.
-            </p>
-          ) : (
-            <Input
-              label="Email"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          )}
+          <Input
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </CardBody>
         <Divider />
         <CardFooter
