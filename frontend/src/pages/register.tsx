@@ -30,6 +30,11 @@ export const Register = () => {
 
   const handleRegister = async () => {
     if (!isFormValid) {
+      if (!passwordRegex.test(password)) {
+        toast.error(
+          "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character."
+        );
+      }
       toast.error("Please fill in all fields correctly.");
       return;
     }
