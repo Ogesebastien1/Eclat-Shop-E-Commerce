@@ -12,6 +12,9 @@ import {
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
 import animationData from "../assets/register-animation.json";
+import { toast } from "react-toastify";
+import { Tooltip } from "@nextui-org/react";
+import PasswordStrengthBar from "react-password-strength-bar";
 
 export const Register = () => {
   const [login, setLogin] = useState("");
@@ -19,10 +22,17 @@ export const Register = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [password, setPassword] = useState("");
-
+  const [password2, setPassword2] = useState("");
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const [isFormValid, setIsFormValid] = useState(false);
+  const [passwordError2, setPasswordError2] = useState("");
 
   const handleRegister = async () => {
+    if (!isFormValid) {
+      toast.error("Please fill in all fields correctly.");
+      return;
+    }
     try {
       const formData = {
         login: login,
@@ -42,9 +52,10 @@ export const Register = () => {
         }
       );
       window.location.href = "/login";
+      toast.success("Account created successfully. Please log in.");
     } catch (error: any) {
       if (error.response.status === 403) {
-        alert(error.response.data);
+        toast.error(error.response.data);
         console.error(error);
       } else {
         console.error(error);
@@ -54,12 +65,25 @@ export const Register = () => {
 
   // Mettre à jour l'état isFormValid chaque fois que l'état des champs change
   useEffect(() => {
-    if (login && email && firstname && lastname && password) {
-      setIsFormValid(true);
+    if (login && email && firstname && lastname && password && password2) {
+      if (passwordRegex.test(password) && password === password2) {
+        setIsFormValid(true);
+        setPasswordError2("");
+      }
     } else {
       setIsFormValid(false);
     }
-  }, [login, email, firstname, lastname, password]);
+  }, [login, email, firstname, lastname, password, password2]);
+
+  useEffect(() => {
+    if (password !== password2) {
+      setPasswordError2(
+        "Password does not match. Please enter the same password."
+      );
+    } else {
+      setPasswordError2("");
+    }
+  }, [password, password2]);
 
   return (
     <div
@@ -121,7 +145,7 @@ export const Register = () => {
               isRequired
             />
           </div>
-          <div style={{ marginBottom: "1rem" }}>
+          <div style={{ marginBottom: "0.5rem" }}>
             <Input
               label="Password"
               type="password"
@@ -129,6 +153,27 @@ export const Register = () => {
               onChange={(e) => setPassword(e.target.value)}
               isRequired
             />
+            <PasswordStrengthBar password={password} />
+          </div>
+          <div style={{ marginBottom: "0.5rem" }}>
+            <Input
+              label="Password"
+              type="password"
+              value={password2}
+              onChange={(e) => setPassword2(e.target.value)}
+              isRequired
+            />
+            {passwordError2 && (
+              <Tooltip
+                text={passwordError2}
+                type="error"
+                placement="bottom-start"
+              >
+                <p style={{ color: "red", fontSize: "0.8rem" }}>
+                  {passwordError2}
+                </p>
+              </Tooltip>
+            )}
           </div>
         </CardBody>
         <Divider />
@@ -146,7 +191,6 @@ export const Register = () => {
               width: "100%",
             }}
             onClick={handleRegister}
-            disabled={!isFormValid}
             className="bg-sky-400"
           >
             Register now !
