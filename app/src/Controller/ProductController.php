@@ -1,54 +1,62 @@
 <?php
 
 namespace App\Controller;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Product;
+use App\Repository\ProductRepository;
 
 class ProductController extends AbstractController
 {
-    // This method handles GET requests to /api/product and returns a list of products
-    #[Route('/api/product', name: 'app_product')]
-    public function index(): Response
-    {
-        return $this->render('product/index.html.twig', [
-            'controller_name' => 'ProductController',
-        ]);     
-    }
 
     // This method handles GET requests to /api/product/{id} and returns the product with the specified ID
+    // test done !
     #[Route('/api/product/{id}', name: 'product_get', methods: ['GET'])]
     public function get(int $id, ProductRepository $productRepository): Response
     {
-        $product = $productRepository->find($id);
+        $product = $productRepository->findProductById($id);
 
         if (!$product) {
-            return $this->json(['message' => 'Product not found'], 404);
+            return new JsonResponse(['status' => 'Error', 'message' => 'Product not found'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json([
-            'message' => 'Product fetched successfully',
-            'product' => $product
-        ]);
+        return new JsonResponse([
+            'status' => 'Success',
+            'product' => [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'description' => $product->getDescription(),
+                'price' => $product->getPrice(),
+                'photo' => $product->getPhoto()
+            ]
+        ], Response::HTTP_OK);
     }
 
-    // This method handles POST requests to /api/product and creates a new product
+    // This method handles POST requests to /api/product and creates a new product 
+    // test done !
     #[Route('/api/product', name: 'product_add', methods: ['POST'])]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $data = json_decode($request->getContent(), true);
+
+        if ($data === null || !isset($data['name']) || !isset($data['description']) || !isset($data['price']) || !isset($data['photo'])) {
+            return new JsonResponse(['status' => 'Error', 'message' => 'Missing required fields'], Response::HTTP_BAD_REQUEST);
+        }
+
         $product = new Product();
-        $product->setName($request->request->get('name'));
-        $product->setDescription($request->request->get('description'));
-        $product->setPrice($request->request->get('price'));
+        $product->setName($data['name']);
+        $product->setDescription($data['description']);
+        $product->setPrice($data['price']);
+        $product->setPhoto($data['photo']);
 
         $entityManager->persist($product);
         $entityManager->flush();
 
-        return $this->json([
-            'message' => 'Product added successfully',
-            'product' => $product
-        ]);
+        return new JsonResponse(['status' => 'Product created successfully'], Response::HTTP_CREATED);
     }
 
     // This method handles DELETE requests to /api/product/{id} and deletes the product with the given id
@@ -64,6 +72,7 @@ class ProductController extends AbstractController
     }
 
     // This method handles PUT requests to /api/product/{id} and updates the product with the given id
+    // test done !
     #[Route('/api/product/{id}', name: 'product_update', methods: ['PUT'])]
     public function update(Request $request, EntityManagerInterface $entityManager, Product $product): Response
     {
