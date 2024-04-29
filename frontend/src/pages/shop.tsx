@@ -56,12 +56,12 @@ export function Shop() {
           <NavbarContent className="hidden sm:flex gap-4" justify="center">
             <NavbarItem>
               <Link color="foreground" href="#">
-                Catalog
+                Contact
               </Link>
             </NavbarItem>
             <NavbarItem isActive>
               <Link href="#" aria-current="page">
-                Contact
+                Shopping cart
               </Link>
             </NavbarItem>
             <NavbarItem>
