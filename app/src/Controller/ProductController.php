@@ -88,99 +88,99 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/api/carts/{productId}', name: 'add_product_to_cart', methods: ['POST'])]
-    public function addProductToCart(int $productId, EntityManagerInterface $entityManager, UserRepository $userRepository, ProductRepository $productRepository): Response
-    {
-        // Get the authenticated user
-        $user = $this->getUser();
+    // #[Route('/api/carts/{productId}', name: 'add_product_to_cart', methods: ['POST'])]
+    // public function addProductToCart(int $productId, EntityManagerInterface $entityManager, UserRepository $userRepository, ProductRepository $productRepository): Response
+    // {
+    //     // Get the authenticated user
+    //     $user = $this->getUser();
 
-        // Find the product by id
-        $product = $productRepository->find($productId);
+    //     // Find the product by id
+    //     $product = $productRepository->find($productId);
 
-        if (!$product) {
-            return new JsonResponse(['message' => 'Product not found'], 404);
-        }
+    //     if (!$product) {
+    //         return new JsonResponse(['message' => 'Product not found'], 404);
+    //     }
 
-        // Add the product to the user's cart
-        $user->addProductToCart($product);
+    //     // Add the product to the user's cart
+    //     $user->addProductToCart($product);
 
-        // Save changes to the database
-        $entityManager->persist($user);
-        $entityManager->flush();
+    //     // Save changes to the database
+    //     $entityManager->persist($user);
+    //     $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Product added to cart successfully']);
-    }
+    //     return new JsonResponse(['message' => 'Product added to cart successfully']);
+    // }
 
 
-    #[Route('/api/carts/{productId}', name: 'remove_product_from_cart', methods: ['DELETE'])]
-    public function removeProductFromCart(int $productId, EntityManagerInterface $entityManager, UserRepository $userRepository, ProductRepository $productRepository): Response
-    {
-        // Get the authenticated user
-        $user = $this->getUser();
+    // #[Route('/api/carts/{productId}', name: 'remove_product_from_cart', methods: ['DELETE'])]
+    // public function removeProductFromCart(int $productId, EntityManagerInterface $entityManager, UserRepository $userRepository, ProductRepository $productRepository): Response
+    // {
+    //     // Get the authenticated user
+    //     $user = $this->getUser();
 
-        // Find the product by id
-        $product = $productRepository->find($productId);
+    //     // Find the product by id
+    //     $product = $productRepository->find($productId);
 
-        if (!$product) {
-            return new JsonResponse(['message' => 'Product not found'], 404);
-        }
+    //     if (!$product) {
+    //         return new JsonResponse(['message' => 'Product not found'], 404);
+    //     }
 
-        // Remove the product from the user's cart
-        $user->removeProductFromCart($product);
+    //     // Remove the product from the user's cart
+    //     $user->removeProductFromCart($product);
 
-        // Save changes to the database
-        $entityManager->persist($user);
-        $entityManager->flush();
+    //     // Save changes to the database
+    //     $entityManager->persist($user);
+    //     $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Product removed from cart successfully']);
-    }
+    //     return new JsonResponse(['message' => 'Product removed from cart successfully']);
+    // }
 
 
     
-    #[Route('/api/carts', name: 'get_cart', methods: ['GET'])]
-    public function getCart(): Response
-    {
-        // Get the authenticated user
-        $user = $this->getUser();
+    // #[Route('/api/carts', name: 'get_cart', methods: ['GET'])]
+    // public function getCart(): Response
+    // {
+    //     // Get the authenticated user
+    //     $user = $this->getUser();
 
-        // Get the products in the user's cart
-        $cart = $user->getCart();
+    //     // Get the products in the user's cart
+    //     $cart = $user->getCart();
 
-        // Convert the cart to an array of product data
-        $cartData = array_map(function ($product) {
-            return [
-                'id' => $product->getId(),
-                'name' => $product->getName(),
-                'description' => $product->getDescription(),
-                'price' => $product->getPrice(),
-            ];
-        }, $cart);
+    //     // Convert the cart to an array of product data
+    //     $cartData = array_map(function ($product) {
+    //         return [
+    //             'id' => $product->getId(),
+    //             'name' => $product->getName(),
+    //             'description' => $product->getDescription(),
+    //             'price' => $product->getPrice(),
+    //         ];
+    //     }, $cart);
 
-        return new JsonResponse($cartData);
-    }
+    //     return new JsonResponse($cartData);
+    // }
 
-    // Validation of the cart: This method will convert the authenticated user's shopping cart to an order.
-    #[Route('/api/carts/validate', name: 'validate_cart', methods: ['POST'])]
-    public function validateCart(EntityManagerInterface $entityManager): Response
-    {
-        // Get the authenticated user
-        $user = $this->getUser();
+    // // Validation of the cart: This method will convert the authenticated user's shopping cart to an order.
+    // #[Route('/api/carts/validate', name: 'validate_cart', methods: ['POST'])]
+    // public function validateCart(EntityManagerInterface $entityManager): Response
+    // {
+    //     // Get the authenticated user
+    //     $user = $this->getUser();
 
-        // Create a new order from the user's cart
-        $order = new Order();
-        foreach ($user->getCart() as $product) {
-            $order->addProduct($product);
-        }
+    //     // Create a new order from the user's cart
+    //     $order = new Order();
+    //     foreach ($user->getCart() as $product) {
+    //         $order->addProduct($product);
+    //     }
 
-        // Clear the user's cart
-        $user->clearCart();
+    //     // Clear the user's cart
+    //     $user->clearCart();
 
-        // Save the order and the updated user to the database
-        $entityManager->persist($order);
-        $entityManager->persist($user);
-        $entityManager->flush();
+    //     // Save the order and the updated user to the database
+    //     $entityManager->persist($order);
+    //     $entityManager->persist($user);
+    //     $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Cart validated successfully', 'order_id' => $order->getId()]);
-    }
+    //     return new JsonResponse(['message' => 'Cart validated successfully', 'order_id' => $order->getId()]);
+    // }
 
 }
