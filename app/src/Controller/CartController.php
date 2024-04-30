@@ -5,37 +5,70 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Product;
+use App\Repository\ProductRepository;
 
 class CartController extends AbstractController
 {
-    #[Route('/api/cart/add/{productId}', name: 'cart_add', methods: ['POST'])]
-    public function addToCart(int $productId, Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/api/cart/add/{id}', name: 'cart_add')]
+    public function addToCart(int $id, ProductRepository $productRepository, Request $request): Response
     {
-        $product = $entityManager->getRepository(Product::class)->find($productId);
-        $product->addToCart($productId, 1, $request); // Pass the Request object here
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
 
-        return new JsonResponse(['status' => 'Product added to cart successfully'], Response::HTTP_OK);
-    }
+        /** @var Product $product */
+        $product = $productRepository->find($id);
 
-    // route pour supprimer un produit du panier
-    #[Route('/api/cart/remove/{productId}', name: 'cart_remove', methods: ['DELETE'])]
-    public function removeFromCart(int $productId, EntityManagerInterface $entityManager): Response
-    {
-        $product = $entityManager->getRepository(Product::class)->find($productId);
-        $cart = $this->getUser()->getCart();
-
-        if (!$product || !$cart) {
-            return new JsonResponse(['status' => 'Error', 'message' => 'Product or cart not found'], Response::HTTP_NOT_FOUND);
+        if (!$product) {
+            return $this->redirectToRoute('product_list');
         }
 
-        $product->removeFromCart($cart);
+        $productId = $product->getId();
+        if (!isset($cart[$productId])) {
+            $cart[$productId] = ['product' => $product, 'quantity' => 0];
+        }
+        $cart[$productId]['quantity']++;
 
-        $entityManager->flush();
+        $session->set('cart', $cart);
 
-        return new JsonResponse(['status' => 'Product removed from cart successfully'], Response::HTTP_OK);
+        return $this->json(['message' => 'Product added to cart successfully']);
+    }
+
+    #[Route('/api/cart/remove/{id}', name: 'cart_remove' , methods: ['DELETE'])]
+    public function removeFromCart(int $id, Request $request): Response
+    {
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+        }
+
+        $session->set('cart', $cart);
+
+        return $this->json(['message' => 'Product removed to cart successfully']);
+    }
+
+    #[Route('/api/cart', name: 'cart_show')]
+    public function showCart(Request $request): Response
+    {
+        $cart = $request->getSession()->get('cart', []);
+        $cartData = array_map(function ($item) {
+            return [
+                'product_id' => $item['product']->getId(),
+                'name' => $item['product']->getName(),
+                'quantity' => $item['quantity'],
+                'price' => $item['product']->getPrice(),
+            ];
+        }, $cart);
+
+        return $this->json([
+            'cart' => $cartData,
+            'total' => array_reduce($cart, function ($carry, $item) {
+                return $carry + ($item['quantity'] * $item['product']->getPrice());
+            }, 0)
+        ]);
     }
 }

@@ -1,61 +1,29 @@
 <?php
-// src/Entity/Cart.php
+namespace App\Service;
 
-namespace App\Entity;
-
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
-#[ORM\Entity]
 class Cart
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
-    private $id;
+    private $items = [];
 
-    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: "cart", cascade: ["persist", "remove"])]
-    private $items;
-
-
-    public function __construct()
+    public function addProduct(Product $product, int $quantity = 1): void
     {
-        $this->items = new ArrayCollection();
+        $productId = $product->getId();
+        if (!isset($this->items[$productId])) {
+            $this->items[$productId] = ['product' => $product, 'quantity' => 0];
+        }
+        $this->items[$productId]['quantity'] += $quantity;
     }
 
-    public function getId(): ?int
+    public function removeProduct(Product $product): void
     {
-        return $this->id;
+        $productId = $product->getId();
+        if (isset($this->items[$productId])) {
+            unset($this->items[$productId]);
+        }
     }
 
-    /**
-     * @return Collection|CartItem[]
-     */
-    public function getItems(): Collection
+    public function getItems(): array
     {
         return $this->items;
     }
-
-    public function addItem(CartItem $item): self
-    {
-        if (!$this->items->contains($item)) {
-            $this->items[] = $item;
-            $item->setCart($this);
-        }
-
-        return $this;
-    }
-
-    public function removeItem(CartItem $item): self
-    {
-        if ($this->items->removeElement($item)) {
-            if ($item->getCart() === $this) {
-                $item->setCart(null);
-            }
-        }
-
-        return $this;
-    }
 }
-
