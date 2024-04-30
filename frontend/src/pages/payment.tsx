@@ -3,7 +3,6 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import CheckoutForm from "../components/Checkout";
-import { Spinner } from "@nextui-org/react";
 import Lottie from "lottie-react";
 import { useTheme } from "../contexts/themeContext";
 import darkanimation from "../animations/dark-loading.json";
