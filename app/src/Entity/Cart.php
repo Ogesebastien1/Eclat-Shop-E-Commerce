@@ -1,26 +1,37 @@
 <?php
+// src/Entity/Cart.php
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\CartRepository")
- */
+#[ORM\Entity]
 class Cart
 {
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CartItem", mappedBy="cart", orphanRemoval=true)
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private $id;
+
+    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: "cart", cascade: ["persist", "remove"])]
     private $items;
+
 
     public function __construct()
     {
         $this->items = new ArrayCollection();
     }
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return Collection|CartItem[]
+     */
     public function getItems(): Collection
     {
         return $this->items;
@@ -38,9 +49,7 @@ class Cart
 
     public function removeItem(CartItem $item): self
     {
-        if ($this->items->contains($item)) {
-            $this->items->removeElement($item);
-            
+        if ($this->items->removeElement($item)) {
             if ($item->getCart() === $this) {
                 $item->setCart(null);
             }
@@ -48,14 +57,5 @@ class Cart
 
         return $this;
     }
-
-    public function getTotal(): float
-    {
-        $total = 0;
-        foreach ($this->items as $item) {
-            $total += $item->getProduct()->getPrice();
-        }
-
-        return $total;
-    }
 }
+

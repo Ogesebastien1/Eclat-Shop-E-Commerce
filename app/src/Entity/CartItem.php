@@ -2,22 +2,41 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-class CartItem{
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Cart", inversedBy="items")
-     * @ORM\JoinColumn(nullable=false)
-     */
+#[ORM\Entity]
+class CartItem
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private $id;
+
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: "cartItems")]
+    private $product;
+
+    #[ORM\ManyToOne(targetEntity: Cart::class, inversedBy: "items")]
     private $cart;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product", inversedBy="cartItems")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $product;
+    #[ORM\Column(type: "integer")]
+    private $quantity;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
+
+        return $this;
+    }
 
     public function getCart(): ?Cart
     {
@@ -31,14 +50,14 @@ class CartItem{
         return $this;
     }
 
-    public function getProduct(): ?Product
+    public function getQuantity(): ?int
     {
-        return $this->product;
+        return $this->quantity;
     }
 
-    public function setProduct(?Product $product): self
+    public function setQuantity(int $quantity): self
     {
-        $this->product = $product;
+        $this->quantity = $quantity;
 
         return $this;
     }

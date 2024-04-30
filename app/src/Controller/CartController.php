@@ -1,60 +1,41 @@
 <?php
+
 namespace App\Controller;
 
-use App\Entity\CartItem;
-use App\Entity\Product;
-use App\Repository\ProductRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Product;
 
 class CartController extends AbstractController
 {
-    private $productRepository;
-    private $entityManager;
-
-    public function __construct(ProductRepository $productRepository, EntityManagerInterface $entityManager)
+    #[Route('/api/cart/add/{productId}', name: 'cart_add', methods: ['POST'])]
+    public function addToCart(int $productId, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $this->productRepository = $productRepository;
-        $this->entityManager = $entityManager;
+        $product = $entityManager->getRepository(Product::class)->find($productId);
+        $product->addToCart($productId, 1, $request); // Pass the Request object here
+
+        return new JsonResponse(['status' => 'Product added to cart successfully'], Response::HTTP_OK);
     }
 
-    /**
-     * @Route("/api/cart/add/{productId}", name="add_product_to_cart", methods={"POST"})
-     */
-    public function addProductToCart(int $productId): Response
+    // route pour supprimer un produit du panier
+    #[Route('/api/cart/remove/{productId}', name: 'cart_remove', methods: ['DELETE'])]
+    public function removeFromCart(int $productId, EntityManagerInterface $entityManager): Response
     {
-        $product = $this->productRepository->find($productId);
+        $product = $entityManager->getRepository(Product::class)->find($productId);
+        $cart = $this->getUser()->getCart();
 
-        if (!$product) {
-            return $this->json([
-                'message' => 'Product not found'
-            ], Response::HTTP_NOT_FOUND);
+        if (!$product || !$cart) {
+            return new JsonResponse(['status' => 'Error', 'message' => 'Product or cart not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $user = $this->getUser();
+        $product->removeFromCart($cart);
 
-        if (!$user) {
-            return $this->json([
-                'message' => 'You must be logged in to add products to the cart'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+        $entityManager->flush();
 
-        $cart = $user->getCart();
-
-        $cartItem = new CartItem();
-        $cartItem->setProduct($product);
-        $cart->addItem($cartItem);
-
-        $this->entityManager->persist($cartItem);
-        $this->entityManager->flush();
-
-        return $this->json([
-            'message' => 'Product added to cart',
-            'product' => $product
-        ], Response::HTTP_CREATED);
+        return new JsonResponse(['status' => 'Product removed from cart successfully'], Response::HTTP_OK);
     }
 }
-?>
