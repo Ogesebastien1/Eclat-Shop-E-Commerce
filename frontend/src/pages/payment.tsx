@@ -4,6 +4,10 @@ import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import CheckoutForm from "../components/Checkout";
 import { Spinner } from "@nextui-org/react";
+import Lottie from "lottie-react";
+import { useTheme } from "../contexts/themeContext";
+import darkanimation from "../animations/dark-loading.json";
+import lightanimation from "../animations/light-loading.json";
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe(
@@ -19,6 +23,8 @@ export default function Payment({
 }) {
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
+  let animationData = theme == "dark" ? darkanimation : lightanimation;
 
   useEffect(() => {
     axios
@@ -41,7 +47,7 @@ export default function Payment({
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <Spinner color="default" />
+        <Lottie animationData={animationData} width={400} height={400} />
       </div>
     );
   }
