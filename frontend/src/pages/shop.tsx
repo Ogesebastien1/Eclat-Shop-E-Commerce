@@ -1,6 +1,7 @@
 import React from "react";
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@nextui-org/react";
 import {Card, Image, CardFooter, CardBody} from "@nextui-org/react";
+import { Link as RouterLink } from 'react-router-dom';
 
 export function Shop() {
   const list = [
@@ -108,9 +109,12 @@ export function Shop() {
           />
           <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
             <p className="text-tiny text-white/80">Price $</p>
+
+            <RouterLink to={`/details/${item.id}`}>
             <Button className="text-tiny text-white bg-black/20" variant="flat" color="default" radius="lg" size="sm">
               Show more
             </Button>
+            </RouterLink>
           </CardFooter>
         </Card>
         ))}
