@@ -19,11 +19,10 @@ services:
   # Symfony service
   symfony:
     build: .
+    image: php-fpm:latest
     restart: always
     volumes: # Mount the app directory to the container
       - ./app:/var/www/my_project
-    ports: # Map the port 8000 of the container to the port 8000 of the host
-      - "8000:8000"
     depends_on: # Depend on the database service
       - database
     environment: # Set the environment variables
@@ -39,6 +38,17 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY} # Use the JWT_SECRET_KEY environment variable
       JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY} # Use the JWT_PUBLIC_KEY environment variable
       JWT_PASSPHRASE: ${JWT_PASSPHRASE} # Use the JWT_PASSPHRASE environment variable
+
+  nginx:
+      image: nginx:latest
+      ports:
+        - "8080:80"
+      volumes:
+        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        - ./app:/var/www/my_project
+      command:  /bin/sh -c "chmod 666 /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+      depends_on:
+        - symfony
 
   # Frontend service
   frontend:
