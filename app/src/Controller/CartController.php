@@ -12,7 +12,7 @@ use App\Repository\ProductRepository;
 
 class CartController extends AbstractController
 {
-    #[Route('/api/cart/add/{id}', name: 'cart_add')]
+    #[Route('/api/carts/{id}', name: 'cart_add')]
     public function addToCart(int $id, ProductRepository $productRepository, Request $request): Response
     {
         $session = $request->getSession();
@@ -36,7 +36,7 @@ class CartController extends AbstractController
         return $this->json(['message' => 'Product added to cart successfully']);
     }
 
-    #[Route('/api/cart/remove/{id}', name: 'cart_remove' , methods: ['DELETE'])]
+    #[Route('/api/carts/{id}', name: 'cart_remove' , methods: ['DELETE'])]
     public function removeFromCart(int $id, Request $request): Response
     {
         $session = $request->getSession();
@@ -51,7 +51,7 @@ class CartController extends AbstractController
         return $this->json(['message' => 'Product removed to cart successfully']);
     }
 
-    #[Route('/api/cart', name: 'cart_show')]
+    #[Route('/api/carts', name: 'cart_show')]
     public function showCart(Request $request): Response
     {
         $cart = $request->getSession()->get('cart', []);
