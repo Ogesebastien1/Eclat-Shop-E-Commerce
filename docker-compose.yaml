@@ -22,8 +22,6 @@ services:
     restart: always
     volumes: # Mount the app directory to the container
       - ./app:/var/www/my_project
-    ports: # Map the port 8000 of the container to the port 8000 of the host
-      - "8000:8000"
     depends_on: # Depend on the database service
       - database
     environment: # Set the environment variables
