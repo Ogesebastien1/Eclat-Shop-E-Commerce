@@ -11,7 +11,7 @@ import {
   Link,
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
-import animationData from "../assets/register-animation.json";
+import animationData from "../animations/register-animation.json";
 import { toast } from "react-toastify";
 import { Tooltip } from "@nextui-org/react";
 import PasswordStrengthBar from "react-password-strength-bar";
@@ -107,12 +107,9 @@ export const Register = () => {
       </Link>
       <Card className="max-w-[400px]">
         <CardHeader className="center flex-col">
-          <div
-            className="bg-zinc-100"
-            style={{ borderRadius: 6, width: "100%", padding: "1rem" }}
-          >
-            <h1>Register</h1>
-          </div>
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-600">
+            REGISTER
+          </h1>
           <Lottie animationData={animationData} loop={true} />
         </CardHeader>
         <Divider />
