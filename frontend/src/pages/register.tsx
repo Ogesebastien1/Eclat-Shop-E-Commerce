@@ -9,6 +9,7 @@ import {
   Input,
   Button,
   Link,
+  Spinner,
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
 import animationData from "../animations/register-animation.json";
@@ -27,6 +28,7 @@ export const Register = () => {
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   const [isFormValid, setIsFormValid] = useState(false);
   const [passwordError2, setPasswordError2] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
     if (!isFormValid) {
@@ -39,6 +41,7 @@ export const Register = () => {
       return;
     }
     try {
+      setIsLoading(true);
       const formData = {
         login: login,
         email: email,
@@ -58,12 +61,15 @@ export const Register = () => {
       );
       window.location.href = "/login";
       toast.success("Account created successfully. Please log in.");
+      setIsLoading(false); // Fin de la requête
     } catch (error: any) {
       if (error.response.status === 403) {
         toast.error(error.response.data);
+        setIsLoading(false);
         console.error(error);
       } else {
         console.error(error);
+        setIsLoading(false);
       }
     }
   };
@@ -194,8 +200,9 @@ export const Register = () => {
             }}
             onClick={handleRegister}
             className="bg-sky-400"
+            disabled={isLoading}
           >
-            Register now !
+            {isLoading ? <Spinner color="default" /> : "Register now !"}
           </Button>
 
           <Link

@@ -13,6 +13,11 @@ const ThemeSwitcher: React.FC = (): JSX.Element => {
   const switcher = useRef<HTMLDivElement | null>(null);
   const switcherButton = useRef<HTMLButtonElement>(null);
 
+  const animations: { [key: string]: any } = {
+    light: animationSun,
+    dark: animationMoon,
+  };
+
   const { theme, setTheme } = useTheme();
   const [activeTheme, setActiveTheme] = useState<string>(theme);
   const [animationData, setAnimationData] = useState(animations[theme]);
@@ -77,8 +82,6 @@ const ThemeSwitcher: React.FC = (): JSX.Element => {
           >
             <Lottie
               animationData={animationData}
-              height={height}
-              width={width}
               loop={false}
               key={activeTheme}
             />

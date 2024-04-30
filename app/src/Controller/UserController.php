@@ -61,6 +61,7 @@ class UserController extends AbstractController
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
                 'roles' => $user->getRoles(),
+                'avatar' => $user->getAvatar() ? 'yes' : 'no',
             ]));
 
             return $this->json([
@@ -70,6 +71,7 @@ class UserController extends AbstractController
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
                 'roles' => $user->getRoles(),
+                'avatar' => $user->getAvatar() ? 'yes' : 'no',
             ]);
         }
 
@@ -116,6 +118,10 @@ class UserController extends AbstractController
         }
         if (isset($data['lastname'])) {
             $user->setLastname($data['lastname']);
+        }
+
+        if (isset($data['avatar'])) {
+            $user->setAvatar($data['avatar']);
         }
 
         // Save the updated user to the database
