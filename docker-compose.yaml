@@ -19,6 +19,7 @@ services:
   # Symfony service
   symfony:
     build: .
+    image: php-fpm:latest
     restart: always
     volumes: # Mount the app directory to the container
       - ./app:/var/www/my_project
