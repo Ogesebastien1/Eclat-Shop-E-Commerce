@@ -40,6 +40,17 @@ services:
       JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY} # Use the JWT_PUBLIC_KEY environment variable
       JWT_PASSPHRASE: ${JWT_PASSPHRASE} # Use the JWT_PASSPHRASE environment variable
 
+  nginx:
+      image: nginx:latest
+      ports:
+        - "8080:80"
+      volumes:
+        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        - ./app:/var/www/my_project
+      command:  /bin/sh -c "chmod 666 /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+      depends_on:
+        - symfony
+
   # Frontend service
   frontend:
     image: node:latest # Use the latest Node.js image to run react project
