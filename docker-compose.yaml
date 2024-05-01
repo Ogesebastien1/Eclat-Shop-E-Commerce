@@ -38,8 +38,8 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY} # Use the JWT_SECRET_KEY environment variable
       JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY} # Use the JWT_PUBLIC_KEY environment variable
       JWT_PASSPHRASE: ${JWT_PASSPHRASE} # Use the JWT_PASSPHRASE environment variable
-      CLIENT_SECRET: ${CLIENT_SECRET} # Use the CLIENT_SECRET environment variable
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY} # Use the STRIPE_PUBLISHABLE_KEY environment variable
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY} # Use the CLIENT_SECRET environment variable
+      STRIPE_PUBLISHABLE_KEY: ${REACT_APP_STRIPE_PUBLISHABLE_KEY} # Use the STRIPE_PUBLISHABLE_KEY environment variable
       STRIPE_WEBHOOK_SIGNATURE_KEY: ${STRIPE_WEBHOOK_SIGNATURE_KEY} # Use the STRIPE_WEBHOOK_SIGNATURE_KEY environment variable
 
   nginx:
@@ -60,6 +60,7 @@ services:
     environment:
       CHOKIDAR_USEPOLLING: true
       WATCHPACK_POLLING: true # Use polling for file watching
+      REACT_APP_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY} # Set the STRIPE_PUBLISHABLE_KEY environment variable
     ports: # Map the port 3010 of the container to the port 3000 of the host
       - "3010:3000"
     volumes: # Mount the frontend directory to the container

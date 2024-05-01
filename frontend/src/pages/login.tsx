@@ -9,18 +9,24 @@ import {
   Input,
   Button,
   Link,
+  Spinner,
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
 import animationData from "../animations/login-animation.json";
-import ThemeSwitcher from "../components/themeswitcher";
+import { toast } from "react-toastify";
 
 export const Login = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
   const handleLoginr = async () => {
+    if (!isFormValid) {
+      toast.error("Please fill in all fields correctly.");
+      return;
+    }
+    setIsLoading(true);
     try {
       const formData = {
         login: login,
@@ -37,13 +43,16 @@ export const Login = () => {
         }
       );
       localStorage.setItem("token", response.data.token);
+      setIsLoading(false);
       window.location.href = "/shop";
     } catch (error: any) {
       if (error.response.status === 401) {
-        alert(error.response.data);
+        toast.error(error.response.data);
         console.error(error);
+        setIsLoading(false);
       } else {
         console.error(error);
+        setIsLoading(false);
       }
     }
   };
@@ -126,9 +135,9 @@ export const Login = () => {
             }}
             className="bg-sky-400"
             onClick={handleLoginr}
-            disabled={!isFormValid}
+            disabled={isLoading}
           >
-            Login !
+            {isLoading ? <Spinner color="default" /> : "Login !"}
           </Button>
 
           <Link

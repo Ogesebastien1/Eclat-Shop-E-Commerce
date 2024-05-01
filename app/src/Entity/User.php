@@ -54,6 +54,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     /**
+     * @var string|null The avatar image
+     */
+    #[ORM\Column(type: "blob", nullable: true)]
+    private ?string $avatar = null;
+
+    /**
      * @see UserInterface
      *
      * @return string
@@ -61,6 +67,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): static
+    {
+        $this->avatar = $avatar;
+
+        return $this;
     }
 
     public function setLogin(string $login): static
