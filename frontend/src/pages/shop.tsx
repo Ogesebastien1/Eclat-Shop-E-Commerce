@@ -2,6 +2,7 @@ import React from "react";
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@nextui-org/react";
 import {Card, Image, CardFooter, CardBody} from "@nextui-org/react";
 import { Link as RouterLink } from 'react-router-dom';
+import MyNavbar from "../components/navbar";
 
 export function Shop() {
   const list = [
@@ -57,41 +58,7 @@ export function Shop() {
 
   return (
     <>
-      <div>
-        <Navbar>
-          <NavbarBrand>
-            <p className="font-bold text-inherit">ECLAT SHOP</p>
-          </NavbarBrand>
-          <NavbarContent className="hidden sm:flex gap-4" justify="center">
-            <NavbarItem>
-              <Link color="foreground" href="#">
-                Contact
-              </Link>
-            </NavbarItem>
-            <NavbarItem isActive>
-              <Link href="#" aria-current="page">
-                Shopping cart
-              </Link>
-            </NavbarItem>
-            <NavbarItem>
-              <Link color="foreground" href="#">
-                About us
-              </Link>
-            </NavbarItem>
-          </NavbarContent>
-          <NavbarContent justify="end">
-            <NavbarItem className="hidden lg:flex">
-              <Link href="/login">Login</Link>
-            </NavbarItem>
-            <NavbarItem>
-              <Button as={Link} color="primary" href="/register" variant="flat">
-                Sign Up
-              </Button>
-            </NavbarItem>
-          </NavbarContent>
-        </Navbar>
-      </div>
-
+    <MyNavbar />
     <div className="flex items-center justify-center min-h-screen">
       <div className="gap-4 grid grid-cols-2 sm:grid-cols-4 mx-auto">
         {list.map((item, index) => (
@@ -110,7 +77,7 @@ export function Shop() {
           <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
             <p className="text-tiny text-white/80">Price $</p>
 
-            <RouterLink to={`/details/${item.id}`}>
+            <RouterLink to={`/details`}>
             <Button className="text-tiny text-white bg-black/20" variant="flat" color="default" radius="lg" size="sm">
               Show more
             </Button>
