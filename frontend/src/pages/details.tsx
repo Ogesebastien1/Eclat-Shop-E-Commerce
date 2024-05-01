@@ -13,6 +13,7 @@ export default function Details() {
   return (
     <>  
     <MyNavbar /> 
+    <Button className="m-4" onClick={() => window.history.back()}>Back to Shop</Button>
     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '100px', marginLeft: '250px', marginRight: '20px' }}>
       <div style={{ flex: 1 }}>
         <Accordion variant="splitted">
