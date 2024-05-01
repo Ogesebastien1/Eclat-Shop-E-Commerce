@@ -13,6 +13,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import ThemeSwitcher from "./components/themeswitcher";
 import { ThemeProvider, useTheme } from "./contexts/themeContext";
 import Details from "./pages/details";
+import Payment from "./pages/payment";
 
 function App() {
   const { theme } = useTheme();
@@ -36,6 +37,7 @@ function App() {
             <Route path="/modify-password" element={<ModifiePassword />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/details" element={<Details />} />
+            <Route path="/payment" element={<Payment />} />
           </Routes>
         </div>
       </main>
