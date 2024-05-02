@@ -7,19 +7,28 @@ import Lottie from "lottie-react";
 import { useTheme } from "../contexts/themeContext";
 import darkanimation from "../animations/dark-loading.json";
 import lightanimation from "../animations/light-loading.json";
-// Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || ""
 );
 
-export default function Payment({
-  currency = "eur",
-  productName = "Test Product",
-  unitAmount = 1099,
-  quantity = 1,
-  productResume = "Test Product - 10.99€",
-}) {
+function Payment(props: any) {
+  let currency = "usd";
+  let productName = "Product";
+  let unitAmount = 0;
+  let quantity = 1;
+  let productResume = "";
+
+  try {
+    currency = props.location.state.currency || "usd";
+    productName = props.location.state.productName || "Product";
+    unitAmount = props.location.state.unitAmount || 0;
+    quantity = props.location.state.quantity || 1;
+    productResume = props.location.state.productResume || "";
+  } catch (e) {
+    console.error(e);
+  }
+
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
@@ -61,3 +70,5 @@ export default function Payment({
     </div>
   );
 }
+
+export default Payment;
