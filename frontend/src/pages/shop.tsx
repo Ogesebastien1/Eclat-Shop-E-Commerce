@@ -1,92 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@nextui-org/react";
 import {Card, Image, CardFooter, CardBody} from "@nextui-org/react";
 import { Link as RouterLink } from 'react-router-dom';
 import MyNavbar from "../components/navbar";
 
 export function Shop() {
-  const list = [
-    {
-      title: "Orange",
-      img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Oranges_-_whole-halved-segment.jpg/1200px-Oranges_-_whole-halved-segment.jpg",
-      price: "$5.50",
-      description: "Test description"
-    },
-    {
-      title: "Tangerine",
-      img: "https://as1.ftcdn.net/v2/jpg/00/29/69/78/1000_F_29697857_Rh1QHZRduOv5u8KclCX0cGTPpkVPbtFt.jpg",
-      price: "$3.00",
-      description: "Test description"
-    },
-    {
-      title: "Raspberry",
-      img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Raspberry_-_whole_%28Rubus_idaeus%29.jpg/1200px-Raspberry_-_whole_%28Rubus_idaeus%29.jpg",
-      price: "$10.00",
-      description: "Test description"
-    },
-    {
-      title: "Lemon",
-      img: "https://media.istockphoto.com/id/1389128157/fr/photo/fruit-citronn%C3%A9-avec-feuille-isol%C3%A9e-citron-entier-et-demi-avec-des-feuilles-sur-fond-blanc.jpg?s=612x612&w=0&k=20&c=Ilhfen4bwWI5Xfp7A9EoxcEZ7jm_kjsTlI9eL-y-AzI=",
-      price: "$5.30",
-      description: "Test description"
-    },
-    {
-      title: "Avocado",
-      img: "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/avocados-title-c32b587.jpg?quality=90&resize=556,505",
-      price: "$15.70",
-      description: "Test description"
-    },
-    {
-      title: "Lemon 2",
-      img: "https://static.toiimg.com/thumb/msid-103846641,width-1280,height-720,resizemode-4/103846641.jpg",
-      price: "$8.00",
-      description: "Test description"
-    },
-    {
-      title: "Banana",
-      img: "https://paniersduprimeur.fr/wp-content/uploads/2021/04/banane.png",
-      price: "$7.50",
-      description: "Test description"
-    },
-    {
-      title: "Watermelon",
-      img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Watermelons.jpg/800px-Watermelons.jpg",
-      price: "$12.20",
-      description: "Test description"
-    },
-  ];
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+      fetch('http://localhost:8000/api/products', {
+        method: 'GET', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          setList(data.products || []); // Use data.products instead of data
+        })
+        .catch(error => console.error('Error:', error));
+    }, []);
 
   return (
     <>
     <MyNavbar />
-    <div className="flex items-center justify-center min-h-screen">
+    {/* <div className="flex items-center justify-center min-h-screen">
       <div className="gap-4 grid grid-cols-2 sm:grid-cols-4 mx-auto">
-        {list.map((item, index) => (
+      {list.map((item, index) => (
           <Card
-          isFooterBlurred
-          radius="lg"
-          className="border-none"
-        >
-          <Image
-            alt="Woman listing to music"
-            className="object-cover"
-            height={200}
-            src="/images/hero-card.jpeg"
-            width={200}
-          />
-          <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-            <p className="text-tiny text-white/80">Price $</p>
+            isFooterBlurred
+            radius="lg"
+            className="border-none"
+          >
+            <Image
+              alt={item.name}
+              className="object-cover"
+              height={200}
+              src={item.photo}
+              width={200}
+            />
+            <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+              <p className="text-tiny text-white/80">Price {item.price}</p>
 
-            <RouterLink to={`/details`}>
-            <Button className="text-tiny text-white bg-black/20" variant="flat" color="default" radius="lg" size="sm">
-              Show more
-            </Button>
-            </RouterLink>
-          </CardFooter>
-        </Card>
+              <RouterLink to={`/details/${item.id}`}>
+                <Button className="text-tiny text-white bg-black/20" variant="flat" color="default" radius="lg" size="sm">
+                  Show more
+                </Button>
+              </RouterLink>
+            </CardFooter>
+          </Card>
         ))}
       </div>
-    </div>
+    </div> */}
   </>
 
   );
