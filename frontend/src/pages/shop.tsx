@@ -22,6 +22,8 @@ export function Shop() {
         .catch(error => console.error('Error:', error));
     }, []);
 
+
+    
   return (
     <>
     <MyNavbar />
