@@ -3,7 +3,7 @@ import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@nex
 import {Card, Image, CardFooter, CardBody} from "@nextui-org/react";
 import { Link as RouterLink } from 'react-router-dom';
 import MyNavbar from "../components/navbar";
-
+import { useNavigate } from 'react-router-dom';
 
 interface Item {
   photo: string;
@@ -13,9 +13,12 @@ interface Item {
   id: string;
 }
 
+
+
 export function Shop() {
   const [list, setList] = useState<Item[]>([]);
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
       fetch('http://localhost:8000/api/products', {
         method: 'GET', 
@@ -26,7 +29,7 @@ export function Shop() {
         .then(response => response.json())
         .then(data => {
           console.log(data);
-          setList(data.products || []); // Use data.products instead of data
+          setList(data.products || []); 
         })
         .catch(error => console.error('Error:', error));
     }, []);
@@ -46,12 +49,16 @@ export function Shop() {
     />
     <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
       <p className="text-tiny text-white/80">Price {item.price}</p>
-
-      <RouterLink to={`/details/${item.id}`}>
-        <Button className="text-tiny text-white bg-black/20" variant="flat" color="default" radius="lg" size="sm">
-          View Details
-        </Button>
-      </RouterLink>
+        <Button 
+            className="text-tiny text-white bg-black/20" 
+            variant="flat" 
+            color="default" 
+            radius="lg" 
+            size="sm"
+            onClick={() => navigate(`/details/${item.id}`, { state: { item } })}
+          >
+            Go to details
+          </Button>
     </CardFooter>
   </Card>
 ));
