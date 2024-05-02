@@ -4,6 +4,7 @@ import {Card, Image, CardFooter, CardBody} from "@nextui-org/react";
 import { Link as RouterLink } from 'react-router-dom';
 import MyNavbar from "../components/navbar";
 
+
 interface Item {
   photo: string;
   name: string;

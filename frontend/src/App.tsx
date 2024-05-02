@@ -1,6 +1,6 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Router } from "react-router-dom";
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
@@ -37,6 +37,7 @@ function App() {
             <Route path="/modify-password" element={<ModifiePassword />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/details" element={<Details />} />
+            <Route path="/details/:id" element={<Details />} />
             <Route path="/payment" element={<Payment />} />
           </Routes>
         </div>
