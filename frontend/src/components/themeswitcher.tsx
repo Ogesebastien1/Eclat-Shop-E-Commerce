@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 import { useTheme } from "../contexts/themeContext";
 import Lottie from "lottie-react";
-import animationSun from "../animations/sun-animation.json";
+import animationSun from "../animations/Lottie.json";
 import animationMoon from "../animations/moon-animation.json";
 
 const animations = {
