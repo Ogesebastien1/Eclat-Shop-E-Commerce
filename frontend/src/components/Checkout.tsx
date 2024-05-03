@@ -49,7 +49,6 @@ export default function CheckoutForm({
       duration: 300, // Réduire la durée de l'animation
     });
   }, []);
-
   return (
     <div
       style={{
@@ -60,10 +59,10 @@ export default function CheckoutForm({
       }}
     >
       <Link
-        href="/"
+        href="/shop"
         style={{ position: "absolute", top: "1rem", left: "1rem" }}
       >
-        ← Back to Home
+        ← Back to shop
       </Link>
       <Card className="max-w-[400px]">
         <CardHeader className="center flex-col">
@@ -73,7 +72,27 @@ export default function CheckoutForm({
           <Lottie animationData={buy_animation} loop={true} />
         </CardHeader>
         <Divider />
-        <CardBody>{productResume}</CardBody>
+        <CardBody>
+          <table
+            className="table-auto w-full bg-gradient-to-r from-blue-600 to-pink-600 text-white"
+            style={{ borderRadius: "9px" }}
+          >
+            <thead>
+              <tr>
+                <th className="px-4 py-2 text-white">Product</th>
+                <th className="px-4 py-2 text-white">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {productResume.map((product: any, index: any) => (
+                <tr key={index}>
+                  <td className="px-4 py-2 text-white">{product.name}</td>
+                  <td className="px-4 py-2 text-white">{product.price} EUR</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
         <Divider />
         <CardFooter
           style={{
@@ -88,7 +107,7 @@ export default function CheckoutForm({
           <Button
             ref={buttonRef}
             onClick={handleSubmit}
-            className={`bg-gradient-to-r from-blue-600 to-pink-600 w-full`}
+            className={`bg-gradient-to-r from-blue-600 to-pink-600 w-full text-white`}
           >
             Checkout
           </Button>

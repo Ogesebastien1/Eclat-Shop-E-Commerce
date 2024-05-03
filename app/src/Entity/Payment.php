@@ -13,7 +13,7 @@ class Payment
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    #[ORM\Column(type: "float")]
+    #[ORM\Column(type: "float", nullable: true)]
     private ?float $deliveryPrice = null;
 
     #[ORM\Column(type: "json")]

@@ -7,15 +7,24 @@ import Lottie from "lottie-react";
 import { useTheme } from "../contexts/themeContext";
 import darkanimation from "../animations/dark-loading.json";
 import lightanimation from "../animations/light-loading.json";
-import { useParams } from "react-router-dom"; // Add this line
+import { useLocation } from "react-router-dom"; // Add this line
 
 const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || ""
 );
 
 function Payment() {
-  const { commandId } = useParams<{ commandId: string }>(); // Get the command ID from the URL
-  const [paymentDetails, setPaymentDetails] = useState(null); // State to store the payment details
+  interface PaymentDetails {
+    productList: string[];
+    productPrices: number[];
+    // Add other properties of paymentDetails here
+  }
+  const location = useLocation(); // Get the current location
+  const command = new URLSearchParams(location.search).get("command");
+  const commandId = command ? command.replace(/[{}]/g, "") : "";
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
+    null
+  );
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
@@ -29,23 +38,27 @@ function Payment() {
         setPaymentDetails(response.data);
         console.log(response.data);
         setLoading(false);
-      });
 
-    // axios
-    //   .post("http://localhost:8000/api/payment/create-checkout-session", {
-    //     items: [
-    //       {
-    //         currency: paymentDetails?.productPrices?.currency,
-    //         productName: paymentDetails?.productList?.productName,
-    //         unitAmount: paymentDetails?.productPrices?.unitAmount,
-    //         quantity: paymentDetails?.productList?.quantity,
-    //       },
-    //     ],
-    //   })
-    //   .then((res) => {
-    //     setSessionId(res.data.id);
-    //     setLoading(false);
-    //   });
+        // Create the items array
+        const items = response.data.productList.map(
+          (productName: any, index: any) => ({
+            productName,
+            unitAmount: Math.round(response.data.productPrices[index] * 100), // Convert to cents
+            quantity: 1, // Adjust this if you have quantity information
+            currency: "eur", // Adjust this to your actual currency
+          })
+        );
+
+        // Create the checkout session
+        axios
+          .post("http://localhost:8000/api/payment/create-checkout-session", {
+            items,
+          })
+          .then((res) => {
+            setSessionId(res.data.id);
+            setLoading(false);
+          });
+      });
   }, [commandId]);
 
   if (loading) {
@@ -62,7 +75,12 @@ function Payment() {
         <Elements stripe={stripePromise}>
           <CheckoutForm
             sessionId={sessionId}
-            productResume={paymentDetails?.productList}
+            productResume={paymentDetails?.productList.map(
+              (product: any, index: any) => ({
+                name: product,
+                price: paymentDetails?.productPrices[index],
+              })
+            )}
           />
         </Elements>
       )}

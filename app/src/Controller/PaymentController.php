@@ -10,13 +10,17 @@ use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use App\Entity\Payment;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+
 
 class PaymentController extends AbstractController
 {
     #[Route('/api/payment/create-checkout-session', name: 'create_checkout_session', methods: ['POST'])]
-    public function createCheckoutSession(Request $request): Response
+    public function createCheckoutSession(Request $request, LoggerInterface $logger): Response
     {
         $data = json_decode($request->getContent(), true);
+
+        $logger->info('Creating a checkout session with the following data: ' . json_encode($data));
 
         $lineItems = array_map(function($item) {
             return [
