@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   CardHeader,
   Card,
@@ -13,6 +13,8 @@ import {
 import Lottie from "lottie-react";
 import animationData from "../animations/delivery-animation.json";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 export const CustomRadio = (props: any) => {
   const { children, ...otherProps } = props;
@@ -33,28 +35,35 @@ export const CustomRadio = (props: any) => {
   );
 };
 
-function DeliveryPage(props: any) {
-  let currency;
-  let productName;
-  let unitAmount;
-  let quantity;
-  let productResume;
-
-  try {
-    currency = props.location.state.currency || "usd";
-    productName = props.location.state.productName || "Product";
-    unitAmount = props.location.state.unitAmount || 0;
-    quantity = props.location.state.quantity || 1;
-    productResume = props.location.state.productResume || "Test";
-  } catch (e) {
-    console.error(e);
-  }
+function DeliveryPage() {
   const [selectedDelivery, setSelectedDelivery] = useState("");
   const [deliveryPrice, setDeliveryPrice] = useState(0); // New state for delivery price
+  const location = useLocation(); // Get the current location
+  const commandId = new URLSearchParams(location.search)
+    .get("command")
+    .replace(/[{}]/g, "");
+  console.log("Command ID:", commandId); // Log the command ID
+
+  useEffect(() => {
+    if (commandId) {
+      // Fetch the command when the component mounts
+      axios
+        .get(`http://localhost:8000/api/payment/${commandId}`)
+        .then((response) => {
+          // Set the initial delivery price from the fetched command
+          setDeliveryPrice(response.data.deliveryPrice);
+        });
+    }
+  }, [commandId]);
 
   const handleDeliverySelection = (delivery: string, price: number) => {
     setSelectedDelivery(delivery);
     setDeliveryPrice(price);
+
+    // Update the command with the new delivery price
+    axios.put(`http://localhost:8000/api/payment/${commandId}`, {
+      deliveryPrice: price,
+    });
   };
 
   return (
@@ -109,18 +118,9 @@ function DeliveryPage(props: any) {
               margin: "0.5rem",
               width: "100%",
             }}
-            to={
-              {
-                pathname: "/payment",
-                state: {
-                  currency: currency,
-                  productName: productName,
-                  unitAmount: unitAmount + deliveryPrice,
-                  quantity: quantity,
-                  productResume: productResume,
-                },
-              } as { pathname: string; state: any }
-            }
+            to={{
+              pathname: "/payment/" + commandId,
+            }}
           >
             <Button
               style={{

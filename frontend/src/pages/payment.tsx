@@ -7,50 +7,46 @@ import Lottie from "lottie-react";
 import { useTheme } from "../contexts/themeContext";
 import darkanimation from "../animations/dark-loading.json";
 import lightanimation from "../animations/light-loading.json";
-// recreating the `Stripe` object on every render.
+import { useParams } from "react-router-dom"; // Add this line
+
 const stripePromise = loadStripe(
   process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || ""
 );
 
-function Payment(props: any) {
-  let currency = "usd";
-  let productName = "Product";
-  let unitAmount = 0;
-  let quantity = 1;
-  let productResume = "";
-
-  try {
-    currency = props.location.state.currency || "usd";
-    productName = props.location.state.productName || "Product";
-    unitAmount = props.location.state.unitAmount || 0;
-    quantity = props.location.state.quantity || 1;
-    productResume = props.location.state.productResume || "";
-  } catch (e) {
-    console.error(e);
-  }
-
+function Payment() {
+  const { commandId } = useParams<{ commandId: string }>(); // Get the command ID from the URL
+  const [paymentDetails, setPaymentDetails] = useState(null); // State to store the payment details
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
   let animationData = theme == "dark" ? darkanimation : lightanimation;
 
   useEffect(() => {
+    // Fetch the payment details when the component mounts
     axios
-      .post("http://localhost:8000/api/payment/create-checkout-session", {
-        items: [
-          {
-            currency: currency,
-            productName: productName,
-            unitAmount: unitAmount,
-            quantity: quantity,
-          },
-        ],
-      })
-      .then((res) => {
-        setSessionId(res.data.id);
+      .get(`http://localhost:8000/api/payment/${commandId}`)
+      .then((response) => {
+        setPaymentDetails(response.data);
+        console.log(response.data);
         setLoading(false);
       });
-  }, []);
+
+    // axios
+    //   .post("http://localhost:8000/api/payment/create-checkout-session", {
+    //     items: [
+    //       {
+    //         currency: paymentDetails?.productPrices?.currency,
+    //         productName: paymentDetails?.productList?.productName,
+    //         unitAmount: paymentDetails?.productPrices?.unitAmount,
+    //         quantity: paymentDetails?.productList?.quantity,
+    //       },
+    //     ],
+    //   })
+    //   .then((res) => {
+    //     setSessionId(res.data.id);
+    //     setLoading(false);
+    //   });
+  }, [commandId]);
 
   if (loading) {
     return (
@@ -64,7 +60,10 @@ function Payment(props: any) {
     <div className="flex justify-center items-center h-screen">
       {sessionId && (
         <Elements stripe={stripePromise}>
-          <CheckoutForm sessionId={sessionId} productResume={productResume} />
+          <CheckoutForm
+            sessionId={sessionId}
+            productResume={paymentDetails?.productList}
+          />
         </Elements>
       )}
     </div>
