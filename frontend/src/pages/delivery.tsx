@@ -115,7 +115,7 @@ function DeliveryPage(props: any) {
                 state: {
                   currency: currency,
                   productName: productName,
-                  unitAmount: unitAmount + deliveryPrice, // Add delivery price to unit amount
+                  unitAmount: unitAmount + deliveryPrice,
                   quantity: quantity,
                   productResume: productResume,
                 },
