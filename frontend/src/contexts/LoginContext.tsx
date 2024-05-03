@@ -25,16 +25,18 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
     const token = localStorage.getItem("token");
     if (token) {
       axios
-        .get("http://localhost:8000/api/auth", {
+        .get("http://localhost:8000/api/user", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
         })
         .then(() => {
+          setToken(token);
           setLoggedIn(true);
         })
         .catch(() => {
           setLoggedIn(false);
+          localStorage.removeItem("token");
         });
     }
   }, []);
