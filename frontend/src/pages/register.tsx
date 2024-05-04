@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Card,
@@ -16,6 +16,7 @@ import animationData from "../animations/register-animation.json";
 import { toast } from "react-toastify";
 import { Tooltip } from "@nextui-org/react";
 import PasswordStrengthBar from "react-password-strength-bar";
+import { LoginContext } from "../contexts/LoginContext";
 
 export const Register = () => {
   const [login, setLogin] = useState("");
@@ -29,6 +30,8 @@ export const Register = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [passwordError2, setPasswordError2] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const { token, setToken, isLoggedIn, setLoggedIn } = useContext(LoginContext);
 
   const handleRegister = async () => {
     if (!isFormValid) {
@@ -73,6 +76,27 @@ export const Register = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (isLoggedIn) {
+      window.location.href = "/shop";
+    } else if (token) {
+      axios
+        .get("http://localhost:8000/api/user", {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then(() => {
+          setToken(token);
+          window.location.href = "/shop";
+        })
+        .catch(() => {
+          localStorage.removeItem("token");
+        });
+    }
+  }, []);
 
   // Mettre à jour l'état isFormValid chaque fois que l'état des champs change
   useEffect(() => {

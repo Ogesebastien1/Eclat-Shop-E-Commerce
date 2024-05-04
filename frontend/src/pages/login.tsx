@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent, useContext } from "react";
 import axios from "axios";
 import {
   Card,
@@ -10,16 +10,21 @@ import {
   Button,
   Link,
   Spinner,
+  Checkbox,
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
 import animationData from "../animations/login-animation.json";
 import { toast } from "react-toastify";
+import { LoginContext } from "../contexts/LoginContext";
+import { set } from "animejs";
 
 export const Login = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const { token, setToken, isLoggedIn, setLoggedIn } = useContext(LoginContext);
 
   const handleLoginr = async () => {
     if (!isFormValid) {
@@ -42,20 +47,50 @@ export const Login = () => {
           },
         }
       );
-      localStorage.setItem("token", response.data.token);
+      if (rememberMe) {
+        localStorage.setItem("token", response.data.token);
+        setLoggedIn(true);
+      } else {
+        setToken(response.data.token);
+        setLoggedIn(true);
+      }
       setIsLoading(false);
       window.location.href = "/shop";
     } catch (error: any) {
       if (error.response.status === 401) {
+        setLoggedIn(false);
         toast.error(error.response.data);
         console.error(error);
         setIsLoading(false);
       } else {
+        setLoggedIn(false);
         console.error(error);
         setIsLoading(false);
       }
     }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    if (isLoggedIn) {
+      window.location.href = "/shop";
+    } else if (token) {
+      axios
+        .get("http://localhost:8000/api/user", {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then(() => {
+          setToken(token);
+          window.location.href = "/shop";
+        })
+        .catch(() => {
+          localStorage.removeItem("token");
+        });
+    }
+  }, []);
 
   // Mettre à jour l'état isFormValid chaque fois que l'état des champs change
   useEffect(() => {
@@ -90,7 +125,7 @@ export const Login = () => {
         </CardHeader>
         <Divider />
         <CardBody>
-          <div style={{ marginBottom: "1rem" }}>
+          <div style={{ marginBottom: "0.5rem" }}>
             <Input
               label="Login"
               value={login}
@@ -98,7 +133,19 @@ export const Login = () => {
               isRequired
             />
           </div>
-          <div style={{ marginBottom: "0.1rem" }}>
+          <div style={{ marginBottom: "0.5rem", marginLeft: "0.5rem" }}>
+            <Checkbox
+              checked={rememberMe}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setRememberMe(event.target.checked)
+              }
+            >
+              <div className="text-xs bg-gradient-to-r from-blue-600 to-pink-600 text-transparent bg-clip-text">
+                Remember me
+              </div>
+            </Checkbox>
+          </div>
+          <div style={{ marginBottom: "0.5rem" }}>
             <Input
               label="Password"
               type="password"
