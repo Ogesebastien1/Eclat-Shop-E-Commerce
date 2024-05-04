@@ -24,13 +24,6 @@ export default function Details() {
   }, []);
 
   
-  const product = {
-    name: "Product Name",
-    description: "This is a great product. It has many features and benefits.",
-    price: "$99.99",
-    image: "https://via.placeholder.com/700x700", // Replace with your product image URL
-  };
-
   return (
     <>  
     <MyNavbar /> 
@@ -54,7 +47,7 @@ export default function Details() {
         isFooterBlurred
         radius="lg"
         className="border-none"
-        style={{ width: '90%', height: '420px' }}
+        style={{ width: '90%', height: '300px', marginBottom: '50px' }}
       >
         <Image
           alt={item.name}

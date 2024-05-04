@@ -1,13 +1,27 @@
 // Navbar.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from '@nextui-org/react';
+import { useNavigate } from 'react-router-dom';
 
-const MyNavbar = () => (
-  <div>
+
+const MyNavbar = () => {
+  const navigate = useNavigate();
+  const [hover, setHover] = useState(false);
+
+  return (
+    <div>
     <Navbar>
-      <NavbarBrand>
-        <p className="font-bold text-inherit">ECLAT SHOP</p>
-      </NavbarBrand>
+    <NavbarBrand>
+          <p 
+            className="font-bold text-inherit" 
+            onClick={() => navigate('/')}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            style={hover ? { color: '#0067dd', cursor: 'pointer' } : {}}
+          >
+            ECLAT SHOP
+          </p>
+        </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
           <Link color="foreground" href="#">
@@ -38,5 +52,6 @@ const MyNavbar = () => (
     </Navbar>
   </div>
 );
+};
 
 export default MyNavbar;
