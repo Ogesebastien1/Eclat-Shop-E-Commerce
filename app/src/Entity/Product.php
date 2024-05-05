@@ -78,22 +78,4 @@ class Product
         return $this;
     }
 
-    public function addToCart(int $productId, int $quantity = 1, \Symfony\Component\HttpFoundation\Request $request): void
-    {
-        $product = $entityManager->getRepository(Product::class)->find($productId);
-        $cart = $request->getSession()->get('cart', []);
-        $cart[] = ['product' => $product, 'quantity' => $quantity];
-        $request->getSession()->set('cart', $cart);
-    }
-
-
-    public function removeFromCart(Cart $cart): void
-    {
-        foreach ($cart->getItems() as $item) {
-            if ($item->getProduct() === $this) {
-                $cart->removeItem($item);
-                return;
-            }
-        }
-    }
 }

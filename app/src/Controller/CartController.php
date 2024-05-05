@@ -9,10 +9,53 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Orders;
+use App\Entity\OrdersItem;
+
 
 class CartController extends AbstractController
 {
-    #[Route('/api/carts/{id}', name: 'cart_add')]
+
+    #[Route('/api/carts/validate', name: 'cart_checkout', methods: ['POST'])]
+    public function checkoutCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository): Response
+    {
+        $cart = $request->getSession()->get('cart', []);
+        if (empty($cart)) {
+            return $this->json(['message' => 'Cart is empty'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $orders = new Orders();
+        $totalPrice = 0;
+        $productId=0;
+        foreach ($cart as $productId => $item) {
+            $product = $productRepository->findProductById($productId);
+            if (!$product) {
+                continue;
+            }
+
+            $ordersItem = new OrdersItem();
+            $ordersItem->setProduct($product);
+            $ordersItem->setQuantity($item['quantity']);
+            $ordersItem->setOrders($orders);
+
+            $orders->addProduct($ordersItem);
+
+            $entityManager->persist($ordersItem);
+
+            $totalPrice += $product->getPrice() * $item['quantity'];
+        }
+
+        $orders->setTotalPrice($totalPrice);
+        $entityManager->persist($orders);
+        $entityManager->flush();
+
+        $request->getSession()->set('cart', []);
+
+        return $this->json(['message' => 'Order created successfully', 'ordersId' => $orders->getId()]);
+    }
+
+    #[Route('/api/carts/{id<\d+>}', name: 'cart_add')]
     public function addToCart(int $id, ProductRepository $productRepository, Request $request): Response
     {
         $session = $request->getSession();
