@@ -1,12 +1,13 @@
 // Navbar.tsx
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, Avatar } from '@nextui-org/react';
 import { useNavigate } from 'react-router-dom';
-
+import { LoginContext } from '../contexts/LoginContext';
 
 const MyNavbar = () => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
+  const { isLoggedIn, userData } = useContext(LoginContext);
 
   return (
     <Navbar>
@@ -40,32 +41,38 @@ const MyNavbar = () => {
           </NavbarItem>
         </NavbarContent>
         <Dropdown placement="bottom-end">
-          <DropdownTrigger>
-            <Avatar
-              isBordered
-              as="button"
-              className="transition-transform"
-              color="secondary"
-              name="Jason Hughes"
-              size="sm"
-              src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-            />
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2">
-              <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
-            </DropdownItem>
-            <DropdownItem key="settings">My Settings</DropdownItem>
-            <DropdownItem key="team_settings">Team Settings</DropdownItem>
-            <DropdownItem key="analytics">Analytics</DropdownItem>
-            <DropdownItem key="system">System</DropdownItem>
-            <DropdownItem key="configurations">Configurations</DropdownItem>
-            <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-            <DropdownItem key="logout" color="danger">
-              Log Out
-            </DropdownItem>
-          </DropdownMenu>
+        <DropdownTrigger>
+        <Avatar
+          isBordered
+          as="button"
+          className="transition-transform"
+          color="secondary"
+          size="sm"
+          src={isLoggedIn && userData.avatar ? userData.avatar :  "https://static.thenounproject.com/png/929024-200.png"}
+        />
+      </DropdownTrigger>
+          {isLoggedIn ? (
+            <DropdownMenu aria-label="Profile Actions" variant="flat">
+              <DropdownItem key="profile" className="h-14 gap-2">
+                <p className="font-semibold">Signed in as</p>
+                <p className="font-semibold">{userData.email}</p>
+              </DropdownItem>
+              <DropdownItem key="settings">My Settings</DropdownItem>
+              <DropdownItem key="team_settings">Team Settings</DropdownItem>
+              <DropdownItem key="analytics">Analytics</DropdownItem>
+              <DropdownItem key="system">System</DropdownItem>
+              <DropdownItem key="configurations">Configurations</DropdownItem>
+              <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+              <DropdownItem key="logout" color="danger">
+                Log Out
+              </DropdownItem>
+            </DropdownMenu>
+          ) : (
+            <DropdownMenu aria-label="Guest Actions" variant="flat">
+              <DropdownItem key="login" onClick={() => navigate('/login')}>Sign In</DropdownItem>
+              <DropdownItem key="signup" onClick={() => navigate('/Register')}>Sign Up</DropdownItem>
+            </DropdownMenu>
+          )}
         </Dropdown>
       </div>
     </Navbar>
