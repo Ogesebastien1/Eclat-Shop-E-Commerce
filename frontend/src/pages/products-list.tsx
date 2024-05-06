@@ -110,7 +110,7 @@ export const ProductList = () => {
               <ListboxItem
                 key={product.id}
                 textValue={product.name}
-                className="w-full"
+                className="p-2 w-full pl-5 pr-0"
               >
                 <div className="flex gap-2 items-center">
                   <Avatar
@@ -132,7 +132,7 @@ export const ProductList = () => {
                     </span>
                   </div>
                 </div>
-                <div className="w-full mt-2 mb-2">
+                <div className="flex justify-center m-1">
                   <Button
                     onClick={() => handleDelete(product.id)}
                     className="bg-red-600 w-full"
