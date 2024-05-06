@@ -61,7 +61,7 @@ class UserController extends AbstractController
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
                 'roles' => $user->getRoles(),
-                'avatar' => $user->getAvatar() ? 'yes' : 'no',
+                'avaatar' => $user->getAvatar() ? 'yes' : 'no',
             ]));
 
             return $this->json([

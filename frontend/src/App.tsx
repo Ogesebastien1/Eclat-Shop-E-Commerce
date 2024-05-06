@@ -12,7 +12,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NextUIProvider } from "@nextui-org/react";
 import ThemeSwitcher from "./components/themeswitcher";
-import { useTheme } from "./contexts/themeContext";
+import { ThemeProvider, useTheme } from "./contexts/themeContext";
+import Details from "./pages/details";
 import Payment from "./pages/payment";
 import DeliveryPage from "./pages/delivery";
 import Spline from "@splinetool/react-spline";
@@ -42,6 +43,8 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/modify-password" element={<ModifiePassword />} />
             <Route path="/shop" element={<Shop />} />
+            <Route path="/details" element={<Details />} />
+            <Route path="/details/:id" element={<Details />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/delivery" element={<DeliveryPage />} />
             <Route path="/success" element={<Success />} />

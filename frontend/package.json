@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@nextui-org/navbar": "^2.0.30",
     "@nextui-org/react": "^2.3.6",
+    "@nextui-org/system": "^2.1.2",
+    "@nextui-org/theme": "^2.2.3",
     "@splinetool/react-spline": "^2.2.6",
     "@stripe/react-stripe-js": "^2.7.0",
     "@stripe/stripe-js": "^3.3.0",
@@ -23,6 +26,7 @@
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-lottie": "^1.2.4",
     "react-password-strength-bar": "^0.4.1",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
@@ -60,9 +64,10 @@
     "@tailwindcss/typography": "^0.5.13",
     "@types/animejs": "^3.1.12",
     "@types/react-lottie": "^1.2.10",
+    "@types/react-router-dom": "^5.3.3",
     "@types/react-transition-group": "^4.4.10",
     "create-react-component-folder": "^0.3.7",
-    "react-router-dom": "^6.22.3",
+    "react-router-dom": "^6.23.0",
     "tailwindcss": "^3.4.3"
   }
 }

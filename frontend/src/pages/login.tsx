@@ -52,35 +52,7 @@ export const Login = () => {
       if (rememberMe) {
         localStorage.setItem("token", response.data.token);
         setToken(response.data.token);
-        axios
-          .get("http://localhost:8000/api/user", {
-            headers: {
-              Authorization: token,
-            },
-          })
-          .then((response) => {
-            setLoggedIn(true);
-            setUserData(response.data);
-          })
-          .catch(() => {
-            setLoggedIn(false);
-            localStorage.removeItem("token");
-          });
       } else {
-        axios
-          .get("http://localhost:8000/api/user", {
-            headers: {
-              Authorization: token,
-            },
-          })
-          .then((response) => {
-            setLoggedIn(true);
-            setUserData(response.data);
-          })
-          .catch(() => {
-            setLoggedIn(false);
-            localStorage.removeItem("token");
-          });
         setToken(response.data.token);
         setLoggedIn(true);
       }
@@ -102,7 +74,6 @@ export const Login = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log(token);
     if (isLoggedIn) {
       window.location.href = "/shop";
     } else if (token) {
