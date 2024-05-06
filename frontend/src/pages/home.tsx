@@ -22,6 +22,10 @@ export const Home = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    console.log(userData);
+  }, [userData]);
+
   return (
     <div className="flex justify-center items-center h-screen">
       <CSSTransition in={loading} timeout={300} classNames="fade" unmountOnExit>
