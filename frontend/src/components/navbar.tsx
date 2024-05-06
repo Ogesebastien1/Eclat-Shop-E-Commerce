@@ -30,7 +30,7 @@ const MyNavbar = () => {
             ECLAT SHOP
           </p>
         </NavbarBrand>
-        <NavbarContent className="hidden sm:flex gap-3"  style={{ marginRight: '23%' }}>
+        <NavbarContent className="hidden sm:flex gap-3"  style={{ marginRight: '22%' }}>
           <NavbarItem>
             <Link color="foreground" href="#">
               Contact
