@@ -26,6 +26,7 @@
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-lottie": "^1.2.4",
     "react-password-strength-bar": "^0.4.1",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",

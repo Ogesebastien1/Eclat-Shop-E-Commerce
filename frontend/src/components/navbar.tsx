@@ -4,11 +4,18 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownI
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../contexts/LoginContext';
 
+interface User {
+  avatar: string;
+  email: string;
+}
+
 const MyNavbar = () => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
-  const { isLoggedIn, userData } = useContext(LoginContext);
+  const { isLoggedIn, userData } = useContext(LoginContext) as unknown as { isLoggedIn: boolean, userData: User };
 
+  console.log("userData", userData);
+  
   return (
     <Navbar>
       <div className="flex justify-between items-center w-full" >
