@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Accordion, AccordionItem, Image, Button, CardFooter, Card } from "@nextui-org/react";
 import MyNavbar from "../components/navbar";
 import { useLocation } from "react-router-dom";
@@ -18,10 +18,21 @@ interface LocationState {
 export default function Details() {
   const location = useLocation();
   const { item } = location.state as LocationState;  
+  const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     console.log(item);
+    if (imageRef.current) {
+      var parentElement = imageRef.current.parentNode as HTMLElement;
+      if (parentElement) {
+        parentElement.style.width = '100%';
+        parentElement.style.height = '100%';
+        parentElement.style.maxWidth = 'none';
+        console.log('Parent element:', parentElement);
+      }
+    }
   }, []);
+
 
   
   return (
@@ -42,7 +53,7 @@ export default function Details() {
           </AccordionItem>
         </Accordion>
       </div>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, width:'100%' }} className="w-full">
       <Card
         isFooterBlurred
         radius="lg"
@@ -50,9 +61,11 @@ export default function Details() {
         style={{ width: '90%', height: '300px', marginBottom: '50px' }}
       >
         <Image
+          ref={imageRef}
           alt={item.name}
-          className="object-cover w-full h-full"
+          className="object-cover w-full h-full imgpersonalized"
           src={item.photo}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
         <p className="text-tiny text-white/90" style={{ marginLeft: '90px', fontSize: '20px', color: 'white'}}>{item.price} $</p>
