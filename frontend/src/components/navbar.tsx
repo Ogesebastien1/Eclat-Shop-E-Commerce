@@ -1,5 +1,5 @@
 // Navbar.tsx
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, DropdownItem, DropdownMenu, Dropdown, DropdownTrigger, Avatar } from '@nextui-org/react';
 import { useNavigate } from 'react-router-dom';
 import { LoginContext } from '../contexts/LoginContext';
@@ -12,9 +12,18 @@ interface User {
 const MyNavbar = () => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
-  const { isLoggedIn, userData } = useContext(LoginContext) as unknown as { isLoggedIn: boolean, userData: User };
+  const { isLoggedIn, userData} = useContext(LoginContext) as unknown as { isLoggedIn: boolean, userData: User };
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.reload();
+  };
 
   console.log("userData", userData);
+
+  useEffect(() => {
+    console.log(isLoggedIn);
+  }
+  , [isLoggedIn]);
   
   return (
     <Navbar>
@@ -70,9 +79,9 @@ const MyNavbar = () => {
               <DropdownItem key="system">System</DropdownItem>
               <DropdownItem key="configurations">Configurations</DropdownItem>
               <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-              <DropdownItem key="logout" color="danger">
-                Log Out
-              </DropdownItem>
+                <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+                  Log Out
+                </DropdownItem>
             </DropdownMenu>
           ) : (
             <DropdownMenu aria-label="Guest Actions" variant="flat">

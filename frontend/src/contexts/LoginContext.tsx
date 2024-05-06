@@ -47,6 +47,26 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (token) {
+      axios
+        .get("http://localhost:8000/api/user", {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          setToken(token);
+          setLoggedIn(true);
+          setUserData(response.data);
+        })
+        .catch(() => {
+          setLoggedIn(false);
+          localStorage.removeItem("token");
+        });
+    }
+  }, [token, isLoggedIn]);
+
   return (
     <LoginContext.Provider
       value={{
