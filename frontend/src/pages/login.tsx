@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, useContext } from "react";
+import { useState, useEffect, ChangeEvent, useContext } from "react";
 import axios from "axios";
 import {
   Card,
@@ -13,10 +13,10 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import Lottie from "lottie-react";
+import { useNavigate } from "react-router-dom";
 import animationData from "../animations/login-animation.json";
 import { toast } from "react-toastify";
 import { LoginContext } from "../contexts/LoginContext";
-import { set } from "animejs";
 
 export const Login = () => {
   const [login, setLogin] = useState("");
@@ -24,7 +24,9 @@ export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const { token, setToken, isLoggedIn, setLoggedIn } = useContext(LoginContext);
+  const { token, setToken, isLoggedIn, setLoggedIn, setUserData } =
+    useContext(LoginContext);
+  const navigate = useNavigate();
 
   const handleLoginr = async () => {
     if (!isFormValid) {
@@ -49,13 +51,41 @@ export const Login = () => {
       );
       if (rememberMe) {
         localStorage.setItem("token", response.data.token);
-        setLoggedIn(true);
+        setToken(response.data.token);
+        axios
+          .get("http://localhost:8000/api/user", {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((response) => {
+            setLoggedIn(true);
+            setUserData(response.data);
+          })
+          .catch(() => {
+            setLoggedIn(false);
+            localStorage.removeItem("token");
+          });
       } else {
+        axios
+          .get("http://localhost:8000/api/user", {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((response) => {
+            setLoggedIn(true);
+            setUserData(response.data);
+          })
+          .catch(() => {
+            setLoggedIn(false);
+            localStorage.removeItem("token");
+          });
         setToken(response.data.token);
         setLoggedIn(true);
       }
       setIsLoading(false);
-      window.location.href = "/shop";
+      navigate("/shop");
     } catch (error: any) {
       if (error.response.status === 401) {
         setLoggedIn(false);
