@@ -58,8 +58,15 @@ export function Shop() {
   
   return (
     <>
-      {isloading ? (
-        <div>
+        {isloading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
           <Lottie options={defaultOptions} height={400} width={400} />
         </div>
       ) : (
