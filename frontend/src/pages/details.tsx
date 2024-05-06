@@ -68,7 +68,7 @@ export default function Details() {
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-        <p className="text-tiny text-white/90" style={{ marginLeft: '90px', fontSize: '20px', color: 'white'}}>{item.price} $</p>
+        <p className="text-tiny text-white/90" style={{ marginLeft: '90px', fontSize: '20px', color: 'white'}}>{item.price} €</p>
           <Button className="text-tiny text-white bg-white/20" variant="flat" color="default" radius="lg" size="sm">
              Add to Cart
           </Button>
