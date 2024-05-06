@@ -1,5 +1,4 @@
 import "./App.css";
-import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
@@ -9,6 +8,7 @@ import { ModifiePassword } from "./pages/modifie-password";
 import { Shop } from "./pages/shop";
 import { Success } from "./pages/success";
 import { AddProduct } from "./pages/add-products";
+import { ProductList } from "./pages/products-list";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NextUIProvider } from "@nextui-org/react";
@@ -47,6 +47,7 @@ function App() {
             <Route path="/delivery" element={<DeliveryPage />} />
             <Route path="/success" element={<Success />} />
             <Route path="/admin/add-product" element={<AddProduct />} />
+            <Route path="/admin/products" element={<ProductList />} />
           </Routes>
         </div>
       </main>

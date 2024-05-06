@@ -52,7 +52,8 @@ class ProductController extends AbstractController
                 'name' => $product->getName(),
                 'description' => $product->getDescription(),
                 'price' => $product->getPrice(),
-                'photo' => $product->getPhoto()
+                'photo' => $product->getPhoto(),
+                'stock' => $product->getStock(),
             ];
         }
 
@@ -72,8 +73,9 @@ class ProductController extends AbstractController
         $price = $request->request->get('price');
         /** @var UploadedFile $image */
         $image = $request->files->get('photo');
+        $stock = $request->request->get('stock');
 
-        if (!$name || !$description || !$price || !$image) {
+        if (!$name || !$description || !$price || !$image || !$stock) {
             return new JsonResponse(['status' => 'Error', 'message' => 'Missing required fields'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -99,11 +101,14 @@ class ProductController extends AbstractController
             return new JsonResponse(['status' => 'Error', 'message' => 'Failed to upload image to S3, the error is ' . $e], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+        $stock = $stock !== null ? $stock : 0; // If stock is null, set it to 0
+
         $product = new Product();
         $product->setName($name);
         $product->setDescription($description);
         $product->setPrice($price);
         $product->setPhoto($result['ObjectURL']); // Store the S3 URL of the image
+        $product->setStock($stock);
 
         $entityManager->persist($product);
         $entityManager->flush();
@@ -131,6 +136,7 @@ class ProductController extends AbstractController
         $product->setName($request->request->get('name', $product->getName()));
         $product->setDescription($request->request->get('description', $product->getDescription()));
         $product->setPrice($request->request->get('price', $product->getPrice()));
+        $product->setStock($request->request->get('stock', $product->getStock()));
 
         $entityManager->flush();
 

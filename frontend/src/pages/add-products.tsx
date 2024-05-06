@@ -20,6 +20,7 @@ export const AddProduct = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState<File | null>(null);
+  const [stock, setStock] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { userData } = useContext(LoginContext);
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ export const AddProduct = () => {
       formData.append("description", description);
       formData.append("price", price);
       formData.append("photo", image); // send the image file
+      formData.append("stock", stock);
 
       await axios.post(`http://localhost:8000/api/products`, formData, {
         headers: {
@@ -55,6 +57,12 @@ export const AddProduct = () => {
         },
       });
       toast.success("Product added successfully.");
+
+      setName("");
+      setDescription("");
+      setPrice("");
+      setStock("");
+      setImage(null);
     } catch (error: any) {
       console.error(error);
       toast.error("An error occurred while adding the product.");
@@ -77,6 +85,12 @@ export const AddProduct = () => {
         style={{ position: "absolute", top: "1rem", left: "1rem" }}
       >
         ← Back to Home
+      </Link>
+      <Link
+        href="/admin/products"
+        style={{ position: "absolute", top: "1rem", right: "1rem" }}
+      >
+        Products List →
       </Link>
       <Card className="max-w-[400px]">
         <CardHeader className="center flex-col">
@@ -107,6 +121,14 @@ export const AddProduct = () => {
               label="Price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+              isRequired
+            />
+          </div>
+          <div style={{ marginBottom: "1rem" }}>
+            <Input
+              label="Stock"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
               isRequired
             />
           </div>
