@@ -43,15 +43,15 @@ services:
       STRIPE_WEBHOOK_SIGNATURE_KEY: ${STRIPE_WEBHOOK_SIGNATURE_KEY} # Use the STRIPE_WEBHOOK_SIGNATURE_KEY environment variable
 
   nginx:
-      image: nginx:latest
-      ports:
-        - "8000:80"
-      volumes:
-        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-        - ./app:/var/www/my_project
-      command:  /bin/sh -c "chmod 666 /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
-      depends_on:
-        - symfony
+    image: nginx:latest
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./app:/var/www/my_project
+    command: /bin/sh -c "chmod 666 /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    depends_on:
+      - symfony
 
   # Frontend service
   frontend:
@@ -61,6 +61,8 @@ services:
       CHOKIDAR_USEPOLLING: true
       WATCHPACK_POLLING: true # Use polling for file watching
       REACT_APP_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY} # Set the STRIPE_PUBLISHABLE_KEY environment variable
+      ACCESS_KEY_ID: ${ACCESS_KEY_ID}
+      SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY}
     ports: # Map the port 3010 of the container to the port 3000 of the host
       - "3010:3000"
     volumes: # Mount the frontend directory to the container

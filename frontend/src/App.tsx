@@ -8,6 +8,7 @@ import { ResetPassword } from "./pages/reset-password";
 import { ModifiePassword } from "./pages/modifie-password";
 import { Shop } from "./pages/shop";
 import { Success } from "./pages/success";
+import { AddProduct } from "./pages/add-products";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NextUIProvider } from "@nextui-org/react";
@@ -45,6 +46,7 @@ function App() {
             <Route path="/payment" element={<Payment />} />
             <Route path="/delivery" element={<DeliveryPage />} />
             <Route path="/success" element={<Success />} />
+            <Route path="/admin/add-product" element={<AddProduct />} />
           </Routes>
         </div>
       </main>
