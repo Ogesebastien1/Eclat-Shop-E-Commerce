@@ -6,6 +6,8 @@ interface LoginContextProps {
   setLoggedIn: (loggedIn: boolean) => void;
   token: string;
   setToken: (token: string) => void;
+  userData: string;
+  setUserData: (userData: string) => void;
 }
 
 export const LoginContext = createContext<LoginContextProps>({
@@ -13,6 +15,8 @@ export const LoginContext = createContext<LoginContextProps>({
   setLoggedIn: () => {},
   token: "",
   setToken: () => {},
+  userData: "",
+  setUserData: () => {},
 });
 
 export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -20,6 +24,7 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [token, setToken] = useState("");
+  const [userData, setUserData] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,9 +35,10 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
             Authorization: token,
           },
         })
-        .then(() => {
+        .then((response) => {
           setToken(token);
           setLoggedIn(true);
+          setUserData(response.data);
         })
         .catch(() => {
           setLoggedIn(false);
@@ -42,7 +48,16 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <LoginContext.Provider value={{ isLoggedIn, setLoggedIn, token, setToken }}>
+    <LoginContext.Provider
+      value={{
+        isLoggedIn,
+        setLoggedIn,
+        token,
+        setToken,
+        userData,
+        setUserData,
+      }}
+    >
       {children}
     </LoginContext.Provider>
   );

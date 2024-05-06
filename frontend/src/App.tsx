@@ -23,10 +23,6 @@ function App() {
   const themeClass = theme === "dark" ? "dark" : "light";
   const location = useLocation();
 
-  useEffect(() => {
-    console.log("Theme changed to", theme);
-  }, [theme]);
-
   return (
     <NextUIProvider>
       <ThemeSwitcher />
