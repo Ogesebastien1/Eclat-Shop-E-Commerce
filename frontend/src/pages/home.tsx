@@ -1,16 +1,14 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import Spline from "@splinetool/react-spline";
 import Lottie from "lottie-react";
 import { useTheme } from "../contexts/themeContext";
 import darkanimation from "../animations/dark-loading.json";
 import lightanimation from "../animations/light-loading.json";
 import { CSSTransition } from "react-transition-group";
-import { LoginContext } from "../contexts/LoginContext";
 import "./transitions.css";
 
 export const Home = () => {
   const [loading, setLoading] = useState(true);
-  const { userData } = useContext(LoginContext);
   const { theme } = useTheme();
   let animationData = theme == "dark" ? darkanimation : lightanimation;
 
@@ -21,10 +19,6 @@ export const Home = () => {
 
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
 
   return (
     <div className="flex justify-center items-center h-screen">
