@@ -47,7 +47,7 @@ export const AddProduct = () => {
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("image", image); // send the image file
+      formData.append("photo", image); // send the image file
 
       await axios.post(`http://localhost:8000/api/products`, formData, {
         headers: {

@@ -9,6 +9,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Aws\S3\S3Client;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ProductController extends AbstractController
 {
@@ -65,17 +67,43 @@ class ProductController extends AbstractController
     #[Route('/api/products', name: 'product_add', methods: ['POST'])]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $data = json_decode($request->getContent(), true);
+        $name = $request->request->get('name');
+        $description = $request->request->get('description');
+        $price = $request->request->get('price');
+        /** @var UploadedFile $image */
+        $image = $request->files->get('photo');
 
-        if ($data === null || !isset($data['name']) || !isset($data['description']) || !isset($data['price']) || !isset($data['photo'])) {
+        if (!$name || !$description || !$price || !$image) {
             return new JsonResponse(['status' => 'Error', 'message' => 'Missing required fields'], Response::HTTP_BAD_REQUEST);
         }
 
+        $s3Client = new S3Client([
+            'version' => 'latest',
+            'region'  => $_SERVER['AWS_REGION'],
+            'credentials' => [
+                'key'    => $_SERVER['ACCESS_KEY_ID'],
+                'secret' => $_SERVER['SECRET_ACCESS_KEY'],
+            ],
+        ]);
+
+        // Upload the image to S3
+        try {
+            $result = $s3Client->putObject([
+                'Bucket' => $_SERVER['AWS_BUCKET'],
+                'Key' => $image->getClientOriginalName(),
+                'Body' => fopen($image->getPathname(), 'rb'),
+                'ACL' => 'public-read', // Make the image publicly accessible
+                'ContentType' => $image->getMimeType(), // Add this line
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['status' => 'Error', 'message' => 'Failed to upload image to S3, the error is ' . $e], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         $product = new Product();
-        $product->setName($data['name']);
-        $product->setDescription($data['description']);
-        $product->setPrice($data['price']);
-        $product->setPhoto($data['photo']);
+        $product->setName($name);
+        $product->setDescription($description);
+        $product->setPrice($price);
+        $product->setPhoto($result['ObjectURL']); // Store the S3 URL of the image
 
         $entityManager->persist($product);
         $entityManager->flush();

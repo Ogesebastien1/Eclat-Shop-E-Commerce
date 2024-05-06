@@ -43,6 +43,8 @@ services:
       STRIPE_WEBHOOK_SIGNATURE_KEY: ${STRIPE_WEBHOOK_SIGNATURE_KEY} # Use the STRIPE_WEBHOOK_SIGNATURE_KEY environment variable
       ACCESS_KEY_ID: ${ACCESS_KEY_ID}
       SECRET_ACCESS_KEY: ${SECRET_ACCESS_KEY}
+      BUCKET_NAME: ${BUCKET_NAME}
+      REGION: ${REGION}
 
   nginx:
     image: nginx:latest

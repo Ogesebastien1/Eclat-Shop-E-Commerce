@@ -36,6 +36,11 @@
         <env name="STRIPE_SECRET_KEY" value="sk_***"/>
         <env name="STRIPE_WEBHOOK_SIGNATURE_KEY" value="wh_***"/>
         <!-- ###- fpt/stripe-bundle ### -->
+
+        <!-- ###+ aws/aws-sdk-php-symfony ### -->
+        <env name="AWS_KEY" value="not-a-real-key"/>
+        <env name="AWS_SECRET" value="@@not-a-real-secret"/>
+        <!-- ###- aws/aws-sdk-php-symfony ### -->
     </php>
 
     <testsuites>
