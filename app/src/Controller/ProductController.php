@@ -69,14 +69,17 @@ class ProductController extends AbstractController
     // This method handles POST requests to /api/product and creates a new product 
     // test done !
     #[Route('/api/products', name: 'product_add', methods: ['POST'])]
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
+    public function add(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
     {
         $name = $request->request->get('name');
         $description = $request->request->get('description');
+        $logger->info('description', ['description' => $description]);
         $price = $request->request->get('price');
+        $logger->info('price', ['price' => $price]);
         /** @var UploadedFile $image */
         $image = $request->files->get('photo');
         $stock = $request->request->get('stock');
+        $logger->info('stock', ['stock' => $stock]);
 
         if (!$name || !$description || !$price || !$image || !$stock) {
             return new JsonResponse(['status' => 'Error', 'message' => 'Missing required fields'], Response::HTTP_BAD_REQUEST);
