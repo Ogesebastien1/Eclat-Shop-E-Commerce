@@ -19,6 +19,8 @@ import { LoginContext } from "../contexts/LoginContext";
 interface User {
   avatar: string;
   email: string;
+  login: string;
+  role: string[];
 }
 
 const MyNavbar = () => {
@@ -91,11 +93,22 @@ const MyNavbar = () => {
           {isLoggedIn ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold">{userData.email}</p>
+                <p className="font-semibold">Signed in as {userData.login}</p>
               </DropdownItem>
-              <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="team_settings">Team Settings</DropdownItem>
+              <DropdownItem
+                key="settings"
+                onClick={() => navigate("/settings")}
+              >
+                My Settings
+              </DropdownItem>
+              {userData?.roles?.includes("ROLE_ADMIN") && (
+                <DropdownItem
+                  key="team_settings"
+                  onClick={() => navigate("/admin/add-product")}
+                >
+                  Admin
+                </DropdownItem>
+              )}
               <DropdownItem key="analytics">Analytics</DropdownItem>
               <DropdownItem key="system">System</DropdownItem>
               <DropdownItem key="configurations">Configurations</DropdownItem>
