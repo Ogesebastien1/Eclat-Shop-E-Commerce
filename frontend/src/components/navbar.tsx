@@ -41,8 +41,8 @@ const MyNavbar = () => {
         </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-3"  style={{ marginRight: '22%' }}>
           <NavbarItem>
-            <Link color="foreground" href="#">
-              Contact
+            <Link color="foreground" href="/contact">
+               Contact
             </Link>
           </NavbarItem>
           <NavbarItem isActive>

@@ -57,18 +57,18 @@ export function Shop() {
   }, []);
   
   return (
-    <>
+    <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh",
+    }}
+  >
         {isloading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
+       
           <Lottie options={defaultOptions} height={400} width={400} />
-        </div>
+       
       ) : (
         <div>
           <MyNavbar />
@@ -100,6 +100,6 @@ export function Shop() {
           </div>
         </div>
       )}
-    </>
+     </div>
   );
 }
