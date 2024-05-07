@@ -84,6 +84,7 @@ class RegistrationController extends AbstractController
         $user->setFirstname($firstname);
         $user->setLastname($lastname);
         $user->setRoles([$roles]);
+        $user->setAvatar('https://www.gravatar.com/avatar/' . md5(strtolower(trim($email))));
 
         // hash the password (based on the security.yaml config for the $user class)
         $hashedPassword = $passwordHasher->hashPassword(

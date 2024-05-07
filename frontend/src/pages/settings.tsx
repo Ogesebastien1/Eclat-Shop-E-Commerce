@@ -15,6 +15,7 @@ import {
 import { LoginContext } from "../contexts/LoginContext";
 import Lottie from "lottie-react";
 import animationData from "../animations/settings-animation.json";
+import { toast } from "react-toastify";
 
 export const Settings = () => {
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -26,27 +27,36 @@ export const Settings = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const formData = new FormData();
     if (avatar) {
-      formData.append("avatar", avatar);
-    }
-
-    try {
-      const response = await axios.put(
-        `http://localhost:8000/api/user`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: token,
-          },
+      const reader = new FileReader();
+      reader.readAsDataURL(avatar);
+      reader.onloadend = async () => {
+        try {
+          const base64Avatar = reader.result;
+          const response = await axios.put(
+            `http://localhost:8000/api/users/${userData.id}/avatar`,
+            { avatar: base64Avatar },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+            }
+          );
+          setIsLoading(false);
+          toast.success("Avatar updated successfully");
+        } catch (error: any) {
+          setIsLoading(false);
+          toast.error("An error occurred while updating the avatar");
         }
-      );
+      };
+      reader.onerror = () => {
+        setIsLoading(false);
+        toast.error("An error occurred while encoding the avatar");
+      };
+    } else {
       setIsLoading(false);
-      // handle success
-    } catch (error: any) {
-      setIsLoading(false);
-      // handle error
+      toast.error("No avatar selected");
     }
   };
 
@@ -80,7 +90,9 @@ export const Settings = () => {
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-600">
             ACCOUNT SETTINGS
           </h1>
-          <Lottie animationData={animationData} loop={true} />
+          <div className="w-40 h-40">
+            <Lottie animationData={animationData} loop={true} />
+          </div>
         </CardHeader>
         <Divider />
         <CardBody className="center flex-col justify-center">
@@ -125,12 +137,8 @@ export const Settings = () => {
         <Divider />
         <CardFooter>
           <Button
-            style={{
-              margin: "1rem",
-              width: "100%",
-            }}
             onClick={handleUpdate}
-            className="bg-sky-400"
+            className="bg-sky-400 w-full"
             disabled={isLoading}
           >
             {isLoading ? <Spinner color="default" /> : "Update"}
