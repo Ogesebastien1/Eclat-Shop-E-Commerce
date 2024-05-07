@@ -70,30 +70,31 @@ export function Shop() {
       ) : (
         <div>
           <MyNavbar />
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto w-11/12">
+          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl">
             {list.map((item, index) => (
-              <Card 
-                shadow="sm" 
-                key={index} 
-                isPressable 
-                onPress={() => console.log("item pressed")}
-                onClick={() => navigate(`/details/${item.id}`, { state: { item } })}
-              >
-                <CardBody className="overflow-visible p-0">
-                  <Image
-                    shadow="sm"
-                    radius="lg"
-                    width="100%"
-                    alt={item.name}
-                    className="w-full object-cover h-[140px]"
-                    src={item.photo}
-                  />
-                </CardBody>
-                <CardFooter className="text-small justify-between">
-                  <b>{item.name}</b>
-                  <p className="text-default-500">{item.price} €</p>
-                </CardFooter>
-              </Card>
+             <Card 
+             shadow="sm" 
+             key={index} 
+             isPressable 
+             onPress={() => console.log("item pressed")}
+             onClick={() => navigate(`/details/${item.id}`, { state: { item } })}
+             className="w-full h-auto"
+           >
+             <CardBody className="overflow-visible p-0">
+             <Image
+                shadow="sm"
+                radius="lg"
+                width="100%"
+                alt={item.name}
+                className="w-full-cover h-[200px]"
+                src={item.photo}
+              />
+             </CardBody>
+             <CardFooter className="text-small justify-between">
+               <b>{item.name}</b>
+               <p className="text-default-500">{item.price} €</p>
+             </CardFooter>
+           </Card>
             ))}
           </div>
         </div>
