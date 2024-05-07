@@ -8,6 +8,7 @@ import { ModifiePassword } from "./pages/modifie-password";
 import { Shop } from "./pages/shop";
 import { Success } from "./pages/success";
 import { AddProduct } from "./pages/add-products";
+import { Settings } from "./pages/settings";
 import { ProductList } from "./pages/products-list";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -51,6 +52,7 @@ function App() {
             <Route path="/success" element={<Success />} />
             <Route path="/admin/add-product" element={<AddProduct />} />
             <Route path="/admin/products" element={<ProductList />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </div>
       </main>

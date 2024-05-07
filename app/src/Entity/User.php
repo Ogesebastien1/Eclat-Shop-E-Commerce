@@ -54,9 +54,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     /**
-     * @var string|null The avatar image
-     */
-    #[ORM\Column(type: "blob", nullable: true)]
+    * @var string|null The hashed password
+    */
+   #[ORM\Column]
     private ?string $avatar = null;
 
     /**
