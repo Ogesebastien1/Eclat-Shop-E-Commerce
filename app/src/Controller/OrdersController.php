@@ -22,11 +22,19 @@ class OrdersController extends AbstractController
             return new JsonResponse(['message' => 'Order not found'], Response::HTTP_NOT_FOUND);
         }
 
+        $user = $order->getUser();
+
         $data = [
             'id' => $order->getId(),
             'totalPrice' => $order->getTotalPrice(),
             'creationDate' => $order->getCreationDate()->format('Y-m-d H:i'),
             'uuid' => $order->getUuid(),
+            'user' => [
+                'id' => $user->getId(),
+                'username' => $user->getLogin(),
+                'email' => $user->getEmail(),
+                // Add other user fields as needed
+            ],
             "item" => $order -> getItems() -> map(function($item){
                 return [
                     'id' => $item -> getId(),

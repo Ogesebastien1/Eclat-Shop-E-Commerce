@@ -26,6 +26,10 @@ class Orders
     #[ORM\Column(type: 'string')]
     private ?string $uuid = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "orders")]
+    #[ORM\JoinColumn(nullable: false)]
+    private $user;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
@@ -107,5 +111,17 @@ class Orders
         }
 
         $this->totalPrice = $totalPrice;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }
