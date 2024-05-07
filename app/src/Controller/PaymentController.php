@@ -43,8 +43,8 @@ class PaymentController extends AbstractController
             'payment_method_types' => ['card'],
             'line_items' => $lineItems,
             'mode' => 'payment',
-            'success_url' => 'http://localhost:3010/payment-success',
-            'cancel_url' => 'http://localhost:3010/payment-cancel',
+            'success_url' => 'http://localhost:3010/success',
+            'cancel_url' => 'http://localhost:3010/shop',
         ]);
 
         return $this->json(['id' => $session->id]);

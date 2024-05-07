@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider } from "./contexts/themeContext";
+import { LoginProvider } from "./contexts/LoginContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -15,7 +16,9 @@ root.render(
     <BrowserRouter>
       <NextUIProvider>
         <ThemeProvider>
-          <App />
+          <LoginProvider>
+            <App />
+          </LoginProvider>
         </ThemeProvider>
       </NextUIProvider>
     </BrowserRouter>
