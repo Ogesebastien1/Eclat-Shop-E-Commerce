@@ -40,6 +40,7 @@ composer require symfony/runtime || { echo 'Composer require failed'; exit 1; }
 composer dump-autoload || { echo 'Composer dump-autoload failed'; exit 1; }
 
 # Update the database schema
+php bin/console doctrine:schema:drop --force || { echo 'Database schema drop failed'; exit 1; }
 php bin/console doctrine:schema:update --force || { echo 'Database schema update failed'; exit 1; }
 
 # Start Symfony server

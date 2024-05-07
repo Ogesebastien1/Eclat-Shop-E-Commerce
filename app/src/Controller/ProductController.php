@@ -9,6 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Aws\S3\S3Client;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Psr\Log\LoggerInterface;
+
+use function PHPUnit\Framework\isEmpty;
 
 class ProductController extends AbstractController
 {
@@ -50,7 +55,8 @@ class ProductController extends AbstractController
                 'name' => $product->getName(),
                 'description' => $product->getDescription(),
                 'price' => $product->getPrice(),
-                'photo' => $product->getPhoto()
+                'photo' => $product->getPhoto(),
+                'stock' => $product->getStock(),
             ];
         }
 
@@ -65,17 +71,47 @@ class ProductController extends AbstractController
     #[Route('/api/products', name: 'product_add', methods: ['POST'])]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $data = json_decode($request->getContent(), true);
+        $name = $request->request->get('name');
+        $description = $request->request->get('description');
+        $price = $request->request->get('price');
+        /** @var UploadedFile $image */
+        $image = $request->files->get('photo');
+        $stock = $request->request->get('stock');
 
-        if ($data === null || !isset($data['name']) || !isset($data['description']) || !isset($data['price']) || !isset($data['photo'])) {
+        if (!$name || !$description || !$price || !$image || !$stock) {
             return new JsonResponse(['status' => 'Error', 'message' => 'Missing required fields'], Response::HTTP_BAD_REQUEST);
         }
 
+        $s3Client = new S3Client([
+            'version' => 'latest',
+            'region'  => $_SERVER['AWS_REGION'],
+            'credentials' => [
+                'key'    => $_SERVER['ACCESS_KEY_ID'],
+                'secret' => $_SERVER['SECRET_ACCESS_KEY'],
+            ],
+        ]);
+
+        // Upload the image to S3
+        try {
+            $result = $s3Client->putObject([
+                'Bucket' => $_SERVER['AWS_BUCKET'],
+                'Key' => $image->getClientOriginalName(),
+                'Body' => fopen($image->getPathname(), 'rb'),
+                'ACL' => 'public-read', // Make the image publicly accessible
+                'ContentType' => $image->getMimeType(), // Add this line
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse(['status' => 'Error', 'message' => 'Failed to upload image to S3, the error is ' . $e], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $stock = $stock !== null ? $stock : 0; // If stock is null, set it to 0
+
         $product = new Product();
-        $product->setName($data['name']);
-        $product->setDescription($data['description']);
-        $product->setPrice($data['price']);
-        $product->setPhoto($data['photo']);
+        $product->setName($name);
+        $product->setDescription($description);
+        $product->setPrice($price);
+        $product->setPhoto($result['ObjectURL']); // Store the S3 URL of the image
+        $product->setStock($stock);
 
         $entityManager->persist($product);
         $entityManager->flush();
@@ -96,13 +132,70 @@ class ProductController extends AbstractController
     }
 
     // This method handles PUT requests to /api/product/{id} and updates the product with the given id
-    // test done !
     #[Route('/api/products/{id}', name: 'product_update', methods: ['PUT'])]
-    public function update(Request $request, EntityManagerInterface $entityManager, Product $product): Response
+    public function update(Request $request, EntityManagerInterface $entityManager, Product $product, LoggerInterface $logger): Response
     {
-        $product->setName($request->request->get('name', $product->getName()));
-        $product->setDescription($request->request->get('description', $product->getDescription()));
-        $product->setPrice($request->request->get('price', $product->getPrice()));
+        $data = json_decode($request->getContent(), true);
+        $logger->info('Updating product', ['id' => $product->getId()]);
+
+        if (isset($data['name'])) {
+            $product->setName($data['name']);
+            $logger->info('Updated name', ['name' => $product->getName()]);
+        }
+        if (isset($data['description'])) {
+            $product->setDescription($data['description']);
+            $logger->info('Updated description', ['description' => $product->getDescription()]);
+        }
+        if (isset($data['price'])) {
+            $product->setPrice($data['price']);
+            $logger->info('Updated price', ['price' => $product->getPrice()]);
+        }
+        if (isset($data['stock'])) {
+            $product->setStock($data['stock']);
+            $logger->info('Updated stock', ['stock' => $product->getStock()]);
+        }
+
+        if (isset($data['photo'])) {
+            $logger->info('Received new image');
+
+            // Delete the old image from S3
+            $oldImageKey = basename($product->getPhoto());
+            $s3Client = new S3Client([
+                'version' => 'latest',
+                'region'  => $_SERVER['AWS_REGION'],
+                'credentials' => [
+                    'key'    => $_SERVER['ACCESS_KEY_ID'],
+                    'secret' => $_SERVER['SECRET_ACCESS_KEY'],
+                ],
+            ]);
+            $s3Client->deleteObject([
+                'Bucket' => $_SERVER['AWS_BUCKET'],
+                'Key' => $oldImageKey,
+            ]);
+
+            $logger->info('Deleted old image from S3', ['key' => $oldImageKey]);
+
+            // Decode the Base64 image
+            $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $data['photo']));
+            $imageName = uniqid() . '.png'; // Generate a unique name for the image
+            file_put_contents($imageName, $imageData);
+
+            // Upload the new image to S3
+            $result = $s3Client->putObject([
+                'Bucket' => $_SERVER['AWS_BUCKET'],
+                'Key' => $imageName,
+                'Body' => fopen($imageName, 'rb'),
+                'ACL' => 'public-read', // Make the image publicly accessible
+                'ContentType' => 'image/png', // Set the content type to image/png
+            ]);
+
+            $logger->info('Uploaded new image to S3', ['result' => $result]);
+
+            $product->setPhoto($result['ObjectURL']); // Store the S3 URL of the new image
+
+            // Delete the temporary image file
+            unlink($imageName);
+        }
 
         $entityManager->flush();
 
