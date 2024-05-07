@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import {
   Card,
@@ -6,7 +6,6 @@ import {
   CardBody,
   CardFooter,
   Divider,
-  Input,
   Button,
   Link,
   Spinner,
@@ -16,12 +15,17 @@ import { LoginContext } from "../contexts/LoginContext";
 import Lottie from "lottie-react";
 import animationData from "../animations/settings-animation.json";
 import { toast } from "react-toastify";
+import Modal from "react-modal";
+import { useTheme } from "../contexts/themeContext";
 
 export const Settings = () => {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { token, userData } = useContext(LoginContext);
+  const { token, userData, setLoggedIn } = useContext(LoginContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { theme } = useTheme();
+  let backgroundcolor = theme == "dark" ? "#18181b" : "white";
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +38,7 @@ export const Settings = () => {
         try {
           const base64Avatar = reader.result;
           const response = await axios.put(
-            `http://localhost:8000/api/users/${userData.id}/avatar`,
+            `http://localhost:8000/api/user/avatar`,
             { avatar: base64Avatar },
             {
               headers: {
@@ -60,6 +64,10 @@ export const Settings = () => {
     }
   };
 
+  useEffect(() => {
+    backgroundcolor = theme == "dark" ? "#18181b" : "white";
+  }, [theme]);
+
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     setAvatar(file);
@@ -68,6 +76,28 @@ export const Settings = () => {
     } else {
       setAvatarPreview(null);
     }
+  };
+
+  const handleDeleteAccount = () => {
+    setIsModalOpen(true);
+  };
+
+  const confirmDeleteAccount = async () => {
+    try {
+      await axios.delete(`http://localhost:8000/api/user`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      });
+      setLoggedIn(false);
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    } catch (error: any) {
+      console.error(error);
+      toast.error("An error occurred while deleting your account.");
+    }
+    setIsModalOpen(false);
   };
 
   return (
@@ -80,11 +110,52 @@ export const Settings = () => {
       }}
     >
       <Link
-        href="/"
+        href="/shop"
         style={{ position: "absolute", top: "1rem", left: "1rem" }}
       >
-        ← Back to Home
+        ← Back to shop
       </Link>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        contentLabel="Delete Account Confirmation"
+        style={{
+          overlay: {
+            zIndex: 1000,
+          },
+          content: {
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: backgroundcolor,
+            borderRadius: "14px",
+          },
+        }}
+      >
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Are you sure you want to delete your account?
+        </h2>
+        <p className="text-lg mb-8 text-center">
+          This action cannot be undone.
+        </p>
+        <Button
+          color="danger"
+          onClick={confirmDeleteAccount}
+          className="w-full mb-4"
+        >
+          Yes, delete my account
+        </Button>
+        <Button
+          color="success"
+          onClick={() => setIsModalOpen(false)}
+          className="w-full"
+        >
+          No, keep my account
+        </Button>
+      </Modal>
       <Card className="max-w-[400px]">
         <CardHeader className="center flex-col">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-600">
@@ -126,13 +197,16 @@ export const Settings = () => {
           </Card>
           <Link
             href="/reset-password"
-            className="center w-full mt-4"
+            className="center w-full mt-4 mb-4"
             style={{
               fontSize: "0.8rem",
             }}
           >
             <Button fullWidth>Change your password</Button>
           </Link>
+          <Button color="danger" onClick={handleDeleteAccount}>
+            Delete your account
+          </Button>
         </CardBody>
         <Divider />
         <CardFooter>

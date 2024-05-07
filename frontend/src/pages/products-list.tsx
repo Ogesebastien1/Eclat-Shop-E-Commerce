@@ -36,13 +36,17 @@ export const ProductList = () => {
   const [image, setImage] = useState<File | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const { theme } = useTheme();
-  const backgroundcolor = theme == "dark" ? "#18181b" : "white";
+  let backgroundcolor = theme == "dark" ? "#18181b" : "white";
 
   useEffect(() => {
     if (userData && userData.roles && !userData.roles.includes("ROLE_ADMIN")) {
       navigate("/");
     }
   }, [userData]);
+
+  useEffect(() => {
+    backgroundcolor = theme == "dark" ? "#18181b" : "white";
+  }, [theme]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -258,6 +262,7 @@ export const ProductList = () => {
             marginRight: "-50%",
             transform: "translate(-50%, -50%)",
             backgroundColor: backgroundcolor,
+            borderRadius: "14px",
           },
         }}
       >
