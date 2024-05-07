@@ -47,7 +47,7 @@ export default function Details() {
         height: "100vh",
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '100px', marginLeft: '250px', marginRight: '20px' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '100px', marginLeft: '30px', marginRight: '50px', marginBottom:'15%',  }}>
       <div style={{ flex: 1 }}>
         <Accordion variant="splitted">
           <AccordionItem 
@@ -81,7 +81,7 @@ export default function Details() {
           isFooterBlurred
           radius="lg"
           className="border-none"
-          style={{ width: '90%', height: '300px', marginBottom: '50px' }}
+          style={{ width: '100%', height: '300px', marginBottom: '150px'}}
         >
           <Image
             ref={imageRef}
