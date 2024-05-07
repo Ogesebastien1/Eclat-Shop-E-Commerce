@@ -15,6 +15,7 @@ import ThemeSwitcher from "./components/themeswitcher";
 import { ThemeProvider, useTheme } from "./contexts/themeContext";
 import Details from "./pages/details";
 import Payment from "./pages/payment";
+import Contact from "./pages/contact";
 import DeliveryPage from "./pages/delivery";
 import Spline from "@splinetool/react-spline";
 import { useLocation } from "react-router-dom";
@@ -45,6 +46,7 @@ function App() {
             <Route path="/shop" element={<Shop />} />
             <Route path="/details" element={<Details />} />
             <Route path="/details/:id" element={<Details />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/delivery" element={<DeliveryPage />} />
             <Route path="/success" element={<Success />} />
