@@ -82,13 +82,13 @@ export function Shop() {
            >
              <CardBody className="overflow-visible p-0">
              <Image
-                shadow="sm"
-                radius="lg"
-                width="100%"
-                alt={item.name}
-                className="w-full-cover h-[200px]"
-                src={item.photo}
-              />
+              shadow="sm"
+              radius="lg"
+              width="100%"
+              alt={item.name}
+              className="w-full-cover h-[200px]"
+              src={item.photo}
+            />
              </CardBody>
              <CardFooter className="text-small justify-between">
                <b>{item.name}</b>
