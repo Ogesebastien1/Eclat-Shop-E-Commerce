@@ -39,13 +39,14 @@ class CartController extends AbstractController
             $ordersItem->setQuantity($item['quantity']);
             $ordersItem->setOrders($orders);
 
-            $orders->addProduct($ordersItem);
+
+            $orders->addItems($ordersItem);
 
             $entityManager->persist($ordersItem);
 
             $totalPrice += $product->getPrice() * $item['quantity'];
         }
-
+        $orders->setUuid(uniqid());
         $orders->setTotalPrice($totalPrice);
         $entityManager->persist($orders);
         $entityManager->flush();
@@ -55,7 +56,7 @@ class CartController extends AbstractController
         return $this->json(['message' => 'Order created successfully', 'ordersId' => $orders->getId()]);
     }
 
-    #[Route('/api/carts/{id<\d+>}', name: 'cart_add')]
+    #[Route('/api/carts/{id}', name: 'cart_add')]
     public function addToCart(int $id, ProductRepository $productRepository, Request $request): Response
     {
         $session = $request->getSession();

@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+
 #[ORM\Entity]
 class Orders
 {
@@ -19,12 +20,15 @@ class Orders
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $creationDate = null;
 
-    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrdersItem::class, cascade: ['persist'])]
-    private $products;
+    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrdersItem::class, cascade: ['persist'])]
+    private $items;
+
+    #[ORM\Column(type: 'string')]
+    private ?string $uuid = null;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->items = new ArrayCollection();
         $this->creationDate = new \DateTime();
     }
 
@@ -57,26 +61,38 @@ class Orders
         return $this;
     }
 
-    public function getProducts()
+    public function getItems()
     {
-        return $this->products;
+        return $this->items;
     }
 
-    public function addProduct(OrdersItem $product): self
+    public function addItems(OrdersItem $items): self
     {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-            $product->setOrders($this);
+        if (!$this->items->contains($items)) {
+            $this->items[] = $items;
+            $items->setOrders($this);
         }
 
         return $this;
     }
 
-    public function removeProduct(OrdersItem $product): self
+    public function getUuid(): ?string
     {
-        if ($this->products->removeElement($product)) {
-            if ($product->getOrder() === $this) {
-                $product->setOrders(null);
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function removeItems(OrdersItem $items): self
+    {
+        if ($this->items->removeElement($items)) {
+            if ($items->getOrder() === $this) {
+                $items->setOrders(null);
             }
         }
 
@@ -86,8 +102,8 @@ class Orders
     public function calculateTotalPrice(): void
     {
         $totalPrice = 0;
-        foreach ($this->products as $product) {
-            $totalPrice += $product->getPrice();
+        foreach ($this->items as $item) {
+            $totalPrice += $item->getTotalPrice();
         }
 
         $this->totalPrice = $totalPrice;
