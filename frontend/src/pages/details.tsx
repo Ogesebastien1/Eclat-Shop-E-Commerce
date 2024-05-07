@@ -48,19 +48,34 @@ export default function Details() {
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '100px', marginLeft: '250px', marginRight: '20px' }}>
-        <div style={{ flex: 1 }}>
-          <Accordion variant="splitted">
-            <AccordionItem key="1" aria-label="Product Details" title="Product Details">
-              {item.description}
-            </AccordionItem>
-            <AccordionItem key="2" aria-label="Shipping Information" title="Shipping Information">
-              "We offer free shipping worldwide. The product will be delivered within 2-3 weeks."
-            </AccordionItem>
-            <AccordionItem key="3" aria-label="Return Policy" title="Return Policy">
-              "We accept returns within 30 days of the purchase date."
-            </AccordionItem>
-          </Accordion>
-        </div>
+      <div style={{ flex: 1 }}>
+        <Accordion variant="splitted">
+          <AccordionItem 
+            key="1" 
+            aria-label="Product Details" 
+            title="Product Details"
+            style={{ width: '500px', wordWrap: 'break-word' }}
+          >
+            {item.description}
+          </AccordionItem>
+          <AccordionItem 
+            key="2" 
+            aria-label="Shipping Information" 
+            title="Shipping Information"
+            style={{ width: '500px', wordWrap: 'break-word' }}
+          >
+            "We offer free shipping worldwide. The product will be delivered within 2-3 weeks."
+          </AccordionItem>
+          <AccordionItem 
+            key="3" 
+            aria-label="Return Policy" 
+            title="Return Policy"
+            style={{ width: '500px', wordWrap: 'break-word' }}
+          >
+            "We accept returns within 30 days of the purchase date."
+          </AccordionItem>
+        </Accordion>
+      </div>
         <div style={{ flex: 1, width:'100%' }} className="w-full">
         <Card
           isFooterBlurred
