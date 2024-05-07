@@ -64,6 +64,34 @@ export const Settings = () => {
     }
   };
 
+  const handleChangePassword = async () => {
+    try {
+      const formData = {
+        email: userData.email,
+      };
+      await axios.post(`http://localhost:8000/api/reset-password/update`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        content: formData,
+      });
+      toast.success(
+        "An email has been sent to your email address with a link to change your password.",
+        { autoClose: 5000 }
+      );
+      setLoggedIn(false);
+      localStorage.removeItem("token");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 5000);
+    } catch (error: any) {
+      console.error(error);
+      toast.error("An error occurred while sending the email.", {
+        autoClose: 5000,
+      });
+    }
+  };
+
   useEffect(() => {
     backgroundcolor = theme == "dark" ? "#18181b" : "white";
   }, [theme]);
@@ -195,15 +223,13 @@ export const Settings = () => {
               </label>
             </CardFooter>
           </Card>
-          <Link
-            href="/reset-password"
+          <Button
+            fullWidth
             className="center w-full mt-4 mb-4"
-            style={{
-              fontSize: "0.8rem",
-            }}
+            onClick={handleChangePassword}
           >
-            <Button fullWidth>Change your password</Button>
-          </Link>
+            Change your password
+          </Button>
           <Button color="danger" onClick={handleDeleteAccount}>
             Delete your account
           </Button>

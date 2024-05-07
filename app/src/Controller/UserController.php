@@ -34,10 +34,6 @@ class UserController extends AbstractController
     {
         $logger->info('Entering the index method.');
 
-        // Log the request headers
-        $logger->info('Request headers: ' . json_encode($request->headers->all()));
-
-                
         $logger->info('Got the user from the security context.');
         // Get the JWT from the request
         $jwt = $request->headers->get('Authorization');
