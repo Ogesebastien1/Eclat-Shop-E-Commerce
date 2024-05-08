@@ -22,7 +22,7 @@ export const AddProduct = () => {
   const [image, setImage] = useState<File | null>(null);
   const [stock, setStock] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { userData } = useContext(LoginContext);
+  const { userData, isLoggedIn } = useContext(LoginContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,7 +31,11 @@ export const AddProduct = () => {
   }, []);
 
   useEffect(() => {
-    if (userData && userData.roles && !userData.roles.includes("ROLE_ADMIN")) {
+    if (
+      (userData && userData.roles && !userData.roles.includes("ROLE_ADMIN")) ||
+      !userData ||
+      !isLoggedIn
+    ) {
       navigate("/");
     }
   }, [userData]);

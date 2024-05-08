@@ -54,15 +54,15 @@ const MyNavbar = () => {
           <NavbarBrand>
             <p
               className="font-bold text-inherit"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/shop")}
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
-              style={hover ? { color: "#0067dd", cursor: "pointer"} : {}}
+              style={hover ? { color: "#0067dd", cursor: "pointer" } : {}}
             >
               ECLAT SHOP
             </p>
           </NavbarBrand>
-          <NavbarContent style={{ marginRight: '12rem'}}>  
+          <NavbarContent style={{ marginRight: "12rem" }}>
             <NavbarItem>
               <Link color="foreground" href="/contact">
                 Contact
@@ -94,46 +94,53 @@ const MyNavbar = () => {
                 }
               />
             </DropdownTrigger>
-          {isLoggedIn ? (
-            <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as {userData.login}</p>
-              </DropdownItem>
-              <DropdownItem
-                key="settings"
-                onClick={() => navigate("/settings")}
-              >
-                My Settings
-              </DropdownItem>
-              {userData?.roles?.includes("ROLE_ADMIN") && (
-                <DropdownItem
-                  key="team_settings"
-                  onClick={() => navigate("/admin/add-product")}
-                >
-                  Admin
+            {isLoggedIn ? (
+              <DropdownMenu aria-label="Profile Actions" variant="flat">
+                <DropdownItem key="profile" className="h-14 gap-2">
+                  <p className="font-semibold">Signed in as {userData.login}</p>
                 </DropdownItem>
-              )}
-              <DropdownItem key="analytics">Analytics</DropdownItem>
-              <DropdownItem key="system">System</DropdownItem>
-              <DropdownItem key="configurations">Configurations</DropdownItem>
-              <DropdownItem key="help_and_feedback">
-                Help & Feedback
-              </DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={handleLogout}>
-                Log Out
-              </DropdownItem>
-            </DropdownMenu>
-          ) : (
-            <DropdownMenu aria-label="Guest Actions" variant="flat">
-              <DropdownItem key="login" onClick={() => navigate("/login")}>
-                Sign In
-              </DropdownItem>
-              <DropdownItem key="signup" onClick={() => navigate("/Register")}>
-                Sign Up
-              </DropdownItem>
-            </DropdownMenu>
-          )}
-        </Dropdown>
+                <DropdownItem
+                  key="settings"
+                  onClick={() => navigate("/settings")}
+                >
+                  My Settings
+                </DropdownItem>
+                {userData?.roles?.includes("ROLE_ADMIN") && (
+                  <DropdownItem
+                    key="team_settings"
+                    onClick={() => navigate("/admin/add-product")}
+                  >
+                    Admin
+                  </DropdownItem>
+                )}
+                <DropdownItem key="analytics">Analytics</DropdownItem>
+                <DropdownItem key="system">System</DropdownItem>
+                <DropdownItem key="configurations">Configurations</DropdownItem>
+                <DropdownItem key="help_and_feedback">
+                  Help & Feedback
+                </DropdownItem>
+                <DropdownItem
+                  key="logout"
+                  color="danger"
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </DropdownItem>
+              </DropdownMenu>
+            ) : (
+              <DropdownMenu aria-label="Guest Actions" variant="flat">
+                <DropdownItem key="login" onClick={() => navigate("/login")}>
+                  Sign In
+                </DropdownItem>
+                <DropdownItem
+                  key="signup"
+                  onClick={() => navigate("/Register")}
+                >
+                  Sign Up
+                </DropdownItem>
+              </DropdownMenu>
+            )}
+          </Dropdown>
         </div>
       </Navbar>
     </div>
