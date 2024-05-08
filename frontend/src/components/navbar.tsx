@@ -26,7 +26,7 @@ const MyNavbar = () => {
   , [isLoggedIn]);
   
   return (
-    <Navbar>
+    <Navbar style={{zIndex : 1}}>
       <div className="flex justify-between items-center w-full" >
         <NavbarBrand>
           <p 

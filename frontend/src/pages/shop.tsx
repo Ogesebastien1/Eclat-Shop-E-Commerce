@@ -57,20 +57,24 @@ export function Shop() {
   }, []);
   
   return (
-        <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
+    <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh",
+    }}
+    >
         {isloading ? (
           <Lottie options={defaultOptions} height={400} width={400} />
-      ) : (
-        <div>
-          <MyNavbar />
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl">
+        ) : (
+          <div>
+           <Card>
+              <CardBody>
+                <MyNavbar/>
+              </CardBody>
+            </Card>
+          <div className="mt-45 gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl" style={{marginTop: "20px"}}>
             {list.map((item, index) => (
              <Card 
              shadow="sm" 
