@@ -31,7 +31,7 @@ export const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const navigate = useNavigate();
-  const { userData } = useContext(LoginContext);
+  const { userData, isLoggedIn } = useContext(LoginContext);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -39,7 +39,11 @@ export const ProductList = () => {
   let backgroundcolor = theme == "dark" ? "#18181b" : "white";
 
   useEffect(() => {
-    if (userData && userData.roles && !userData.roles.includes("ROLE_ADMIN")) {
+    if (
+      (userData && userData.roles && !userData.roles.includes("ROLE_ADMIN")) ||
+      !userData ||
+      !isLoggedIn
+    ) {
       navigate("/");
     }
   }, [userData]);
