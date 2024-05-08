@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Card, Image, CardFooter, CardBody} from "@nextui-org/react";
+import {Card, Image, CardFooter, CardBody, CardHeader} from "@nextui-org/react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import darkanimation from "../animations/dark-loading.json";
@@ -70,9 +70,9 @@ export function Shop() {
         ) : (
           <div>
            <Card>
-              <CardBody>
+              <CardHeader>
                 <MyNavbar/>
-              </CardBody>
+              </CardHeader>
             </Card>
           <div className="mt-45 gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl" style={{marginTop: "20px"}}>
             {list.map((item, index) => (
