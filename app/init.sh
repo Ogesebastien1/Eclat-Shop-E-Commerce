@@ -30,6 +30,13 @@ fi
 # Navigate to the project directory
 cd /var/www/my_project
 
+# update php comfiguration
+echo "Updating php.ini settings..."
+sed -i 's/upload_max_filesize = .*/upload_max_filesize = 100M/' /usr/local/etc/php/php.ini-development
+sed -i 's/post_max_size = .*/post_max_size = 100M/' /usr/local/etc/php/php.ini-development
+sed -i 's/upload_max_filesize = .*/upload_max_filesize = 100M/' /usr/local/etc/php/php.ini-production
+sed -i 's/post_max_size = .*/post_max_size = 100M/' /usr/local/etc/php/php.ini-production
+
 # Install composer dependencies
 composer install || { echo 'Composer install failed'; exit 1; }
 
