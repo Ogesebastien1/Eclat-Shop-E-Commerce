@@ -42,54 +42,58 @@ const MyNavbar = () => {
   }, [isLoggedIn]);
 
   return (
-    <Navbar>
-      <div className="flex justify-between items-center w-full">
-        <NavbarBrand>
-          <p
-            className="font-bold text-inherit"
-            onClick={() => navigate("/")}
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            style={hover ? { color: "#0067dd", cursor: "pointer" } : {}}
-          >
-            ECLAT SHOP
-          </p>
-        </NavbarBrand>
-        <NavbarContent
-          className="hidden sm:flex gap-3"
-          style={{ marginRight: "22%" }}
-        >
-          <NavbarItem>
-            <Link color="foreground" href="/contact">
-               Contact
-            </Link>
-          </NavbarItem>
-          <NavbarItem isActive>
-            <Link href="#" aria-current="page">
-              Shopping cart
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link color="foreground" href="#">
-              About us
-            </Link>
-          </NavbarItem>
-        </NavbarContent>
-        <Dropdown placement="bottom-end">
-          <DropdownTrigger>
-            <Avatar
-              isBordered
-              as="button"
-              className="transition-transform"
-              color="secondary"
-              size="sm"
-              src={
-                isLoggedIn && userData.avatar
-                  ? userData.avatar
-                  : "https://www.svgrepo.com/show/442075/avatar-default-symbolic.svg"
-              }
-            />
-          </DropdownTrigger>
+    <div style={{ 
+      position: 'fixed', 
+      top: '3%', 
+      left: '0', 
+      right: '0', 
+      zIndex: 1000 
+    }}>
+      <Navbar>
+        <div className="flex justify-between items-center w-full">
+          <NavbarBrand>
+            <p
+              className="font-bold text-inherit"
+              onClick={() => navigate("/")}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              style={hover ? { color: "#0067dd", cursor: "pointer"} : {}}
+            >
+              ECLAT SHOP
+            </p>
+          </NavbarBrand>
+          <NavbarContent style={{ marginRight: '12rem'}}>  
+            <NavbarItem>
+              <Link color="foreground" href="/contact">
+                Contact
+              </Link>
+            </NavbarItem>
+            <NavbarItem isActive>
+              <Link href="#" aria-current="page">
+                Shopping cart
+              </Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Link color="foreground" href="#">
+                About us
+              </Link>
+            </NavbarItem>
+          </NavbarContent>
+          <Dropdown placement="bottom-end">
+            <DropdownTrigger>
+              <Avatar
+                isBordered
+                as="button"
+                className="transition-transform"
+                color="secondary"
+                size="sm"
+                src={
+                  isLoggedIn && userData.avatar
+                    ? userData.avatar
+                    : "https://www.svgrepo.com/show/442075/avatar-default-symbolic.svg"
+                }
+              />
+            </DropdownTrigger>
           {isLoggedIn ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2">
@@ -130,8 +134,9 @@ const MyNavbar = () => {
             </DropdownMenu>
           )}
         </Dropdown>
-      </div>
-    </Navbar>
+        </div>
+      </Navbar>
+    </div>
   );
 };
 
