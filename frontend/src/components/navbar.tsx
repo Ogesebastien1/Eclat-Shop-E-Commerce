@@ -74,7 +74,7 @@ const MyNavbar = () => {
               </Link>
             </NavbarItem>
             <NavbarItem>
-              <Link color="foreground" href="#">
+              <Link color="foreground" href="/aboutUs">
                 About us
               </Link>
             </NavbarItem>
