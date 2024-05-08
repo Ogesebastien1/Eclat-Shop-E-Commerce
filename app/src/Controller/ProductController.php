@@ -78,6 +78,7 @@ class ProductController extends AbstractController
         $logger->info('price', ['price' => $price]);
         /** @var UploadedFile $image */
         $image = $request->files->get('photo');
+        $logger->info('Image', ['image' => $image->getPath()]);
         $stock = $request->request->get('stock');
         $logger->info('stock', ['stock' => $stock]);
 
