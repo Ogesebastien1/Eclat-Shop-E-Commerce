@@ -70,7 +70,7 @@ export function Shop() {
         ) : (
           <div>
              <MyNavbar />
-          <div className="mt-45 gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl" style={{marginTop: "20px"}}>
+          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl">
             {list.map((item, index) => (
              <Card 
              shadow="sm" 
