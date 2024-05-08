@@ -38,7 +38,7 @@ export default function Details() {
    return (
     <>  
     <MyNavbar /> 
-    <Button className="m-4" onClick={() => window.history.back()}>Back to Shop</Button>
+    <Button style={{marginTop: '150px', marginLeft:'50px'}} className="m-4" onClick={() => window.history.back()}>Back to Shop</Button>
     <div
       style={{
         display: "flex",
@@ -47,7 +47,8 @@ export default function Details() {
         height: "100vh",
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '100px', marginLeft: '30px', marginRight: '50px', marginBottom:'15%',  }}>
+     
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginLeft: '30px', marginRight: '50px', marginBottom:'15%',  }}>
       <div style={{ flex: 1 }}>
         <Accordion variant="splitted">
           <AccordionItem 
@@ -81,7 +82,7 @@ export default function Details() {
           isFooterBlurred
           radius="lg"
           className="border-none"
-          style={{ width: '100%', height: '300px', marginBottom: '150px'}}
+          style={{ width: '120%', height: '400px', marginBottom: '150px'}}
         >
           <Image
             ref={imageRef}
