@@ -25,6 +25,9 @@ class Product
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private ?float $price = null;
 
+    #[ORM\Column(type: "integer")]
+    private ?int $stock = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -78,22 +81,16 @@ class Product
         return $this;
     }
 
-    public function addToCart(int $productId, int $quantity = 1, \Symfony\Component\HttpFoundation\Request $request): void
+    public function getStock(): ?int
     {
-        $product = $entityManager->getRepository(Product::class)->find($productId);
-        $cart = $request->getSession()->get('cart', []);
-        $cart[] = ['product' => $product, 'quantity' => $quantity];
-        $request->getSession()->set('cart', $cart);
+        return $this->stock;
     }
 
-
-    public function removeFromCart(Cart $cart): void
+    public function setStock(int $stock): self
     {
-        foreach ($cart->getItems() as $item) {
-            if ($item->getProduct() === $this) {
-                $cart->removeItem($item);
-                return;
-            }
-        }
+        $this->stock = $stock;
+
+        return $this;
     }
+
 }

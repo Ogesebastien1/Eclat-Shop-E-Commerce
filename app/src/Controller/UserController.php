@@ -13,7 +13,11 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-
+use Aws\S3\S3Client;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 class UserController extends AbstractController
 {
@@ -30,10 +34,6 @@ class UserController extends AbstractController
     {
         $logger->info('Entering the index method.');
 
-        // Log the request headers
-        $logger->info('Request headers: ' . json_encode($request->headers->all()));
-
-                
         $logger->info('Got the user from the security context.');
         // Get the JWT from the request
         $jwt = $request->headers->get('Authorization');
@@ -61,7 +61,7 @@ class UserController extends AbstractController
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
                 'roles' => $user->getRoles(),
-                'avaatar' => $user->getAvatar() ? 'yes' : 'no',
+                'avaatar' => $user->getAvatar()
             ]));
 
             return $this->json([
@@ -71,7 +71,7 @@ class UserController extends AbstractController
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
                 'roles' => $user->getRoles(),
-                'avatar' => $user->getAvatar() ? 'yes' : 'no',
+                'avatar' => $user->getAvatar()
             ]);
         }
 
@@ -130,6 +130,122 @@ class UserController extends AbstractController
 
         // Return a successful response
         return $this->json(['message' => 'User updated successfully']);
+    }
+
+    #[Route('/api/user/avatar', name: 'user_avatar_update', methods: ['PUT'])]
+    public function updateAvatar(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger, JWTTokenManagerInterface $jwtManager): Response
+    {
+        $logger->info('Entering the updateAvatar method.');
+
+        // Get the JWT from the request
+        $jwt = $request->headers->get('Authorization');
+
+        // Define the decoding key and the allowed algorithms
+        $publicKey = file_get_contents(__DIR__ . '/../../config/jwt/public.pem');
+
+        // Decode the JWT
+        $decodedJwt = JWT::decode($jwt, new Key($publicKey, 'RS256'));
+
+        // Get the current user
+        $user = $this->userRepository->findOneByEmail($decodedJwt->username);
+
+        if (!$user) {
+            return new JsonResponse(['status' => 'Error', 'message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $logger->info('Updating user avatar', ['id' => $user->getId()]);
+
+        if (isset($data['avatar'])) {
+            $logger->info('Received new avatar');
+
+            // Delete the old avatar from S3
+            $oldAvatarKey = basename($user->getAvatar());
+            $s3Client = new S3Client([
+                'version' => 'latest',
+                'region'  => $_SERVER['AWS_REGION'],
+                'credentials' => [
+                    'key'    => $_SERVER['ACCESS_KEY_ID'],
+                    'secret' => $_SERVER['SECRET_ACCESS_KEY'],
+                ],
+            ]);
+            $s3Client->deleteObject([
+                'Bucket' => $_SERVER['AWS_BUCKET'],
+                'Key' => $oldAvatarKey,
+            ]);
+
+            $logger->info('Deleted old avatar from S3', ['key' => $oldAvatarKey]);
+
+            // Decode the Base64 avatar
+            $avatarData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $data['avatar']));
+            $avatarName = uniqid() . '.png'; // Generate a unique name for the avatar
+            file_put_contents($avatarName, $avatarData);
+
+            // Upload the new avatar to S3
+            $result = $s3Client->putObject([
+                'Bucket' => $_SERVER['AWS_BUCKET'],
+                'Key' => $avatarName,
+                'Body' => fopen($avatarName, 'rb'),
+                'ACL' => 'public-read', // Make the avatar publicly accessible
+                'ContentType' => 'image/png', // Set the content type to image/png
+            ]);
+
+            $logger->info('Uploaded new avatar to S3', ['result' => $result]);
+
+            $user->setAvatar($result['ObjectURL']); // Store the S3 URL of the new avatar
+
+            // Delete the temporary avatar file
+            unlink($avatarName);
+        }
+
+        $entityManager->flush();
+
+        return $this->json([
+            'message' => 'User avatar updated successfully',
+            'user' => $user
+        ]);
+    }
+
+    #[Route('/api/user', name: 'delete_user', methods: ['DELETE'])]
+    public function delete(Request $request, LoggerInterface $logger, JWTTokenManagerInterface $jwtManager, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
+    {
+        $logger->info('Entering the delete method.');
+
+        // Get the JWT from the request
+        $jwt = $request->headers->get('Authorization');
+
+        // Define the decoding key and the allowed algorithms
+        $publicKey = file_get_contents(__DIR__ . '/../../config/jwt/public.pem');
+
+        // Decode the JWT
+        $decodedJwt = JWT::decode($jwt, new Key($publicKey, 'RS256'));
+
+        // Get the current user
+        $user = $this->userRepository->findOneByEmail($decodedJwt->username);
+
+        // If the user does not exist, return a 404 response
+        if (!$user) {
+            return $this->json(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Delete the user
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        // Send a confirmation email
+        $email = (new TemplatedEmail())
+            ->from(new Address('MS_xofncP@trial-jy7zpl93p2pl5vx6.mlsender.net', 'STG_16 team'))
+            ->to($user->getEmail())
+            ->subject('Your account has been deleted')
+            ->htmlTemplate('account_deleted.html.twig')
+            ->context([
+                'user' => $user,
+            ]);
+
+        $mailer->send($email);
+
+        // Return a successful response
+        return $this->json(['message' => 'User deleted successfully']);
     }
 }
 ?>

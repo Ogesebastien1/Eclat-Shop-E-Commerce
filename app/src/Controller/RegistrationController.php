@@ -84,7 +84,8 @@ class RegistrationController extends AbstractController
         $user->setFirstname($firstname);
         $user->setLastname($lastname);
         $user->setRoles([$roles]);
-
+        $name = $user->getFirstName() . '+' . $user->getLastName();
+        $user->setAvatar('https://avatar.oxro.io/avatar.svg?name=' . $name . '&color=000');
         // hash the password (based on the security.yaml config for the $user class)
         $hashedPassword = $passwordHasher->hashPassword(
             $user,
