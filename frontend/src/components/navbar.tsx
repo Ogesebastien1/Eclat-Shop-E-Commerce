@@ -44,7 +44,7 @@ const MyNavbar = () => {
   return (
     <div style={{ 
       position: 'fixed', 
-      top: '3%', 
+      top: '1%',
       left: '0', 
       right: '0', 
       zIndex: 1000 
