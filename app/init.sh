@@ -11,9 +11,11 @@ if ! dpkg -s zip &> /dev/null; then
     apt-get install -y zip
 fi
 
-if ! dpkg -s php-zip &> /dev/null; then
+# Check for PHP version and install corresponding zip extension
+PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")
+if ! dpkg -s php${PHP_VERSION}-zip &> /dev/null; then
     echo "Installing php-zip extension..."
-    apt-get install -y php-zip
+    apt-get update && apt-get install -y php${PHP_VERSION}-zip
 fi
 
 if ! dpkg -s git &> /dev/null; then
