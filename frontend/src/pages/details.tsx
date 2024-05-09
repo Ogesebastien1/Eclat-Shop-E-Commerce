@@ -29,14 +29,12 @@ export default function Details() {
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    console.log(item);
     if (imageRef.current) {
       var parentElement = imageRef.current.parentNode as HTMLElement;
       if (parentElement) {
         parentElement.style.width = "100%";
         parentElement.style.height = "100%";
         parentElement.style.maxWidth = "none";
-        console.log("Parent element:", parentElement);
       }
     }
   }, []);
