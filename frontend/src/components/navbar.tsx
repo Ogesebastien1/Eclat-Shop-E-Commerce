@@ -27,12 +27,9 @@ interface User {
 const MyNavbar = () => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
-  const { isLoggedIn, userData, isLoading } = useContext(
-    LoginContext
-  ) as unknown as {
+  const { isLoggedIn, userData } = useContext(LoginContext) as unknown as {
     isLoggedIn: boolean;
     userData: User;
-    isLoading: boolean;
   };
 
   const handleLogout = () => {
@@ -73,22 +70,18 @@ const MyNavbar = () => {
         </NavbarContent>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            {isLoading ? (
-              <Spinner />
-            ) : (
-              <Avatar
-                isBordered
-                as="button"
-                className="transition-transform"
-                color="secondary"
-                size="sm"
-                src={
-                  isLoggedIn && userData?.avatar
-                    ? userData.avatar
-                    : "https://www.svgrepo.com/show/442075/avatar-default-symbolic.svg"
-                }
-              />
-            )}
+            <Avatar
+              isBordered
+              as="button"
+              className="transition-transform"
+              color="secondary"
+              size="sm"
+              src={
+                isLoggedIn && userData?.avatar
+                  ? userData.avatar
+                  : "https://www.svgrepo.com/show/442075/avatar-default-symbolic.svg"
+              }
+            />
           </DropdownTrigger>
           {isLoggedIn && userData?.roles?.includes("ROLE_ADMIN") ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
