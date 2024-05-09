@@ -74,7 +74,16 @@ export function Shop() {
       }}
     >
       {isloading ? (
-        <Lottie options={defaultOptions} height={400} width={400} />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <Lottie options={defaultOptions} height={400} width={400} />
+        </div>
       ) : (
         <div>
           <MyNavbar />

@@ -12,6 +12,7 @@ import {
   Dropdown,
   DropdownTrigger,
   Avatar,
+  Spinner,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { LoginContext } from "../contexts/LoginContext";
@@ -26,11 +27,13 @@ interface User {
 const MyNavbar = () => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
-  const { isLoggedIn, userData } = useContext(LoginContext) as unknown as {
+  const { isLoggedIn, userData, isLoading } = useContext(
+    LoginContext
+  ) as unknown as {
     isLoggedIn: boolean;
     userData: User;
+    isLoading: boolean;
   };
-  const [key, setKey] = useState(0);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -70,18 +73,22 @@ const MyNavbar = () => {
         </NavbarContent>
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            <Avatar
-              isBordered
-              as="button"
-              className="transition-transform"
-              color="secondary"
-              size="sm"
-              src={
-                isLoggedIn && userData?.avatar
-                  ? userData.avatar
-                  : "https://www.svgrepo.com/show/442075/avatar-default-symbolic.svg"
-              }
-            />
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <Avatar
+                isBordered
+                as="button"
+                className="transition-transform"
+                color="secondary"
+                size="sm"
+                src={
+                  isLoggedIn && userData?.avatar
+                    ? userData.avatar
+                    : "https://www.svgrepo.com/show/442075/avatar-default-symbolic.svg"
+                }
+              />
+            )}
           </DropdownTrigger>
           {isLoggedIn && userData?.roles?.includes("ROLE_ADMIN") ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
