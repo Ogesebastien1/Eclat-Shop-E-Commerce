@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UserController extends AbstractController
 {
@@ -155,6 +156,13 @@ class UserController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         $logger->info('Updating user avatar', ['id' => $user->getId()]);
+        // Decode the base64 image and save it to a temporary file
+        $avatarData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $data['avatar']));
+        $tempPath = tempnam(sys_get_temp_dir(), 'avatar');
+        file_put_contents($tempPath, $avatarData);
+
+        // Create an instance of UploadedFile
+        $avatarFile = new UploadedFile($tempPath, 'avatar.png', 'image/png', null, true);
 
         if (isset($data['avatar'])) {
             $logger->info('Received new avatar');
@@ -176,26 +184,18 @@ class UserController extends AbstractController
 
             $logger->info('Deleted old avatar from S3', ['key' => $oldAvatarKey]);
 
-            // Decode the Base64 avatar
-            $avatarData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $data['avatar']));
-            $avatarName = uniqid() . '.png'; // Generate a unique name for the avatar
-            file_put_contents($avatarName, $avatarData);
-
             // Upload the new avatar to S3
             $result = $s3Client->putObject([
                 'Bucket' => $_SERVER['AWS_BUCKET'],
-                'Key' => $avatarName,
-                'Body' => fopen($avatarName, 'rb'),
+                'Key' => $avatarFile->getClientOriginalName(),
+                'Body' => fopen($avatarFile->getPathname(), 'rb'),
                 'ACL' => 'public-read', // Make the avatar publicly accessible
-                'ContentType' => 'image/png', // Set the content type to image/png
+                'ContentType' => $avatarFile->getMimeType(), // Add this line
             ]);
 
             $logger->info('Uploaded new avatar to S3', ['result' => $result]);
 
             $user->setAvatar($result['ObjectURL']); // Store the S3 URL of the new avatar
-
-            // Delete the temporary avatar file
-            unlink($avatarName);
         }
 
         $entityManager->flush();
