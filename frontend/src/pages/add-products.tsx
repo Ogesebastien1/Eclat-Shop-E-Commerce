@@ -85,7 +85,7 @@ export const AddProduct = () => {
       }}
     >
       <Link
-        href="/"
+        href="/shop"
         style={{ position: "absolute", top: "1rem", left: "1rem" }}
       >
         ← Back to Home

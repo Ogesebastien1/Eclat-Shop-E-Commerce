@@ -42,15 +42,13 @@ const MyNavbar = () => {
   }, [isLoggedIn]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "3%",
-        left: "0",
-        right: "0",
-        zIndex: 1000,
-      }}
-    >
+    <div style={{ 
+      position: 'fixed', 
+      top: '1%',
+      left: '0', 
+      right: '0', 
+      zIndex: 1000 
+    }}>
       <Navbar>
         <div className="flex justify-between items-center w-full">
           <NavbarBrand>
@@ -76,7 +74,7 @@ const MyNavbar = () => {
               </Link>
             </NavbarItem>
             <NavbarItem>
-              <Link color="foreground" href="#">
+              <Link color="foreground" href="/aboutUs">
                 About us
               </Link>
             </NavbarItem>

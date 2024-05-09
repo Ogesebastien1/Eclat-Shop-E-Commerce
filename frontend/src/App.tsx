@@ -21,6 +21,7 @@ import Contact from "./pages/contact";
 import DeliveryPage from "./pages/delivery";
 import Spline from "@splinetool/react-spline";
 import { useLocation } from "react-router-dom";
+import About from "./pages/aboutUs";
 
 function App() {
   const { theme } = useTheme();
@@ -55,6 +56,7 @@ function App() {
             <Route path="/admin/add-product" element={<AddProduct />} />
             <Route path="/admin/products" element={<ProductList />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/aboutUs" element={<About />} />
           </Routes>
         </div>
       </main>

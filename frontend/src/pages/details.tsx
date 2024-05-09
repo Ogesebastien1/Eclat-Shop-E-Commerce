@@ -38,7 +38,7 @@ export default function Details() {
    return (
     <>  
     <MyNavbar /> 
-    <Button className="m-4" onClick={() => window.history.back()}>Back to Shop</Button>
+    <Button style={{marginTop: '150px', marginLeft:'50px'}} className="m-4" onClick={() => window.history.back()}>Back to Shop</Button>
     <div
       style={{
         display: "flex",
@@ -47,7 +47,8 @@ export default function Details() {
         height: "100vh",
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: '100px', marginLeft: '30px', marginRight: '50px', marginBottom:'15%',  }}>
+     
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginLeft: '30px', marginRight: '50px', marginBottom:'15%',  }}>
       <div style={{ flex: 1 }}>
         <Accordion variant="splitted">
           <AccordionItem 
@@ -81,7 +82,7 @@ export default function Details() {
           isFooterBlurred
           radius="lg"
           className="border-none"
-          style={{ width: '100%', height: '300px', marginBottom: '150px'}}
+          style={{ width: '120%', height: '400px', marginBottom: '150px'}}
         >
           <Image
             ref={imageRef}
@@ -91,8 +92,8 @@ export default function Details() {
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
           <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%-_8px)] shadow-small ml-1 z-10">
-          <p className="text-tiny text-white/90" style={{ marginLeft: '90px', fontSize: '20px', color: 'white'}}>{item.price} €</p>
-            <Button className="text-tiny text-white bg-white/20" variant="flat" color="default" radius="lg" size="sm">
+          <p className="text-tiny /90" style={{ marginLeft: '90px', fontSize: '20px'}}>{item.price} €</p>
+            <Button className="text-tiny /20" variant="flat" color="default" radius="lg" size="sm">
                Add to Cart
             </Button>
           </CardFooter>

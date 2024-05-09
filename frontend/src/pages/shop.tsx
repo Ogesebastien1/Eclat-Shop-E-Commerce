@@ -70,7 +70,7 @@ export function Shop() {
         ) : (
           <div>
              <MyNavbar />
-          <div className="mt-45 gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl" style={{marginTop: "20px"}}>
+             <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl" style={{ marginTop: '-250px' }}>
             {list.map((item, index) => (
              <Card 
              shadow="sm" 
@@ -78,7 +78,6 @@ export function Shop() {
              isPressable 
              onPress={() => console.log("item pressed")}
              onClick={() => navigate(`/details/${item.id}`, { state: { item } })}
-             className="w-full h-auto"
            >
              <CardBody className="overflow-visible p-0">
              <Image
