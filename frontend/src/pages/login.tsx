@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import animationData from "../animations/login-animation.json";
 import { toast } from "react-toastify";
 import { LoginContext } from "../contexts/LoginContext";
+import { set } from "animejs";
 
 export const Login = () => {
   const [login, setLogin] = useState("");
@@ -52,6 +53,7 @@ export const Login = () => {
       if (rememberMe) {
         localStorage.setItem("token", response.data.token);
         setToken(response.data.token);
+        setLoggedIn(true);
       } else {
         setToken(response.data.token);
         setLoggedIn(true);
@@ -85,6 +87,7 @@ export const Login = () => {
         })
         .then(() => {
           setToken(token);
+          setLoggedIn(true);
           window.location.href = "/shop";
         })
         .catch(() => {

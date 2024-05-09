@@ -22,23 +22,23 @@ export const AddProduct = () => {
   const [image, setImage] = useState<File | null>(null);
   const [stock, setStock] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { userData, isLoggedIn } = useContext(LoginContext);
+  const { userData, token, isLoggedIn, isLoadingUser } =
+    useContext(LoginContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(process.env.ACCESS_KEY_ID);
-    console.log(process.env.SECRET_ACCESS_KEY);
-  }, []);
-
-  useEffect(() => {
     if (
-      (userData && userData.roles && !userData.roles.includes("ROLE_ADMIN")) ||
-      !userData ||
-      !isLoggedIn
+      !isLoadingUser &&
+      userData &&
+      userData.roles &&
+      !userData.roles.includes("ROLE_ADMIN")
     ) {
+      console.log("not an admin");
       navigate("/");
+    } else if (!isLoggedIn && !isLoadingUser) {
+      navigate("/login");
     }
-  }, [userData]);
+  }, [userData, isLoadingUser]);
 
   const handleAddProduct = async () => {
     if (!name || !description || !price || !image) {

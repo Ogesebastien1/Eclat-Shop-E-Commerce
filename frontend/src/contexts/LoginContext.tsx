@@ -8,6 +8,8 @@ interface LoginContextProps {
   setToken: (token: string) => void;
   userData: string;
   setUserData: (userData: string) => void;
+  isLoadingUser: boolean; // Ajoutez cette ligne
+  setIsLoadingUser: (isLoadingUser: boolean) => void; // Ajoutez cette ligne
 }
 
 export const LoginContext = createContext<LoginContextProps>({
@@ -17,6 +19,8 @@ export const LoginContext = createContext<LoginContextProps>({
   setToken: () => {},
   userData: "",
   setUserData: () => {},
+  isLoadingUser: true, // Ajoutez cette ligne
+  setIsLoadingUser: () => {}, // Ajoutez cette ligne
 });
 
 export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -25,6 +29,7 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [token, setToken] = useState("");
   const [userData, setUserData] = useState("");
+  const [isLoadingUser, setIsLoadingUser] = useState(true); // Ajoutez cette ligne
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,33 +44,17 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
           setToken(token);
           setLoggedIn(true);
           setUserData(response.data);
+          setIsLoadingUser(false); // Ajoutez cette ligne
         })
         .catch(() => {
           setLoggedIn(false);
           localStorage.removeItem("token");
+          setIsLoadingUser(false); // Ajoutez cette ligne
         });
+    } else {
+      setIsLoadingUser(false); // Ajoutez cette ligne
     }
   }, []);
-
-  useEffect(() => {
-    if (token) {
-      axios
-        .get("http://localhost:8000/api/user", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          setToken(token);
-          setLoggedIn(true);
-          setUserData(response.data);
-        })
-        .catch(() => {
-          setLoggedIn(false);
-          localStorage.removeItem("token");
-        });
-    }
-  }, [token, isLoggedIn]);
 
   return (
     <LoginContext.Provider
@@ -76,6 +65,8 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
         setToken,
         userData,
         setUserData,
+        isLoadingUser,
+        setIsLoadingUser,
       }}
     >
       {children}

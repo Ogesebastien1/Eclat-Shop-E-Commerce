@@ -31,7 +31,8 @@ export const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const navigate = useNavigate();
-  const { userData, isLoggedIn } = useContext(LoginContext);
+  const { userData, token, isLoadingUser, isLoggedIn } =
+    useContext(LoginContext);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -40,13 +41,17 @@ export const ProductList = () => {
 
   useEffect(() => {
     if (
-      (userData && userData.roles && !userData.roles.includes("ROLE_ADMIN")) ||
-      !userData ||
-      !isLoggedIn
+      !isLoadingUser &&
+      userData &&
+      userData.roles &&
+      !userData.roles.includes("ROLE_ADMIN")
     ) {
+      console.log("not an admin");
       navigate("/");
+    } else if (!isLoggedIn && !isLoadingUser) {
+      navigate("/login");
     }
-  }, [userData]);
+  }, [userData, isLoadingUser]);
 
   useEffect(() => {
     backgroundcolor = theme == "dark" ? "#18181b" : "white";
