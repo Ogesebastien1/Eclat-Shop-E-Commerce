@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
@@ -41,6 +41,7 @@ export const ProductList = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Add this ligne
   const { theme } = useTheme();
+  const imageInputRef = useRef<HTMLInputElement>(null);
   let animationData = theme === "dark" ? darkloadingData : lightLoadingData;
   let backgroundcolor = theme == "dark" ? "#18181b" : "white";
 
@@ -179,6 +180,9 @@ export const ProductList = () => {
             );
             setModalIsOpen(false);
             setImage(null);
+            if (imageInputRef.current) {
+              imageInputRef.current.value = "";
+            }
           };
           reader.onerror = (error) => {
             console.error("Error: ", error);
@@ -214,23 +218,33 @@ export const ProductList = () => {
       >
         Add product →
       </Link>
-      <Card className="center flex max-w-7xl min-w-96">
-        <CardHeader className="center flex-col mb-4">
+      <Card className="center max-w-7xl min-w-96 flex-col">
+        <CardHeader className="center flex-col mb-4 z-0">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-600">
             Products
           </h1>
         </CardHeader>
-        <Divider />
+        <Divider style={{ zIndex: 0 }} />
         <CardBody
           className="center flex-col justify-center"
-          style={{ maxHeight: "300px", overflowY: "auto" }}
+          style={{
+            flexDirection: "column-reverse",
+            zIndex: 0,
+          }}
         >
           {isLoading ? (
             <div className="center flex-col w-52 h-30 ml-20 justify-center">
               <Lottie animationData={animationData} loop={true} />
             </div>
           ) : (
-            <div style={{ position: "relative", zIndex: 1, marginTop: "7rem" }}>
+            <div
+              style={{
+                position: "relative",
+                zIndex: 0,
+                maxHeight: "70vh",
+                overflowY: "auto",
+              }}
+            >
               <Listbox items={products} label="Products" selectionMode="single">
                 {(product) => (
                   <ListboxItem
@@ -347,6 +361,7 @@ export const ProductList = () => {
               className="mb-4"
             />
             <input
+              ref={imageInputRef}
               type="file"
               accept=".png, .jpg, .jpeg"
               onChange={(e) =>

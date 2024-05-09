@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import axios from "axios";
 import {
   Card,
@@ -25,6 +25,7 @@ export const AddProduct = () => {
   const { userData, token, isLoggedIn, isLoadingUser } =
     useContext(LoginContext);
   const navigate = useNavigate();
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (
@@ -67,6 +68,9 @@ export const AddProduct = () => {
       setPrice("");
       setStock("");
       setImage(null);
+      if (imageInputRef.current) {
+        imageInputRef.current.value = ""; // Reset the file input
+      }
     } catch (error: any) {
       console.error(error);
       toast.error("An error occurred while adding the product.");
@@ -139,6 +143,7 @@ export const AddProduct = () => {
           <div style={{ marginBottom: "1rem" }}>
             <label>Image</label>
             <input
+              ref={imageInputRef}
               type="file"
               accept=".png, .jpg, .jpeg"
               onChange={(e) => setImage(e.target.files?.[0] || null)}

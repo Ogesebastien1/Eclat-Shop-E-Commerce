@@ -66,9 +66,11 @@ export function Shop() {
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "column",
         alignItems: "center",
+        justifyContent: "flex-start", // change this
         height: "100vh",
+        paddingTop: "1rem",
       }}
     >
       {isloading ? (
@@ -78,11 +80,17 @@ export function Shop() {
           <MyNavbar />
           <div
             className="gap-2 grid grid-cols-2 sm:grid-cols-4 mx-auto min-w-max max-w-6xl"
-            style={{ marginTop: "-250px" }}
+            style={{
+              zIndex: 0,
+              overflow: "auto",
+              marginTop: "1rem",
+              marginBottom: "1rem",
+            }}
           >
             {list.map((item, index) => (
               <Card
                 shadow="sm"
+                className="z-0"
                 key={index}
                 isPressable
                 onPress={() => console.log("item pressed")}
