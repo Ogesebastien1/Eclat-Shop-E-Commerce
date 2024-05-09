@@ -57,9 +57,6 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
 
     if (token) {
       fetchUser();
-      console.log("userdata", userData)
-      console.log("token", token)
-      console.log("isLoggedIn", isLoggedIn)
     } else if (sessionStorage.getItem("token")) {
       setToken(sessionStorage.getItem("token") as string);
     } else if (localStorage.getItem("token")) {
