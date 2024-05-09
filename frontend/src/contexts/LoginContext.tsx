@@ -52,6 +52,7 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
       } catch (error) {
         console.error(error);
       }
+      setLoggedIn(true)
       setIsLoadingUser(false);
     };
 

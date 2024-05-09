@@ -38,8 +38,8 @@ const MyNavbar = () => {
   };
 
   return (
-    <Navbar style={{ position: "sticky", top: 0, zIndex: 1000 }}>
-      <div className="flex justify-between items-center w-full">
+    <Navbar style={{ position: "sticky", top: 0, zIndex: 1000, width: "100%" }}>
+      <div style={{ position: "absolute", top: "1rem", left: "1rem" }}>
         <NavbarBrand>
           <p
             className="font-bold text-inherit"
@@ -51,15 +51,12 @@ const MyNavbar = () => {
             ECLAT SHOP
           </p>
         </NavbarBrand>
-        <NavbarContent style={{ marginRight: "12rem" }}>
+      </div>
+      <div style={{ position: "absolute", top: "1.5rem", left: "50%", transform: "translate(-50%, -50%)" }}>
+        <NavbarContent>
           <NavbarItem>
             <Link color="foreground" href="/contact">
               Contact
-            </Link>
-          </NavbarItem>
-          <NavbarItem isActive>
-            <Link href="#" aria-current="page">
-              Shopping cart
             </Link>
           </NavbarItem>
           <NavbarItem>
@@ -68,6 +65,9 @@ const MyNavbar = () => {
             </Link>
           </NavbarItem>
         </NavbarContent>
+      </div>
+      <div style={{ position: "absolute", top: "1rem", right: "1rem" }}>
+
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Avatar
@@ -85,16 +85,10 @@ const MyNavbar = () => {
           </DropdownTrigger>
           {isLoggedIn && userData?.roles?.includes("ROLE_ADMIN") ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="profile" className="h-14 gap-2">
+              <DropdownItem key="profile" className="h-14 gap-2" onClick={() => navigate("/settings")}>
                 <p className="font-semibold">
                   Signed in as {userData?.login || "gest"}
                 </p>
-              </DropdownItem>
-              <DropdownItem
-                key="settings"
-                onClick={() => navigate("/settings")}
-              >
-                My Settings
               </DropdownItem>
               <DropdownItem
                 key="team_settings"
@@ -102,34 +96,16 @@ const MyNavbar = () => {
               >
                 Admin
               </DropdownItem>
-              <DropdownItem key="analytics">Analytics</DropdownItem>
-              <DropdownItem key="system">System</DropdownItem>
-              <DropdownItem key="configurations">Configurations</DropdownItem>
-              <DropdownItem key="help_and_feedback">
-                Help & Feedback
-              </DropdownItem>
               <DropdownItem key="logout" color="danger" onClick={handleLogout}>
                 Log Out
               </DropdownItem>
             </DropdownMenu>
           ) : isLoggedIn ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="profile" className="h-14 gap-2">
+              <DropdownItem key="profile" className="h-14 gap-2" onClick={() => navigate("/settings")}>
                 <p className="font-semibold">
                   Signed in as {userData?.login || "gest"}
                 </p>
-              </DropdownItem>
-              <DropdownItem
-                key="settings"
-                onClick={() => navigate("/settings")}
-              >
-                My Settings
-              </DropdownItem>
-              <DropdownItem key="analytics">Analytics</DropdownItem>
-              <DropdownItem key="system">System</DropdownItem>
-              <DropdownItem key="configurations">Configurations</DropdownItem>
-              <DropdownItem key="help_and_feedback">
-                Help & Feedback
               </DropdownItem>
               <DropdownItem key="logout" color="danger" onClick={handleLogout}>
                 Log Out
@@ -143,11 +119,14 @@ const MyNavbar = () => {
               <DropdownItem key="signup" onClick={() => navigate("/Register")}>
                 Sign Up
               </DropdownItem>
+              <DropdownItem key="contact" onClick={() => navigate("/contact")}>
+                Contact
+              </DropdownItem>
             </DropdownMenu>
           )}
         </Dropdown>
       </div>
-    </Navbar>
+    </Navbar >
   );
 };
 

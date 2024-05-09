@@ -28,18 +28,28 @@ export const AddProduct = () => {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (
-      !isLoadingUser &&
-      userData &&
-      userData.roles &&
-      !userData.roles.includes("ROLE_ADMIN")
-    ) {
-      console.log("not an admin");
-      navigate("/");
-    } else if (!isLoggedIn && !isLoadingUser) {
-      navigate("/login");
-    }
-  }, [userData, isLoadingUser]);
+    const fetchUser = async () => {
+      if (!token) {
+        return;
+      }
+
+      try {
+        const response = await axios.get("http://localhost:8000/api/user", {
+          headers: {
+            Authorization: token,
+          },
+        });
+        console.log(response.data)
+        if (!response.data.roles.includes("ROLE_ADMIN")) {
+          navigate("/shop");
+        }
+      } catch (error) {
+        console.error(error);
+        navigate("/shop");
+      }
+    };
+    fetchUser()
+  }, [token]);
 
   const handleAddProduct = async () => {
     if (!name || !description || !price || !image) {
