@@ -31,7 +31,8 @@ export const Register = () => {
   const [passwordError2, setPasswordError2] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const { token, setToken, isLoggedIn, setLoggedIn } = useContext(LoginContext);
+  const { token, setToken, isLoggedIn, setLoggedIn, isLoadingUser } =
+    useContext(LoginContext);
 
   const handleRegister = async () => {
     if (!isFormValid) {
@@ -78,23 +79,8 @@ export const Register = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (isLoggedIn) {
+    if (isLoggedIn && !isLoadingUser) {
       window.location.href = "/shop";
-    } else if (token) {
-      axios
-        .get("http://localhost:8000/api/user", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then(() => {
-          setToken(token);
-          window.location.href = "/shop";
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-        });
     }
   }, []);
 

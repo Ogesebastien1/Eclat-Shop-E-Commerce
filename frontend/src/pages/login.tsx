@@ -25,8 +25,14 @@ export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const { token, setToken, isLoggedIn, setLoggedIn, setUserData } =
-    useContext(LoginContext);
+  const {
+    token,
+    setToken,
+    isLoggedIn,
+    setLoggedIn,
+    setUserData,
+    isLoadingUser,
+  } = useContext(LoginContext);
   const navigate = useNavigate();
 
   const handleLoginr = async () => {
@@ -75,24 +81,8 @@ export const Login = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (isLoggedIn) {
+    if (isLoggedIn && !isLoadingUser) {
       window.location.href = "/shop";
-    } else if (token) {
-      axios
-        .get("http://localhost:8000/api/user", {
-          headers: {
-            Authorization: token,
-          },
-        })
-        .then(() => {
-          setToken(token);
-          setLoggedIn(true);
-          window.location.href = "/shop";
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-        });
     }
   }, []);
 

@@ -35,20 +35,21 @@ const MyNavbar = () => {
     window.location.reload();
   };
 
-  console.log("userData", userData);
-
   useEffect(() => {
-    console.log(isLoggedIn);
-  }, [isLoggedIn]);
+    // Cette fonction sera exécutée chaque fois que `userData` change
+    console.log("userData has changed:", userData);
+  }, [userData]); // `userData` est la dépendance de cet effet
 
   return (
-    <div style={{ 
-      position: 'fixed', 
-      top: '1%',
-      left: '0', 
-      right: '0', 
-      zIndex: 1000 
-    }}>
+    <div
+      style={{
+        position: "fixed",
+        top: "1%",
+        left: "0",
+        right: "0",
+        zIndex: 1000,
+      }}
+    >
       <Navbar>
         <div className="flex justify-between items-center w-full">
           <NavbarBrand>
