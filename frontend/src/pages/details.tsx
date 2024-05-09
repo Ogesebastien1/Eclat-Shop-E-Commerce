@@ -1,7 +1,15 @@
-import React, { useEffect, useRef } from "react";
-import { Accordion, AccordionItem, Image, Button, CardFooter, Card } from "@nextui-org/react";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Accordion,
+  AccordionItem,
+  Image,
+  Button,
+  CardFooter,
+  Card,
+} from "@nextui-org/react";
 import MyNavbar from "../components/navbar";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 interface Item {
   photo: string;
@@ -17,7 +25,7 @@ interface LocationState {
 
 export default function Details() {
   const location = useLocation();
-  const { item } = location.state as LocationState;  
+  const { item } = location.state as LocationState;
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -25,82 +33,134 @@ export default function Details() {
     if (imageRef.current) {
       var parentElement = imageRef.current.parentNode as HTMLElement;
       if (parentElement) {
-        parentElement.style.width = '100%';
-        parentElement.style.height = '100%';
-        parentElement.style.maxWidth = 'none';
-        console.log('Parent element:', parentElement);
+        parentElement.style.width = "100%";
+        parentElement.style.height = "100%";
+        parentElement.style.maxWidth = "none";
+        console.log("Parent element:", parentElement);
       }
     }
   }, []);
 
 
-  
-   return (
-    <>  
-    <MyNavbar /> 
-    <Button style={{marginTop: '150px', marginLeft:'50px'}} className="m-4" onClick={() => window.history.back()}>Back to Shop</Button>
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-     
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginLeft: '30px', marginRight: '50px', marginBottom:'15%',  }}>
-      <div style={{ flex: 1 }}>
-        <Accordion variant="splitted">
-          <AccordionItem 
-            key="1" 
-            aria-label="Product Details" 
-            title="Product Details"
-            style={{ width: '500px', wordWrap: 'break-word' }}
+  const addToCart = (productId: any, event: any) => {
+    console.log("Product ID:", productId);
+
+    axios
+    .post(`http://localhost:8000/api/carts/${productId}`, null, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.error("There was an error!", error);
+    });
+  }
+
+  const testCart = (event:any) => {
+    axios
+      .get("http://localhost:8000/api/carts", { 
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error!", error);
+      });
+  };
+
+  return (
+    <>
+      <MyNavbar />
+      <Button className="m-4" onClick={() => window.history.back()}>
+        Back to Shop
+      </Button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: "100px",
+          marginLeft: "250px",
+          marginRight: "20px",
+        }}
+      >
+        <div style={{ flex: 1 }}>
+          <Accordion variant="splitted">
+            <AccordionItem
+              key="1"
+              aria-label="Product Details"
+              title="Product Details"
+            >
+              {item.description}
+            </AccordionItem>
+            <AccordionItem
+              key="2"
+              aria-label="Shipping Information"
+              title="Shipping Information"
+            >
+              "We offer free shipping worldwide. The product will be delivered
+              within 2-3 weeks."
+            </AccordionItem>
+            <AccordionItem
+              key="3"
+              aria-label="Return Policy"
+              title="Return Policy"
+            >
+              "We accept returns within 30 days of the purchase date."
+            </AccordionItem>
+          </Accordion>
+        </div>
+        <div style={{ flex: 1, width: "100%" }} className="w-full">
+          <Card
+            isFooterBlurred
+            radius="lg"
+            className="border-none"
+            style={{ width: "90%", height: "300px", marginBottom: "50px" }}
           >
-            {item.description}
-          </AccordionItem>
-          <AccordionItem 
-            key="2" 
-            aria-label="Shipping Information" 
-            title="Shipping Information"
-            style={{ width: '500px', wordWrap: 'break-word' }}
-          >
-            "We offer free shipping worldwide. The product will be delivered within 2-3 weeks."
-          </AccordionItem>
-          <AccordionItem 
-            key="3" 
-            aria-label="Return Policy" 
-            title="Return Policy"
-            style={{ width: '500px', wordWrap: 'break-word' }}
-          >
-            "We accept returns within 30 days of the purchase date."
-          </AccordionItem>
-        </Accordion>
-      </div>
-        <div style={{ flex: 1, width:'100%' }} className="w-full">
-        <Card
-          isFooterBlurred
-          radius="lg"
-          className="border-none"
-          style={{ width: '120%', height: '400px', marginBottom: '150px'}}
-        >
-          <Image
-            ref={imageRef}
-            alt={item.name}
-            className="object-cover w-full h-full imgpersonalized"
-            src={item.photo}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-          <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%-_8px)] shadow-small ml-1 z-10">
-          <p className="text-tiny /90" style={{ marginLeft: '90px', fontSize: '20px'}}>{item.price} €</p>
-            <Button className="text-tiny /20" variant="flat" color="default" radius="lg" size="sm">
-               Add to Cart
-            </Button>
-          </CardFooter>
-        </Card>
+            <Image
+              ref={imageRef}
+              alt={item.name}
+              className="object-cover w-full h-full imgpersonalized"
+              src={item.photo}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+            <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+              <p
+                className="text-tiny text-white/90"
+                style={{ marginLeft: "90px", fontSize: "20px", color: "white" }}
+              >
+                {item.price} €
+              </p>
+              <Button
+                className="text-tiny text-white bg-white/20"
+                variant="flat"
+                color="default"
+                radius="lg"
+                size="sm"
+                onClick={(event) => addToCart(Number(item.id), event)}
+              >
+                Add to Cart
+              </Button>
+              <Button
+                className="text-tiny text-white bg-white/20"
+                variant="flat"
+                color="default"
+                radius="lg"
+                size="sm"
+                onClick={(event) => testCart(event)}
+              >
+                Add to Cart
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       </div>
-    </div>
     </>
   );
 }
