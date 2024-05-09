@@ -59,7 +59,7 @@ export default function About() {
             </div>
             }
         >
-        <Card style={{ maxWidth: '500px', height: '300px', overflow: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+        <Card style={{ maxWidth: '510px', height: '300px', overflow: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
             <p style={{ overflowWrap: 'break-word', wordBreak: 'break-all' }}>At Éclat Shop, we believe in providing high-quality products, exceptional customer service, and a seamless online shopping experience. We are committed to sustainability and ethical business practices, and we strive to make a positive impact in our community.</p>
             </Card>
         </Tab>
