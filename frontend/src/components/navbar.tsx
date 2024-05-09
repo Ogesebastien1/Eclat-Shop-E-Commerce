@@ -51,7 +51,7 @@ const MyNavbar = () => {
             ECLAT SHOP
           </p>
         </NavbarBrand>
-        <NavbarContent style={{ marginRight: "12rem", marginLeft: "12rem" }}>
+        <NavbarContent style={{ marginRight: "12rem" }}>
           <NavbarItem>
             <Link color="foreground" href="/contact">
               Contact
