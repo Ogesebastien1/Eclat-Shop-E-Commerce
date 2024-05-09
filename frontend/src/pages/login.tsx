@@ -35,7 +35,7 @@ export const Login = () => {
   } = useContext(LoginContext);
   const navigate = useNavigate();
 
-  const handleLoginr = async () => {
+  const handleLogin = async () => {
     if (!isFormValid) {
       toast.error("Please fill in all fields correctly.");
       return;
@@ -64,6 +64,15 @@ export const Login = () => {
         setToken(response.data.token);
         setLoggedIn(true);
       }
+
+      // Récupérer les données de l'utilisateur après la connexion réussie
+      const userResponse = await axios.get("http://localhost:8000/api/user", {
+        headers: {
+          Authorization: response.data.token,
+        },
+      });
+      setUserData(userResponse.data);
+
       setIsLoading(false);
       navigate("/shop");
     } catch (error: any) {
@@ -175,7 +184,7 @@ export const Login = () => {
               width: "100%",
             }}
             className="bg-sky-400"
-            onClick={handleLoginr}
+            onClick={handleLogin}
             disabled={isLoading}
           >
             {isLoading ? <Spinner color="default" /> : "Login !"}

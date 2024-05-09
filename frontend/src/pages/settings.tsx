@@ -67,7 +67,7 @@ export const Settings = () => {
   const handleChangePassword = async () => {
     try {
       const formData = {
-        email: userData.email,
+        email: userData?.email,
       };
       await axios.post(`http://localhost:8000/api/reset-password/update`, {
         headers: {

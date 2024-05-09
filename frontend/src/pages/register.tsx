@@ -121,12 +121,12 @@ export const Register = () => {
       >
         ← Back to Home
       </Link>
-      <Card className="max-w-[400px]">
+      <Card className="w-96">
         <CardHeader className="center flex-col">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-600">
             REGISTER
           </h1>
-          <div className="w-6 h-6">
+          <div className="w-48 h-48">
             <Lottie animationData={animationData} loop={true} />
           </div>
         </CardHeader>
@@ -184,11 +184,7 @@ export const Register = () => {
               isRequired
             />
             {passwordError2 && (
-              <Tooltip
-                text={passwordError2}
-                type="error"
-                placement="bottom-start"
-              >
+              <Tooltip placement="bottom-start">
                 <p style={{ color: "red", fontSize: "0.8rem" }}>
                   {passwordError2}
                 </p>

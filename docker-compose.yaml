@@ -65,6 +65,7 @@ services:
       CHOKIDAR_USEPOLLING: true
       WATCHPACK_POLLING: true # Use polling for file watching
       REACT_APP_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY} # Set the STRIPE_PUBLISHABLE_KEY environment variable
+      WDS_SOCKET_PORT: 3010 # Set the Webpack Dev Server socket port
     ports: # Map the port 3010 of the container to the port 3000 of the host
       - "3010:3000"
     volumes: # Mount the frontend directory to the container

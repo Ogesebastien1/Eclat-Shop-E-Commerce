@@ -20,7 +20,7 @@ interface User {
   avatar: string;
   email: string;
   login: string;
-  role: string[];
+  roles: string[];
 }
 
 const MyNavbar = () => {
@@ -37,15 +37,8 @@ const MyNavbar = () => {
     window.location.reload();
   };
 
-  useEffect(() => {
-    // Cette fonction sera exécutée chaque fois que `userData` change
-    console.log("userData has changed:", userData);
-    setKey((prevKey) => prevKey + 1); // Ajoutez cette ligne
-  }, [userData]); // `userData` est la dépendance de cet effet
-
   return (
     <div
-      key={key}
       style={{
         position: "fixed",
         top: "1%",
@@ -93,16 +86,18 @@ const MyNavbar = () => {
                 color="secondary"
                 size="sm"
                 src={
-                  isLoggedIn && userData.avatar
+                  isLoggedIn && userData?.avatar
                     ? userData.avatar
                     : "https://www.svgrepo.com/show/442075/avatar-default-symbolic.svg"
                 }
               />
             </DropdownTrigger>
-            {isLoggedIn ? (
+            {isLoggedIn && userData?.roles?.includes("ROLE_ADMIN") ? (
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="h-14 gap-2">
-                  <p className="font-semibold">Signed in as {userData.login}</p>
+                  <p className="font-semibold">
+                    Signed in as {userData?.login || "gest"}
+                  </p>
                 </DropdownItem>
                 <DropdownItem
                   key="settings"
@@ -110,14 +105,39 @@ const MyNavbar = () => {
                 >
                   My Settings
                 </DropdownItem>
-                {userData?.roles?.includes("ROLE_ADMIN") && (
-                  <DropdownItem
-                    key="team_settings"
-                    onClick={() => navigate("/admin/add-product")}
-                  >
-                    Admin
-                  </DropdownItem>
-                )}
+                <DropdownItem
+                  key="team_settings"
+                  onClick={() => navigate("/admin/add-product")}
+                >
+                  Admin
+                </DropdownItem>
+                <DropdownItem key="analytics">Analytics</DropdownItem>
+                <DropdownItem key="system">System</DropdownItem>
+                <DropdownItem key="configurations">Configurations</DropdownItem>
+                <DropdownItem key="help_and_feedback">
+                  Help & Feedback
+                </DropdownItem>
+                <DropdownItem
+                  key="logout"
+                  color="danger"
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </DropdownItem>
+              </DropdownMenu>
+            ) : isLoggedIn ? (
+              <DropdownMenu aria-label="Profile Actions" variant="flat">
+                <DropdownItem key="profile" className="h-14 gap-2">
+                  <p className="font-semibold">
+                    Signed in as {userData?.login || "gest"}
+                  </p>
+                </DropdownItem>
+                <DropdownItem
+                  key="settings"
+                  onClick={() => navigate("/settings")}
+                >
+                  My Settings
+                </DropdownItem>
                 <DropdownItem key="analytics">Analytics</DropdownItem>
                 <DropdownItem key="system">System</DropdownItem>
                 <DropdownItem key="configurations">Configurations</DropdownItem>

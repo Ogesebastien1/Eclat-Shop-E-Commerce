@@ -1,4 +1,5 @@
 import "./App.css";
+import React, { useContext, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
@@ -22,11 +23,40 @@ import DeliveryPage from "./pages/delivery";
 import Spline from "@splinetool/react-spline";
 import { useLocation } from "react-router-dom";
 import About from "./pages/aboutUs";
+import { LoginContext } from "./contexts/LoginContext";
+import axios from "axios";
 
 function App() {
   const { theme } = useTheme();
   const themeClass = theme === "dark" ? "dark" : "light";
+  const { setLoggedIn, setToken, setUserData, setIsLoadingUser } =
+    useContext(LoginContext);
   const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios
+        .get("http://localhost:8000/api/user", {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          setToken(token);
+          setLoggedIn(true);
+          setUserData(response.data);
+          setIsLoadingUser(false);
+        })
+        .catch(() => {
+          setLoggedIn(false);
+          localStorage.removeItem("token");
+          setIsLoadingUser(false);
+        });
+    } else {
+      setIsLoadingUser(false);
+    }
+  }, [setLoggedIn, setToken, setUserData, setIsLoadingUser]);
 
   return (
     <NextUIProvider>

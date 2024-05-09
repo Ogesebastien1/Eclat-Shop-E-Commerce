@@ -141,7 +141,7 @@ export const AddProduct = () => {
             <input
               type="file"
               accept=".png, .jpg, .jpeg"
-              onChange={(e) => setImage(e.target.files[0])}
+              onChange={(e) => setImage(e.target.files?.[0] || null)}
               required
             />
           </div>

@@ -244,7 +244,9 @@ export const ProductList = () => {
                         alt={product.name}
                         className="flex-shrink-0"
                         size="sm"
-                        src={product.photo}
+                        src={
+                          product.photo ? product.photo.toString() : undefined
+                        }
                       />
                       <div className="flex flex-col">
                         <span className="text-small">{product.name}</span>
@@ -304,10 +306,10 @@ export const ProductList = () => {
               label="Name"
               value={selectedProduct.name}
               onChange={(e) =>
-                setSelectedProduct((prev) => ({
-                  ...prev,
-                  name: e.target.value,
-                }))
+                setSelectedProduct((prev) => {
+                  if (prev === null) return null;
+                  return { ...prev, name: e.target.value };
+                })
               }
               className="mb-4"
             />
@@ -315,10 +317,10 @@ export const ProductList = () => {
               label="Description"
               value={selectedProduct.description}
               onChange={(e) =>
-                setSelectedProduct((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
+                setSelectedProduct((prev) => {
+                  if (prev === null) return null;
+                  return { ...prev, description: e.target.value };
+                })
               }
               className="mb-4"
             />
@@ -326,10 +328,10 @@ export const ProductList = () => {
               label="Price"
               value={selectedProduct.price}
               onChange={(e) =>
-                setSelectedProduct((prev) => ({
-                  ...prev,
-                  price: e.target.value,
-                }))
+                setSelectedProduct((prev) => {
+                  if (prev === null) return null;
+                  return { ...prev, price: e.target.value };
+                })
               }
               className="mb-4"
             />
@@ -337,17 +339,19 @@ export const ProductList = () => {
               label="Stock"
               value={selectedProduct.stock}
               onChange={(e) =>
-                setSelectedProduct((prev) => ({
-                  ...prev,
-                  stock: e.target.value,
-                }))
+                setSelectedProduct((prev) => {
+                  if (prev === null) return null;
+                  return { ...prev, stock: e.target.value };
+                })
               }
               className="mb-4"
             />
             <input
               type="file"
               accept=".png, .jpg, .jpeg"
-              onChange={(e) => setImage(e.target.files[0])}
+              onChange={(e) =>
+                setImage(e.target.files ? e.target.files[0] : null)
+              }
             />
             <Button onClick={handleUpdate} className="bg-blue-600 w-full mt-4">
               Update Product

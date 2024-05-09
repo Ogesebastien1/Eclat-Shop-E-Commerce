@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 export const ModifiePassword = () => {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
-  const [token, setToken] = useState(null); // Add this line
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
