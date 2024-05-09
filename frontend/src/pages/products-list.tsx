@@ -203,10 +203,10 @@ export const ProductList = () => {
       }}
     >
       <Link
-        href="/"
+        href="/shop"
         style={{ position: "absolute", top: "1rem", left: "1rem" }}
       >
-        ← Back to Home
+        ← Back to Shop
       </Link>
       <Link
         href="/admin/add-product"

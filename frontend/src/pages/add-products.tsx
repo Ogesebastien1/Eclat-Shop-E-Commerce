@@ -88,7 +88,7 @@ export const AddProduct = () => {
         href="/shop"
         style={{ position: "absolute", top: "1rem", left: "1rem" }}
       >
-        ← Back to Home
+        ← Back to Shop
       </Link>
       <Link
         href="/admin/products"
