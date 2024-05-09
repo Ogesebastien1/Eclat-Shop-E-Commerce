@@ -27,13 +27,13 @@ interface User {
 const MyNavbar = () => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
-  const { isLoggedIn, userData } = useContext(LoginContext) as unknown as {
-    isLoggedIn: boolean;
-    userData: User;
-  };
+  const { isLoggedIn, userData, setToken, setLoggedIn } = useContext(LoginContext)
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token")
+    setToken("")
+    setLoggedIn(false)
     window.location.reload();
   };
 

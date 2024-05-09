@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import axios from 'axios';
 
 interface User {
   roles: string[];
@@ -21,13 +21,13 @@ interface LoginContextProps {
 
 export const LoginContext = createContext<LoginContextProps>({
   isLoggedIn: false,
-  setLoggedIn: () => {},
+  setLoggedIn: () => { },
   token: "",
-  setToken: () => {},
-  userData: null, // Initialisez userData avec null
-  setUserData: () => {},
+  setToken: () => { },
+  userData: null,
+  setUserData: () => { },
   isLoadingUser: true,
-  setIsLoadingUser: () => {},
+  setIsLoadingUser: () => { },
 });
 
 export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -35,8 +35,37 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [token, setToken] = useState("");
-  const [userData, setUserData] = useState<User | null>(null); // Utilisez le type User pour userData
+  const [userData, setUserData] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      setIsLoadingUser(true);
+      try {
+        const response = await axios.get("http://localhost:8000/api/user", {
+          headers: {
+            Authorization: token,
+          },
+        });
+        setUserData(response.data);
+        setLoggedIn(true)
+      } catch (error) {
+        console.error(error);
+      }
+      setIsLoadingUser(false);
+    };
+
+    if (token) {
+      fetchUser();
+      console.log("userdata", userData)
+      console.log("token", token)
+      console.log("isLoggedIn", isLoggedIn)
+    } else if (sessionStorage.getItem("token")) {
+      setToken(sessionStorage.getItem("token") as string);
+    } else if (localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token") as string);
+    }
+  }, [token]);
 
   return (
     <LoginContext.Provider

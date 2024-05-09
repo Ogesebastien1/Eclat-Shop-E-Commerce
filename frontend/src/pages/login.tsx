@@ -17,7 +17,6 @@ import { useNavigate } from "react-router-dom";
 import animationData from "../animations/login-animation.json";
 import { toast } from "react-toastify";
 import { LoginContext } from "../contexts/LoginContext";
-import { set } from "animejs";
 
 export const Login = () => {
   const [login, setLogin] = useState("");
@@ -32,6 +31,7 @@ export const Login = () => {
     setLoggedIn,
     setUserData,
     isLoadingUser,
+    userData,
   } = useContext(LoginContext);
   const navigate = useNavigate();
 
@@ -61,6 +61,7 @@ export const Login = () => {
         setToken(response.data.token);
         setLoggedIn(true);
       } else {
+        sessionStorage.setItem("token", response.data.token);
         setToken(response.data.token);
         setLoggedIn(true);
       }
@@ -72,8 +73,8 @@ export const Login = () => {
         },
       });
       setUserData(userResponse.data);
-
       setIsLoading(false);
+      setLoggedIn(true);
       navigate("/shop");
     } catch (error: any) {
       if (error.response.status === 401) {
@@ -91,7 +92,7 @@ export const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn && !isLoadingUser) {
-      window.location.href = "/shop";
+      navigate("/shop");
     }
   }, [isLoggedIn, isLoadingUser]);
 
