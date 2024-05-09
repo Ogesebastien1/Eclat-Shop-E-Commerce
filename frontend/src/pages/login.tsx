@@ -84,7 +84,7 @@ export const Login = () => {
     if (isLoggedIn && !isLoadingUser) {
       window.location.href = "/shop";
     }
-  }, []);
+  }, [isLoggedIn, isLoadingUser]);
 
   // Mettre à jour l'état isFormValid chaque fois que l'état des champs change
   useEffect(() => {

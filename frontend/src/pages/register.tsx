@@ -82,7 +82,7 @@ export const Register = () => {
     if (isLoggedIn && !isLoadingUser) {
       window.location.href = "/shop";
     }
-  }, []);
+  }, [isLoggedIn, isLoadingUser]);
 
   // Mettre à jour l'état isFormValid chaque fois que l'état des champs change
   useEffect(() => {
@@ -126,7 +126,9 @@ export const Register = () => {
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-600">
             REGISTER
           </h1>
-          <Lottie animationData={animationData} loop={true} />
+          <div className="w-6 h-6">
+            <Lottie animationData={animationData} loop={true} />
+          </div>
         </CardHeader>
         <Divider />
         <CardBody>

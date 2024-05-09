@@ -17,6 +17,9 @@ import {
 import { LoginContext } from "../contexts/LoginContext";
 import Modal from "react-modal";
 import { useTheme } from "../contexts/themeContext";
+import Lottie from "lottie-react";
+import darkloadingData from "../animations/dark-loading.json";
+import lightLoadingData from "../animations/light-loading.json";
 
 interface Product {
   id: number;
@@ -36,8 +39,14 @@ export const ProductList = () => {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Add this ligne
   const { theme } = useTheme();
+  let animationData = theme === "dark" ? darkloadingData : lightLoadingData;
   let backgroundcolor = theme == "dark" ? "#18181b" : "white";
+
+  useEffect(() => {
+    animationData = theme === "dark" ? darkloadingData : lightLoadingData;
+  }, [theme]);
 
   useEffect(() => {
     if (
@@ -59,6 +68,7 @@ export const ProductList = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setIsLoading(true); // Set loading to true before fetching
       try {
         const response = await axios.get<{
           status: string;
@@ -72,6 +82,8 @@ export const ProductList = () => {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false); // Set loading to false after fetching
       }
     };
 
@@ -203,57 +215,68 @@ export const ProductList = () => {
         Add product →
       </Link>
       <Card className="center flex max-w-7xl min-w-96">
-        <CardHeader className="center flex-col">
+        <CardHeader className="center flex-col mb-4">
           <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-600">
             Products
           </h1>
         </CardHeader>
         <Divider />
-        <CardBody className="center flex-col justify-center">
-          <Listbox items={products} label="Products" selectionMode="single">
-            {(product) => (
-              <ListboxItem
-                key={product.id}
-                textValue={product.name}
-                className="p-2 w-full pl-5 pr-0"
-                onClick={() => handleEdit(product.id)}
-              >
-                <div className="flex gap-2 items-center">
-                  <Avatar
-                    alt={product.name}
-                    className="flex-shrink-0"
-                    size="sm"
-                    src={product.photo}
-                  />
-                  <div className="flex flex-col">
-                    <span className="text-small">{product.name}</span>
-                    <span className="text-tiny text-default-400">
-                      {product.description}
-                    </span>
-                    <span className="text-tiny text-default-400">
-                      {product.stock}
-                    </span>
-                    <span className="text-tiny text-default-400">
-                      {product.price} €
-                    </span>
-                  </div>
-                </div>
-                <div className="flex justify-center m-1">
-                  <Button
-                    onClick={() => handleDelete(product.id)}
-                    className="bg-red-600 w-full"
-                    disabled={deletingId !== null}
+        <CardBody
+          className="center flex-col justify-center"
+          style={{ maxHeight: "300px", overflowY: "auto" }}
+        >
+          {isLoading ? (
+            <div className="center flex-col w-52 h-30 ml-20 justify-center">
+              <Lottie animationData={animationData} loop={true} />
+            </div>
+          ) : (
+            <div style={{ position: "relative", zIndex: 1, marginTop: "7rem" }}>
+              <Listbox items={products} label="Products" selectionMode="single">
+                {(product) => (
+                  <ListboxItem
+                    key={product.id}
+                    textValue={product.name}
+                    className="p-2 w-full pl-5 pr-0"
+                    onClick={() => handleEdit(product.id)}
                   >
-                    {deletingId === product.id ? (
-                      <Spinner color="default" />
-                    ) : (
-                      "Delete"
-                    )}
-                  </Button>
-                </div>
-              </ListboxItem>
-            )}
-          </Listbox>
+                    <div className="flex gap-2 items-center">
+                      <Avatar
+                        alt={product.name}
+                        className="flex-shrink-0"
+                        size="sm"
+                        src={product.photo}
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-small">{product.name}</span>
+                        <span className="text-tiny text-default-400">
+                          {product.description}
+                        </span>
+                        <span className="text-tiny text-default-400">
+                          {product.stock}
+                        </span>
+                        <span className="text-tiny text-default-400">
+                          {product.price} €
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-center m-1">
+                      <Button
+                        onClick={() => handleDelete(product.id)}
+                        className="bg-red-600 w-full"
+                        disabled={deletingId !== null}
+                      >
+                        {deletingId === product.id ? (
+                          <Spinner color="default" />
+                        ) : (
+                          "Delete"
+                        )}
+                      </Button>
+                    </div>
+                  </ListboxItem>
+                )}
+              </Listbox>
+            </div>
+          )}
         </CardBody>
       </Card>
       <Modal

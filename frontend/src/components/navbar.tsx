@@ -30,6 +30,8 @@ const MyNavbar = () => {
     isLoggedIn: boolean;
     userData: User;
   };
+  const [key, setKey] = useState(0);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.location.reload();
@@ -38,10 +40,12 @@ const MyNavbar = () => {
   useEffect(() => {
     // Cette fonction sera exécutée chaque fois que `userData` change
     console.log("userData has changed:", userData);
+    setKey((prevKey) => prevKey + 1); // Ajoutez cette ligne
   }, [userData]); // `userData` est la dépendance de cet effet
 
   return (
     <div
+      key={key}
       style={{
         position: "fixed",
         top: "1%",
