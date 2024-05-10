@@ -13,6 +13,7 @@ import lightanimation from "../animations/light-loading.json";
 import Lottie from "react-lottie";
 import { useTheme } from "../contexts/themeContext";
 import MyNavbar from "../components/navbar";
+import Cart from "../components/cart";
 
 interface Item {
   photo: string;
@@ -124,6 +125,7 @@ export function Shop() {
               </Card>
             ))}
           </div>
+          <Cart />
         </div>
       )}
     </div>

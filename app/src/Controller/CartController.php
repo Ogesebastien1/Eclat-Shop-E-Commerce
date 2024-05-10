@@ -12,9 +12,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Orders;
 use App\Entity\OrdersItem;
 use Symfony\Component\HttpFoundation\Cookie;
+use Psr\Log\LoggerInterface;
 
 class CartController extends AbstractController
 {
+
+    
     #[Route('/api/carts/validate', name: 'cart_checkout', methods: ['POST'])]
     public function checkoutCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository): Response
     {
@@ -56,6 +59,8 @@ class CartController extends AbstractController
         return $response;
     }
 
+
+    
     #[Route('/api/carts/{id}', name: 'cart_add')]
     public function addToCart(int $id, ProductRepository $productRepository, Request $request): Response
     {
@@ -78,19 +83,31 @@ class CartController extends AbstractController
         return $response;
     }
 
-    #[Route('/api/carts/{id}', name: 'cart_remove', methods: ['DELETE'])]
-    public function removeFromCart(int $id, Request $request): Response
+    #[Route('/api/carts/remove/{id}', name: 'cart_remove', methods: ['DELETE'])]
+    public function removeFromCart(int $id, ProductRepository $productRepository, Request $request): Response
     {
         $cart = json_decode($request->cookies->get('cart', '{}'), true);
-
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
+        $product = $productRepository->findProductById($id);
+        if (!$product) {
+            return $this->json(['message' => 'Product not found'], 404);
         }
 
+        $productId = $product->getId();
+        if (!isset($cart[$productId])) {
+            return $this->json(['message' => 'Product not found in cart'], 404);
+        }
+        
+        $cart[$productId]['quantity']--;
+        if ($cart[$productId]['quantity'] <= 0) {
+            unset($cart[$productId]);
+        }
+        
         $response = $this->json(['message' => 'Product removed from cart successfully']);
-        $response->headers->setCookie(new Cookie('cart', json_encode($cart), time() + 3600));
+        $cookie = Cookie::create('cart', json_encode($cart), time() + 3600, '/', null, false, false);
+        $response->headers->setCookie($cookie);
         return $response;
     }
+
 
     #[Route('/api/carts', name: 'cart_show')]
     public function showCart(Request $request, ProductRepository $productRepository): Response
