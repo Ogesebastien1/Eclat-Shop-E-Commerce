@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Modal,
   ModalContent,
@@ -16,17 +16,21 @@ import {
   Avatar,
 } from "@nextui-org/react";
 import axios from "axios";
+import { LoginContext } from "../contexts/LoginContext";
 
 
 const Cart = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [cartData, setCartData] = useState(null);
+  const { token } = useContext(LoginContext);
 
   useEffect(() => {
     fetchCartItems();
   }, []);
 
   const fetchCartItems = async () => {
+    //print content of the cookie 
+
     axios
       .get("http://localhost:8000/api/carts", { 
         headers: {
@@ -72,9 +76,10 @@ const Cart = () => {
     }
 
     axios
-      .post(`http://localhost:8000/api/carts/validate`, {}, {
+      .post(`http://localhost:8000/api/carts/validate`, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
         withCredentials: true,
       })

@@ -13,13 +13,17 @@ use App\Entity\Orders;
 use App\Entity\OrdersItem;
 use Symfony\Component\HttpFoundation\Cookie;
 use Psr\Log\LoggerInterface;
+use Firebase\JWT\JWT;
+use App\Repository\UserRepository;
+use Firebase\JWT\Key;
+
 
 class CartController extends AbstractController
 {
 
     
     #[Route('/api/carts/validate', name: 'cart_checkout', methods: ['POST'])]
-    public function checkoutCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository): Response
+    public function checkoutCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, UserRepository $userRepository): Response
     {
         $cart = json_decode($request->cookies->get('cart', '{}'), true);
         if (empty($cart)) {
@@ -48,7 +52,18 @@ class CartController extends AbstractController
         $orders->setUuid(uniqid());
         $orders->setTotalPrice($totalPrice);
 
-        $user = $this->getUser();
+        // Get the JWT from the request
+        $jwt = str_replace('Bearer ', '', $request->headers->get('Authorization'));
+
+        // Define the decoding key and the allowed algorithms
+        $publicKey = file_get_contents(__DIR__ . '/../../config/jwt/public.pem');
+
+        // Decode the JWT
+        $decodedJwt = JWT::decode($jwt, new Key($publicKey, 'RS256'));
+
+        // Get the current user
+        $user = $userRepository->findOneByEmail($decodedJwt->username);
+
         $orders->setUser($user);
 
         $entityManager->persist($orders);
@@ -115,13 +130,17 @@ class CartController extends AbstractController
         $cart = json_decode($request->cookies->get('cart', '{}'), true);
         $cartData = array_map(function ($item) use ($productRepository) {
             $product = $productRepository->findProductById($item['product']);
-            return [
-                'product_id' => $product->getId(),
-                'name' => $product->getName(),
-                'quantity' => $item['quantity'],
-                'price' => $product->getPrice(),
-            ];
+            if ($product) {
+                return [
+                    'product_id' => $product->getId(),
+                    'name' => $product->getName(),
+                    'quantity' => $item['quantity'],
+                    'price' => $product->getPrice(),
+                ];
+            }
         }, $cart);
+
+        $cartData = array_filter($cartData);
 
         $total = array_reduce($cartData, function ($carry, $item) {
             return $carry + ($item['quantity'] * $item['price']);
