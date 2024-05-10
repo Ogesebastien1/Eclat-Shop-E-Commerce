@@ -40,7 +40,7 @@ export default function Details() {
   }, []);
 
 
-  const addToCart = (productId: any, event: any) => {
+ const addToCart = (productId: any, event: any) => {
     console.log("Product ID:", productId);
 
     axios
@@ -48,6 +48,7 @@ export default function Details() {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      withCredentials: true,
     })
     .then((response) => {
       console.log(response.data);
@@ -63,6 +64,7 @@ export default function Details() {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       })
       .then((response) => {
         console.log(response.data);
