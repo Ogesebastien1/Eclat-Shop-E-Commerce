@@ -119,6 +119,28 @@ class CartController extends AbstractController
         return $response;
     }
 
+    #[Route('/api/carts/purge/{id}', name: 'cart_delete', methods: ['DELETE'])]
+    public function deleteFromCart(int $id, ProductRepository $productRepository, Request $request): Response
+    {
+        $cart = json_decode($request->cookies->get('cart', '{}'), true);
+        $product = $productRepository->findProductById($id);
+        if (!$product) {
+            return $this->json(['message' => 'Product not found'], 404);
+        }
+
+        $productId = $product->getId();
+        if (!isset($cart[$productId])) {
+            return $this->json(['message' => 'Product not found in cart'], 404);
+        }
+        
+        unset($cart[$productId]);
+        
+        $response = $this->json(['message' => 'Product deleted from cart successfully']);
+        $cookie = Cookie::create('cart', json_encode($cart), time() + 3600, '/', null, false, false);
+        $response->headers->setCookie($cookie);
+        return $response;
+    }
+
 
     #[Route('/api/carts', name: 'cart_show')]
     public function showCart(Request $request, ProductRepository $productRepository): Response

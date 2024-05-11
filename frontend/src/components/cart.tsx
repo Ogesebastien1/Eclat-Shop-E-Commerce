@@ -30,7 +30,6 @@ const Cart = () => {
   }, []);
 
   const fetchCartItems = async () => {
-    //print content of the cookie
 
     axios
       .get("http://localhost:8000/api/carts", {
@@ -74,6 +73,19 @@ const Cart = () => {
       });
   };
 
+  const purgeFromCard = (productId: any, event: any) => {
+    axios
+      .delete(`http://localhost:8000/api/carts/purge/${productId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        fetchCartItems();
+      })
+      .catch((error) => {
+        console.error("There was an error!", error);
+      });
+  };
+
   const checkoutCart = () => {
     if (cartData && Object.keys((cartData as any).cart).length === 0) {
       alert("Votre panier est vide");
@@ -93,7 +105,6 @@ const Cart = () => {
         }
       )
       .then((response) => {
-        // Vous pouvez rediriger l'utilisateur vers une page de confirmation de commande ici, par exemple :
         navigate(`/delivery?command=${response.data.ordersId}`);
       })
       .catch((error) => {
@@ -105,6 +116,22 @@ const Cart = () => {
           );
           console.error("Response data:", error.response.data);
         }
+      });
+  };
+
+  const addToCart = (productId: any, productName: string, event: any) => {
+    axios
+      .post(`http://localhost:8000/api/carts/${productId}`, null, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        fetchCartItems();
+      })
+      .catch((error) => {
+        console.error("There was an error!", error);
       });
   };
 
@@ -153,14 +180,14 @@ const Cart = () => {
                         <Accordion
                           key={key}
                           style={{
-                            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
+                            boxShadow: "0px 0px 1px 1px rgba(129, 32, 236, 0.7)",
                             borderRadius: "8px",
                             margin: "10px 0",
                           }}
                         >
                           <AccordionItem
                             title={
-                              <div style={{ textAlign: "center" }}>
+                              <div>
                                 {item.name}
                               </div>
                             }
@@ -172,9 +199,36 @@ const Cart = () => {
                                 alignItems: "space-between",
                               }}
                             >
-                              <p style={{ margin: "5px" }}>
-                                Quantity: {item.quantity}
+                              <p style={{ margin: "5px 0", alignSelf: "center" }}>
+                                Quantity 
                               </p>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                
+                                <Button
+                                  color="success"
+                                  variant="light"
+                                  onClick={(event) => addToCart(key, item.name, event)}
+                                >
+                                  +
+                                </Button>
+                                <p style={{ margin: "5px" }}>
+                                 {item.quantity}
+                                </p>
+                                <Button
+                                  color="danger"
+                                  variant="light"
+                                  onClick={(event) =>
+                                    deleteFromCart(key, event)
+                                  }
+                                >
+                                  -
+                                </Button>
+                              </div>
                               <div
                                 style={{
                                   display: "flex",
@@ -188,7 +242,7 @@ const Cart = () => {
                                   color="danger"
                                   variant="light"
                                   onClick={(event) =>
-                                    deleteFromCart(key, event)
+                                    purgeFromCard(key, event)
                                   }
                                 >
                                   Delete
