@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { LoginContext } from "../contexts/LoginContext";
 
+
 interface User {
   avatar: string;
   email: string;
@@ -38,7 +39,7 @@ const MyNavbar = () => {
   };
 
   return (
-    <Navbar style={{ position: "sticky", top: 0, zIndex: 1000, width: "100%" }}>
+    <Navbar style={{ position: "fixed", top: 0, zIndex: 1000, width: "100%" }}>
       <div style={{ position: "absolute", top: "1rem", left: "1rem" }}>
         <NavbarBrand>
           <p

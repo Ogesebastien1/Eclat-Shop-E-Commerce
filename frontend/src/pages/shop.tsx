@@ -93,7 +93,7 @@ export function Shop() {
             style={{
               zIndex: 0,
               overflow: "auto",
-              marginTop: "1rem",
+              marginTop: "5rem", 
               marginBottom: "1rem",
             }}
           >
@@ -107,6 +107,9 @@ export function Shop() {
                 onClick={() =>
                   navigate(`/details/${item.id}`, { state: { item } })
                 }
+                style={{
+                  width: "400px", // Increase the width to make the cards larger
+                }}
               >
                 <CardBody className="overflow-visible p-0">
                   <Image
