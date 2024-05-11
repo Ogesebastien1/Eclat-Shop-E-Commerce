@@ -66,7 +66,7 @@ export default function Details() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "90vh",
+          height: "95vh",
           padding: "20px",
         }}
       >
@@ -121,11 +121,9 @@ export default function Details() {
                 position: 'absolute',
                 bottom: 0,
                 left: 0,
-                width: 'calc(100% - 8px)',
                 display: 'flex',
                 justifyContent: 'space-between',
-                padding: '10px',
-                border: '3px solid rgba(255, 255, 255, 0.2)',
+                padding: '10px',    
                 borderRadius: '10px',
                 boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
                 marginLeft: '1px',
