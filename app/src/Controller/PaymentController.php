@@ -24,7 +24,7 @@ class PaymentController extends AbstractController
         $logger->info('Creating a checkout session with the following data: ' . json_encode($data));
 
         $lineItems = array_map(function($item) use ($productRepository) {
-            if ($item['productName'] !== 'express' && $item['productName'] !== 'standard') {
+            if ($item['productName'] !== 'Delivery express' && $item['productName'] !== 'Delivery standard') {
                 $product = $productRepository->findOneBy(['name' => $item['productName']]);
                 if (!$product) {
                     throw new \Exception('Product not found');
