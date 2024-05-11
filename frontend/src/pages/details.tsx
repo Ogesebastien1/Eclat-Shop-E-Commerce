@@ -10,6 +10,8 @@ import {
 import MyNavbar from "../components/navbar";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
+import Cart from "../components/cart";
 
 interface Item {
   photo: string;
@@ -39,9 +41,7 @@ export default function Details() {
     }
   }, []);
 
-  const addToCart = (productId: any, event: any) => {
-    console.log("Product ID:", productId);
-
+  const addToCart = (productId: any, productName: string, event: any) => {
     axios
       .post(`http://localhost:8000/api/carts/${productId}`, null, {
         headers: {
@@ -49,8 +49,11 @@ export default function Details() {
         },
         withCredentials: true,
       })
-      .then((response) => {})
+      .then((response) => {
+        toast.success(`${productName} added to cart!`);
+      })
       .catch((error) => {
+        toast.error(`There was an error adding ${productName} to the cart.`);
         console.error("There was an error!", error);
       });
   };
@@ -124,13 +127,16 @@ export default function Details() {
                 color="default"
                 radius="lg"
                 size="sm"
-                onClick={(event) => addToCart(Number(item.id), event)}
+                onClick={(event) =>
+                  addToCart(Number(item.id), item.name, event)
+                }
               >
                 Add to Cart
               </Button>
             </CardFooter>
           </Card>
         </div>
+        <Cart />
       </div>
     </>
   );
