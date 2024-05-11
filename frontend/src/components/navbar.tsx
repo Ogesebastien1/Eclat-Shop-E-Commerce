@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { LoginContext } from "../contexts/LoginContext";
 
+
 interface User {
   avatar: string;
   email: string;
@@ -38,7 +39,7 @@ const MyNavbar = () => {
   };
 
   return (
-    <Navbar style={{ position: "sticky", top: 0, zIndex: 1000, width: "100%" }}>
+    <Navbar style={{ position: "fixed", top: 0, zIndex: 1000, width: "100%",  }}>
       <div style={{ position: "absolute", top: "1rem", left: "1rem" }}>
         <NavbarBrand>
           <p
@@ -52,7 +53,7 @@ const MyNavbar = () => {
           </p>
         </NavbarBrand>
       </div>
-      <div style={{ position: "absolute", top: "1.5rem", left: "50%", transform: "translate(-50%, -50%)" }}>
+      <div style={{ position: "absolute", top: "1.5rem", left: "50%", transform: "translate(-50%, -50%)", marginTop:"5px" }}>
         <NavbarContent>
           <NavbarItem>
             <Link color="foreground" href="/contact">
@@ -103,10 +104,11 @@ const MyNavbar = () => {
           ) : isLoggedIn ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile" className="h-14 gap-2" onClick={() => navigate("/settings")}>
-                <p className="font-semibold">
-                  Signed in as {userData?.login || "gest"}
+                <p className="font-semibold" style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
+                  {userData?.login || "guest"}
                 </p>
               </DropdownItem>
+              
               <DropdownItem key="logout" color="danger" onClick={handleLogout}>
                 Log Out
               </DropdownItem>
@@ -118,9 +120,6 @@ const MyNavbar = () => {
               </DropdownItem>
               <DropdownItem key="signup" onClick={() => navigate("/Register")}>
                 Sign Up
-              </DropdownItem>
-              <DropdownItem key="contact" onClick={() => navigate("/contact")}>
-                Contact
               </DropdownItem>
             </DropdownMenu>
           )}

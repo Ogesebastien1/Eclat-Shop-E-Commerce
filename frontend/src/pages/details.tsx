@@ -66,84 +66,82 @@ export default function Details() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "90vh",
+          height: "95vh",
+          padding: "20px",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            padding: "2rem",
-          }}
-        >
-          <div style={{ flex: 1, width: "100%" }}>
-            <Accordion variant="splitted" className="w-full pt-5">
+       <div style={{ display: 'flex', flexDirection: 'row', gap: '20px', width: '70%' }}>
+          <div style={{ flex: 1, maxWidth: '50%', overflow: 'auto' }}>
+            <Accordion variant="splitted">
               <AccordionItem
                 key="1"
-                aria-label="Product Details"
                 title="Product Details"
-                className="break-words"
               >
                 {item.description}
               </AccordionItem>
               <AccordionItem
                 key="2"
-                aria-label="Shipping Information"
                 title="Shipping Information"
-                className="break-words"
               >
                 "We offer free shipping worldwide. The product will be delivered
                 within 2-3 weeks."
               </AccordionItem>
               <AccordionItem
                 key="3"
-                aria-label="Return Policy"
                 title="Return Policy"
-                className="break-words"
               >
                 "We accept returns within 30 days of the purchase date."
               </AccordionItem>
             </Accordion>
           </div>
-          <div style={{ flex: 1 }} className="w-full pr-5">
-            <Card
-              isFooterBlurred
-              radius="lg"
-              className="border-none m-4"
-              style={{ width: "100%", minHeight: "100px", height: "auto" }}
+          <div style={{ flex: 1, maxWidth: '50%' }}>
+          <Card
+            isFooterBlurred
+            radius="lg"
+            style={{
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              overflow: 'hidden',
+              width: '100%', 
+              height: '80%', 
+              position: 'relative' 
+            }}
             >
-              <Image
-                ref={imageRef}
-                alt={item.name}
-                className="object-cover w-full h-full imgpersonalized"
-                src={item.photo}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-              <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-                <p
-                  className="text-tiny text-white/90"
-                  style={{
-                    marginLeft: "90px",
-                    fontSize: "20px",
-                    color: "white",
-                  }}
-                >
-                  {item.price} €
-                </p>
-                <Button
-                  className="text-tiny text-white bg-white/20"
-                  variant="flat"
-                  color="default"
-                  radius="lg"
-                  size="sm"
-                  onClick={(event) =>
-                    addToCart(Number(item.id), item.name, event)
-                  }
-                >
-                  Add to Cart
-                </Button>
-              </CardFooter>
+            <Image
+              src={item.photo}
+              style={{
+                maxWidth: '100%', 
+                maxHeight: '100%', 
+              }}
+            />
+            <CardFooter
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '10px',    
+                borderRadius: '10px',
+                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                marginLeft: '1px',
+                zIndex: 10,
+              }}
+            >
+              <p style={{ textTransform: 'uppercase', fontWeight: 'bold'}}>{item.name}</p>
+              <p style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>{item.price} €</p>
+              <Button
+                style={{
+                  marginLeft: 'auto',
+                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                }}
+                onClick={(event) => addToCart(Number(item.id), item.name, event)}
+              >
+                Add to card
+              </Button>
+            </CardFooter>
             </Card>
             <Cart />
           </div>
