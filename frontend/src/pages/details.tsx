@@ -112,8 +112,8 @@ export default function Details() {
             <Image
               src={item.photo}
               style={{
-                maxWidth: '90%', 
-                maxHeight: '90%', 
+                maxWidth: '100%', 
+                maxHeight: '100%', 
               }}
             />
             <CardFooter
@@ -121,20 +121,27 @@ export default function Details() {
                 position: 'absolute',
                 bottom: 0,
                 left: 0,
-                width: '100%',
+                width: 'calc(100% - 8px)',
                 display: 'flex',
-                justifyContent: 'space-between', 
-                padding: '10px',  
+                justifyContent: 'space-between',
+                padding: '10px',
+                border: '3px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '10px',
+                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                marginLeft: '1px',
+                zIndex: 10,
               }}
-              >
-              <p style={{ marginLeft: "300px" }}>{item.price} €</p>
+            >
+              <p style={{ textTransform: 'uppercase', fontWeight: 'bold'}}>{item.name}</p>
+              <p style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>{item.price} €</p>
               <Button
                 style={{
-                  marginLeft: 'auto' 
+                  marginLeft: 'auto',
+                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
                 }}
                 onClick={(event) => addToCart(Number(item.id), item.name, event)}
               >
-                Add to Cart
+                Add to card
               </Button>
             </CardFooter>
             </Card>

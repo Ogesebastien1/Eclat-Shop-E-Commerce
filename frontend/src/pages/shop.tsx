@@ -122,7 +122,7 @@ export function Shop() {
                   />
                 </CardBody>
                 <CardFooter className="text-small justify-between">
-                  <b>{item.name}</b>
+                  <b style={{ textTransform: 'uppercase' }}>{item.name}</b>
                   <p className="text-default-500">{item.price} €</p>
                 </CardFooter>
               </Card>
