@@ -19,58 +19,62 @@ class PaymentController extends AbstractController
     #[Route('/api/payment/create-checkout-session', name: 'create_checkout_session', methods: ['POST'])]
     public function createCheckoutSession(Request $request, LoggerInterface $logger, ProductRepository $productRepository): Response
     {
-        $data = json_decode($request->getContent(), true);
+        try {
+            $data = json_decode($request->getContent(), true);
 
-        $logger->info('Creating a checkout session with the following data: ' . json_encode($data));
+            $logger->info('Creating a checkout session with the following data: ' . json_encode($data));
 
-        $lineItems = array_map(function($item) use ($productRepository) {
-            if ($item['productName'] !== 'Delivery express' && $item['productName'] !== 'Delivery standard') {
-                $product = $productRepository->findOneBy(['name' => $item['productName']]);
-                if (!$product) {
-                    throw new \Exception('Product not found');
+            $lineItems = array_map(function($item) use ($productRepository) {
+                if ($item['productName'] !== 'Delivery express' && $item['productName'] !== 'Delivery standard') {
+                    $product = $productRepository->findOneBy(['name' => $item['productName']]);
+                    if (!$product) {
+                        throw new \Exception('Product not found');
+                    }
+                
+                    return [
+                        'price_data' => [
+                            'currency' => 'eur',
+                            'product_data' => [
+                                'name' => $product->getName(),
+                                'images' => [$product->getPhoto()],
+                            ],
+                            'unit_amount' => $product->getPrice() * 100,
+                        ],
+                        'quantity' => $item['quantity'],
+                    ];
+                } else {
+                    // Handle delivery information
+                    return [
+                        'price_data' => [
+                            'currency' => 'eur',
+                            'product_data' => [
+                                'name' => $item['productName'],
+                            ],
+                            'unit_amount' => $item['unitAmount'],
+                        ],
+                        'quantity' => $item['quantity'],
+                    ];
                 }
-            
-                return [
-                    'price_data' => [
-                        'currency' => 'eur',
-                        'product_data' => [
-                            'name' => $product->getName(),
-                            'images' => [$product->getPhoto()],
-                        ],
-                        'unit_amount' => $product->getPrice() * 100,
-                    ],
-                    'quantity' => $item['quantity'],
-                ];
-            } else {
-                // Handle delivery information
-                return [
-                    'price_data' => [
-                        'currency' => 'eur',
-                        'product_data' => [
-                            'name' => $item['productName'],
-                        ],
-                        'unit_amount' => $item['unitAmount'],
-                    ],
-                    'quantity' => $item['quantity'],
-                ];
-            }
-        }, $data['items']);
+            }, $data['items']);
 
-        // Set the Stripe API key
-        $stripeSecretKey = $this->getParameter('STRIPE_SECRET_KEY');
-        Stripe::setApiKey($stripeSecretKey);
+            // Set the Stripe API key
+            $stripeSecretKey = $this->getParameter('STRIPE_SECRET_KEY');
+            Stripe::setApiKey($stripeSecretKey);
 
-        $session = Session::create([
-            'payment_method_types' => ['card'],
-            'line_items' => $lineItems,
-            'mode' => 'payment',
-            'success_url' => 'http://localhost:3010/success',
-            'cancel_url' => 'http://localhost:3010/shop',
-        ]);
+            $session = Session::create([
+                'payment_method_types' => ['card'],
+                'line_items' => $lineItems,
+                'mode' => 'payment',
+                'success_url' => 'http://localhost:3010/success',
+                'cancel_url' => 'http://localhost:3010/shop',
+            ]);
 
-        return $this->json(['id' => $session->id]);
+            return $this->json(['id' => $session->id]);
+        } catch (\Exception $e) {
+            $logger->error('Error while creating a checkout session: ' . $e->getMessage());
+            return $this->json(['error' => 'Error while creating a checkout session: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
-
     // #[Route('/api/payment', name: 'create_payment', methods: ['POST'])]
     // public function createPayment(Request $request, EntityManagerInterface $em): Response
     // {

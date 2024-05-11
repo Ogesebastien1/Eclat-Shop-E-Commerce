@@ -42,24 +42,28 @@ class ResetPasswordController extends AbstractController
     #[Route('', name: 'app_forgot_password_request')]
     public function request(Request $request, MailerInterface $mailer, TranslatorInterface $translator): Response
     {
-        $form = $this->createForm(ResetPasswordRequestFormType::class);
-        $this->logger->info('Creating form for password reset request.');
+        try {
+            $form = $this->createForm(ResetPasswordRequestFormType::class);
+            $this->logger->info('Creating form for password reset request.');
 
-        // Log the content of the request
-        $this->logger->info('Request content: ' . $request->getContent());
+            // Log the content of the request
+            $this->logger->info('Request content: ' . $request->getContent());
 
-        $form->handleRequest($request);
+            $form->handleRequest($request);
 
-        $this->logger->info('form content' . $form->get('email')->getData());
+            $this->logger->info('form content' . $form->get('email')->getData());
 
-
-        if ($form->get('email')->getData() !== "") {
-            $this->logger->info('Form is submitted and valid. Processing password reset email.');
-            return $this->processSendingPasswordResetEmail(
-                $form->get('email')->getData(),
-                $mailer,
-                $translator
-            );
+            if ($form->get('email')->getData() !== "") {
+                $this->logger->info('Form is submitted and valid. Processing password reset email.');
+                return $this->processSendingPasswordResetEmail(
+                    $form->get('email')->getData(),
+                    $mailer,
+                    $translator
+                );
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('An error occurred while processing the form: ' . $e->getMessage());
+            return new JsonResponse(['message' => 'An error occurred while processing the form: ' . $e->getMessage(), 'error_code' => 500], 500);
         }
 
         return new JsonResponse(['message' => 'Invalid form data.', 'error_code' => 400], 400);
@@ -68,8 +72,13 @@ class ResetPasswordController extends AbstractController
     #[Route('/check-email', name: 'app_check_email')]
     public function checkEmail(): Response
     {
-        if (null === ($resetToken = $this->getTokenObjectFromSession())) {
-            $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
+        try {
+            if (null === ($resetToken = $this->getTokenObjectFromSession())) {
+                $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('An error occurred while getting the reset token: ' . $e->getMessage());
+            return new JsonResponse(['message' => 'An error occurred while getting the reset token: ' . $e->getMessage(), 'error_code' => 500], 500);
         }
 
         return new JsonResponse(['resetToken' => $resetToken]);
@@ -78,9 +87,16 @@ class ResetPasswordController extends AbstractController
     #[Route('/reset', name: 'app_reset_password')]
     public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, MailerInterface $mailer, ?string $token = null): Response
     {
+        try {
+            $data = json_decode($request->getContent(), true);
+            if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Invalid JSON: ' . json_last_error_msg());
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('An error occurred while decoding the request content: ' . $e->getMessage());
+            return new JsonResponse(['message' => 'An error occurred while decoding the request content: ' . $e->getMessage(), 'error_code' => 500], 500);
+        }
 
-        $data = json_decode($request->getContent(), true);
-        $this->logger->info('Request content: ' . $request->getContent());
         $token = $data["content"]['token'] ?? null;
         $plainPassword = $data["content"]['plainPassword'] ?? null;
         $email = $data["content"]['email'] ?? null;
@@ -92,39 +108,47 @@ class ResetPasswordController extends AbstractController
         }
 
         if (null === $token) {
-            throw $this->createNotFoundException('No reset password token found in the URL or in the session.');
+            $this->logger->error('No reset password token found in the URL or in the session.');
+            return new JsonResponse(['message' => 'No reset password token found in the URL or in the session.', 'error_code' => 400], 400);
         }
 
         try {
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
-            $this->addFlash('reset_password_error', sprintf(
-                '%s - %s',
-                $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle'),
-                $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
-            ));
+            $this->logger->error('An error occurred while validating the reset token: ' . $e->getMessage());
+            return new JsonResponse(['message' => 'An error occurred while validating the reset token: ' . $e->getMessage(), 'error_code' => 500], 500);
         }
 
         if ($email !== "") {
             $this->resetPasswordHelper->removeResetRequest($token);
 
-            $encodedPassword = $passwordHasher->hashPassword(
-                $user,
-                $plainPassword
-            );
+            try {
+                $encodedPassword = $passwordHasher->hashPassword(
+                    $user,
+                    $plainPassword
+                );
 
-            $user->setPassword($encodedPassword);
-            $this->entityManager->flush();
+                $user->setPassword($encodedPassword);
+                $this->entityManager->flush();
+            } catch (\Exception $e) {
+                $this->logger->error('An error occurred while updating the user password: ' . $e->getMessage());
+                return new JsonResponse(['message' => 'An error occurred while updating the user password: ' . $e->getMessage(), 'error_code' => 500], 500);
+            }
 
             $this->cleanSessionAfterReset();
 
-            $email = (new TemplatedEmail())
-            ->from(new Address('MS_xofncP@trial-jy7zpl93p2pl5vx6.mlsender.net', 'STG_16 team'))
-            ->to($user->getEmail())
-            ->subject('Your password reset request')
-            ->htmlTemplate('reset_password/email.html.twig');
+            try {
+                $email = (new TemplatedEmail())
+                ->from(new Address('MS_xofncP@trial-jy7zpl93p2pl5vx6.mlsender.net', 'STG_16 team'))
+                ->to($user->getEmail())
+                ->subject('Your password reset request')
+                ->htmlTemplate('reset_password/email.html.twig');
 
-            $mailer->send($email);
+                $mailer->send($email);
+            } catch (\Exception $e) {
+                $this->logger->error('An error occurred while sending the password reset email: ' . $e->getMessage());
+                return new JsonResponse(['message' => 'An error occurred while sending the password reset email: ' . $e->getMessage(), 'error_code' => 500], 500);
+            }
 
             $this->logger->info('Password reset email sent.', ['email' => $user->getEmail()]);
 
@@ -186,7 +210,16 @@ class ResetPasswordController extends AbstractController
     #[Route('/update', name: 'app_reset_with_jwt', methods: ['POST'])]
     public function resetWithJwt(Request $request, JWTTokenManagerInterface $jwtManager, MailerInterface $mailer, TranslatorInterface $translator, ResetPasswordHelperInterface $resetPasswordHelper, EntityManagerInterface $entityManager): Response
     {
-        $data = json_decode($request->getContent(), true);
+        try {
+            $data = json_decode($request->getContent(), true);
+            if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+                throw new \Exception('Invalid JSON: ' . json_last_error_msg());
+            }
+        } catch (\Exception $e) {
+            $this->logger->error('An error occurred while decoding the request content: ' . $e->getMessage());
+            return new JsonResponse(['message' => 'An error occurred while decoding the request content: ' . $e->getMessage(), 'error_code' => 500], 500);
+        }
+
         $email = $data["content"]['email'] ?? null;
 
         $this->logger->info('Received password reset request.', ['email' => $email]);
@@ -207,18 +240,21 @@ class ResetPasswordController extends AbstractController
             return new JsonResponse(['message' => 'An error occurred while generating the reset token : ' . $e, 'error_code' => 500], 500);
         }
 
-        $email = (new TemplatedEmail())
-            ->from(new Address('MS_xofncP@trial-jy7zpl93p2pl5vx6.mlsender.net', 'STG_16 team'))
-            ->to($user->getEmail())
-            ->subject('Your password reset request')
-            ->htmlTemplate('reset_password/link.html.twig')
-            ->context([
-                'resetToken' => $resetToken,
-            ]);
+        try {
+            $email = (new TemplatedEmail())
+                ->from(new Address('MS_xofncP@trial-jy7zpl93p2pl5vx6.mlsender.net', 'STG_16 team'))
+                ->to($user->getEmail())
+                ->subject('Your password reset request')
+                ->htmlTemplate('reset_password/link.html.twig')
+                ->context([
+                    'resetToken' => $resetToken,
+                ]);
 
-        $this->logger->info('Preparing to send password reset email.', ['email' => $user->getEmail()]);
-
-        $mailer->send($email);
+            $mailer->send($email);
+        } catch (\Exception $e) {
+            $this->logger->error('An error occurred while sending the password reset email: ' . $e->getMessage());
+            return new JsonResponse(['message' => 'An error occurred while sending the password reset email: ' . $e->getMessage(), 'error_code' => 500], 500);
+        }
 
         $this->logger->info('Password reset email sent.', ['email' => $user->getEmail()]);
 
