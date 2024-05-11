@@ -72,26 +72,28 @@ export default function CheckoutForm({
           <Lottie animationData={buy_animation} loop={true} />
         </CardHeader>
         <Divider />
-        <CardBody>
-          <table
-            className="table-auto w-full bg-gradient-to-r from-blue-600 to-pink-600 text-white"
-            style={{ borderRadius: "9px" }}
-          >
-            <thead>
-              <tr>
-                <th className="px-4 py-2 text-white">Product</th>
-                <th className="px-4 py-2 text-white">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productResume.map((product: any, index: any) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 text-white">{product.name}</td>
-                  <td className="px-4 py-2 text-white">{product.price} EUR</td>
+        <CardBody className="flex justify-center">
+          <div>
+            <table
+              className="table-auto w-full ml-12"
+              style={{ borderRadius: "9px" }}
+            >
+              <thead>
+                <tr>
+                  <th className="px-4 py-2">Product</th>
+                  <th className="px-4 py-2">Price</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {productResume.map((product: any, index: any) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2">{product.name}</td>
+                    <td className="px-4 py-2">{product.price} $</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </CardBody>
         <Divider />
         <CardFooter

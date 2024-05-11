@@ -20,8 +20,6 @@ use Firebase\JWT\Key;
 
 class CartController extends AbstractController
 {
-
-    
     #[Route('/api/carts/validate', name: 'cart_checkout', methods: ['POST'])]
     public function checkoutCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, UserRepository $userRepository): Response
     {
@@ -69,12 +67,10 @@ class CartController extends AbstractController
         $entityManager->persist($orders);
         $entityManager->flush();
 
-        $response = $this->json(['message' => 'Order created successfully', 'ordersId' => $orders->getId()]);
+        $response = $this->json(['message' => 'Order created successfully', 'ordersId' => $orders->getUuid()]);
         $response->headers->clearCookie('cart');
         return $response;
     }
-
-
     
     #[Route('/api/carts/{id}', name: 'cart_add')]
     public function addToCart(int $id, ProductRepository $productRepository, Request $request): Response

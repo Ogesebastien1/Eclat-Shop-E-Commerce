@@ -39,36 +39,17 @@ export default function Details() {
     }
   }, []);
 
-
- const addToCart = (productId: any, event: any) => {
+  const addToCart = (productId: any, event: any) => {
     console.log("Product ID:", productId);
 
     axios
-    .post(`http://localhost:8000/api/carts/${productId}`, null, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      withCredentials: true,
-    })
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.error("There was an error!", error);
-    });
-  }
-
-  const testCart = (event:any) => {
-    axios
-      .get("http://localhost:8000/api/carts", { 
+      .post(`http://localhost:8000/api/carts/${productId}`, null, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       })
-      .then((response) => {
-        console.log(response.data);
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error("There was an error!", error);
       });
@@ -144,16 +125,6 @@ export default function Details() {
                 radius="lg"
                 size="sm"
                 onClick={(event) => addToCart(Number(item.id), event)}
-              >
-                Add to Cart
-              </Button>
-              <Button
-                className="text-tiny text-white bg-white/20"
-                variant="flat"
-                color="default"
-                radius="lg"
-                size="sm"
-                onClick={(event) => testCart(event)}
               >
                 Add to Cart
               </Button>

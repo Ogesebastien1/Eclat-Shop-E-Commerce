@@ -20,34 +20,56 @@ function Payment() {
     // Add other properties of paymentDetails here
   }
   const location = useLocation(); // Get the current location
-  const command = new URLSearchParams(location.search).get("command");
+  const search = location.search.substring(1); // Remove the '?' symbol
+  const searchParams = new URLSearchParams(decodeURIComponent(atob(search)));
+  const command = searchParams.get("command");
   const commandId = command ? command.replace(/[{}]/g, "") : "";
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
-    null
-  );
+  const delivery = decodeURIComponent(searchParams.get("delivery") || "");
+  const deliveryPrice = decodeURIComponent(searchParams.get("price") || "");
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
+    productList: [],
+    productPrices: [],
+  });
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
   let animationData = theme == "dark" ? darkanimation : lightanimation;
 
   useEffect(() => {
-    // Fetch the payment details when the component mounts
+    // Fetch the order details when the component mounts
     axios
-      .get(`http://localhost:8000/api/payment/${commandId}`)
+      .get(`http://localhost:8000/api/orders/${commandId}`)
       .then((response) => {
-        setPaymentDetails(response.data);
-        console.log(response.data);
+        if (response.data.item) {
+          // Extract productList and productPrices from the item array
+          let productList = response.data.item.map((item: any) => item.product);
+          let productPrices = response.data.item.map((item: any) => item.price);
+
+          // Add delivery to productList and deliveryPrice to productPrices
+          productList = [...productList, delivery];
+          productPrices = [...productPrices, deliveryPrice];
+
+          setPaymentDetails({ productList, productPrices });
+        } else {
+          console.error("item not defined in response data");
+        }
         setLoading(false);
 
         // Create the items array
-        const items = response.data.productList.map(
-          (productName: any, index: any) => ({
-            productName,
-            unitAmount: Math.round(response.data.productPrices[index] * 100), // Convert to cents
-            quantity: 1, // Adjust this if you have quantity information
-            currency: "eur", // Adjust this to your actual currency
-          })
-        );
+        const items = response.data.item.map((item: any) => ({
+          productName: item.product,
+          unitAmount: Math.round(item.price), // Convert to cents
+          quantity: item.quantity,
+          currency: "eur", // Adjust this to your actual currency
+        }));
+
+        // Add delivery information to the items array
+        items.push({
+          productName: delivery,
+          unitAmount: Math.round(Number(deliveryPrice) * 100), // Convert to cents
+          quantity: 1,
+          currency: "eur", // Adjust this to your actual currency
+        });
 
         // Create the checkout session
         axios
@@ -59,7 +81,7 @@ function Payment() {
             setLoading(false);
           });
       });
-  }, [commandId]);
+  }, [commandId, delivery, deliveryPrice]);
 
   if (loading) {
     return (
