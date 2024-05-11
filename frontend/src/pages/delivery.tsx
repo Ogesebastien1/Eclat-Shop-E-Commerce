@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   CardHeader,
   Card,
@@ -20,6 +20,9 @@ import { useLocation } from "react-router-dom";
 import { useTheme } from "../contexts/themeContext";
 import darkanimation from "../animations/dark-loading.json";
 import lightanimation from "../animations/light-loading.json";
+import { LoginContext } from "../contexts/LoginContext";
+import { m } from "framer-motion";
+import { set } from "animejs";
 
 export const CustomRadio = (props: any) => {
   const { children, ...otherProps } = props;
@@ -45,12 +48,28 @@ function DeliveryPage() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [deliveryPrice, setDeliveryPrice] = useState(0); // New state for delivery price
   const location = useLocation(); // Get the current location
+  const { token } = useContext(LoginContext);
   const [isLoading, setIsLoading] = useState(false); // New state for loading status
   const command = new URLSearchParams(location.search).get("command");
   const commandId = command ? command.replace(/[{}]/g, "") : "";
   const { theme } = useTheme();
   let animationData = theme == "dark" ? darkanimation : lightanimation;
-  const [paymentDetails, setPaymentDetails] = useState({
+  interface Item {
+    product: string;
+    quantity: number;
+    price?: number;
+    description?: string;
+    id?: number;
+    photo?: string;
+  }
+
+  interface PaymentDetails {
+    productList: Item[];
+    productPrices: number[];
+    productQuantities?: number[];
+  }
+
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
     productList: [],
     productPrices: [],
   });
@@ -59,14 +78,15 @@ function DeliveryPage() {
     if (commandId) {
       // Fetch the command when the component mounts
       axios
-        .get(`http://localhost:8000/api/payment/${commandId}`)
+        .get(`http://localhost:8000/api/orders/${commandId}`)
         .then((response) => {
           // Set the initial delivery price from the fetched command
-          setDeliveryPrice(response.data.deliveryPrice);
+          setDeliveryPrice(response.data.totalPrice);
           // Set the payment details
+          console.log(response.data);
           setPaymentDetails({
-            productList: response.data.productList,
-            productPrices: response.data.productPrices,
+            productList: response.data.item.map((item: any) => item.product),
+            productPrices: response.data.item.map((item: any) => item.price),
           });
           // Set isDataLoaded to true after the data has been set
           setIsDataLoaded(true);
@@ -77,29 +97,10 @@ function DeliveryPage() {
   const handleDeliverySelection = (delivery: string, price: number) => {
     // Only run the PUT request if the data has been loaded
     if (isDataLoaded) {
+      setIsLoading(true);
       setSelectedDelivery(delivery);
       setDeliveryPrice(price);
-      setIsLoading(true); // Start loading
-
-      // Remove existing delivery from the product list and product prices
-      const newProductList: string[] = paymentDetails.productList.filter(
-        (product: string) => !product.startsWith("Delivery ")
-      );
-      const newProductPrices = paymentDetails.productPrices.slice(
-        0,
-        newProductList.length
-      );
-
-      // Update the command with the new delivery price and method
-      axios
-        .put(`http://localhost:8000/api/payment/${commandId}`, {
-          deliveryPrice: price,
-          productList: [...newProductList, "Delivery " + selectedDelivery],
-          productPrices: [...newProductPrices, price],
-        })
-        .then(() => {
-          setIsLoading(false); // Stop loading after the request is completed
-        });
+      setIsLoading(false);
     }
   };
 
@@ -145,13 +146,13 @@ function DeliveryPage() {
                 }
               >
                 <CustomRadio
-                  value="standard"
+                  value="Delivery standard"
                   description="Livraison en 3-5 jours ouvrables"
                 >
                   Livraison standard - 5€
                 </CustomRadio>
                 <CustomRadio
-                  value="express"
+                  value="Delivery express"
                   description="Livraison le jour ouvrable suivant"
                 >
                   Livraison express - 10€
@@ -167,7 +168,14 @@ function DeliveryPage() {
                 }}
                 to={{
                   pathname: "/payment",
-                  search: "?command=" + commandId,
+                  search: btoa(
+                    "?command=" +
+                      encodeURIComponent(commandId) +
+                      "&delivery=" +
+                      encodeURIComponent(selectedDelivery) +
+                      "&price=" +
+                      encodeURIComponent(deliveryPrice)
+                  ),
                 }}
               >
                 <Button

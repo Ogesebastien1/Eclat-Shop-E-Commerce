@@ -12,6 +12,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
+
 class OrdersController extends AbstractController
 {
     #[Route('/api/orders/{uuid}', name: 'order_show', methods: ['GET'])]

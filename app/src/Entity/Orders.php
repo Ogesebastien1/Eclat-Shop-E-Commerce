@@ -95,7 +95,7 @@ class Orders
     public function removeItems(OrdersItem $items): self
     {
         if ($this->items->removeElement($items)) {
-            if ($items->getOrder() === $this) {
+            if ($items->getOrders() === $this) {
                 $items->setOrders(null);
             }
         }
