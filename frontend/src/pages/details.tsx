@@ -49,7 +49,7 @@ export default function Details() {
         withCredentials: true,
       })
       .then((response) => {
-        toast.success(`${productName} added to cart!`);
+        toast.success(`${productName.toUpperCase()} added to cart!`);
       })
       .catch((error) => {
         toast.error(`There was an error adding ${productName} to the cart.`);
@@ -137,7 +137,10 @@ export default function Details() {
                   marginLeft: 'auto',
                   backgroundColor: 'rgba(0, 0, 0, 0.2)',
                 }}
-                onClick={(event) => addToCart(Number(item.id), item.name, event)}
+                onClick={async (event) => {
+                  await addToCart(Number(item.id), item.name, event);
+                  setTimeout(() => window.location.reload(), 500); 
+                }}
               >
                 Add to card
               </Button>
