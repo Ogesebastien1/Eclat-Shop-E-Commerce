@@ -58,7 +58,7 @@ Step 2: Launch Docker and enter the following command.
 Deployment is handled using Docker, which simplifies the process into manageable services:
 
 - **PHP Service**: Manages the PHP environment.
-- **Web Server Service**: Uses Apache/Nginx to serve the application.
+- **Web Server Service**: Uses Nginx to serve the application.
 - **Database Service**: Runs PostgreSQL for data management.
 
 Use Docker Compose to orchestrate these services. This script will set up each service in its container, ensuring they are interconnected and configured correctly.
