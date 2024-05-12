@@ -66,6 +66,9 @@ function App() {
           <Spline
             scene="https://prod.spline.design/Vr2Pm5sxZFITlfcj/scene.splinecode"
             className="absolute inset-0 z-0"
+            style={{
+              filter: "blur(5px)",
+            }}
           />
         )}
         <div className="App relative z-10">
