@@ -20,6 +20,7 @@ import { useTheme } from "../contexts/themeContext";
 import Lottie from "lottie-react";
 import darkloadingData from "../animations/dark-loading.json";
 import lightLoadingData from "../animations/light-loading.json";
+import { toast } from "react-toastify";
 
 interface Product {
   id: number;
@@ -107,7 +108,7 @@ export const ProductList = () => {
       await axios.delete(`http://localhost:8000/api/products/${id}`);
       setProducts(products.filter((product) => product.id !== id));
     } catch (error) {
-      console.error(error);
+      toast.error("The product could not be deleted, verify if any order is linked to this product.");
     } finally {
       setDeletingId(null);
     }
