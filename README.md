@@ -21,14 +21,11 @@ Before you begin, ensure you have the following installed:
 
 To clone the repository and start setting up the project, use the following command in your terminal:
 
-Step 1
-```git clone https://repository.git```
-
-Step 2 
+Step 1 : Clone the repository
 ```git clone https://repository.gith```
-
-Step 3
-```docker-compose up --build```
+ 
+Step 2: Launch Docker and enter the following command.
+```docker compose up -d --build```
 
 ## API Reference
 
