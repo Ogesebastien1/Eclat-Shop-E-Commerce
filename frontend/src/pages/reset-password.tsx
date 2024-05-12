@@ -34,7 +34,6 @@ export const ResetPassword = () => {
       // Store the token in local storage or somewhere else where you can access it later
       localStorage.setItem("email", email);
       toast.success("Email has been sent. Please check your inbox.");
-      console.log(response.data);
     } catch (error) {
       console.error(error);
       toast.success("Email has been sent. Please check your inbox.");

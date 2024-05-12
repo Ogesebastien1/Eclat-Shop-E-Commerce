@@ -41,7 +41,6 @@ export function Shop() {
 
   useEffect(() => {
     animationData = theme === "dark" ? darkanimation : lightanimation;
-    console.log("theme", theme);
   }, [theme]);
 
   useEffect(() => {
@@ -93,7 +92,7 @@ export function Shop() {
             style={{
               zIndex: 0,
               overflow: "auto",
-              marginTop: "5rem", 
+              marginTop: "5rem",
               marginBottom: "1rem",
             }}
           >
@@ -103,7 +102,6 @@ export function Shop() {
                 className="z-0"
                 key={index}
                 isPressable
-                onPress={() => console.log("item pressed")}
                 onClick={() =>
                   navigate(`/details/${item.id}`, { state: { item } })
                 }
@@ -122,13 +120,13 @@ export function Shop() {
                   />
                 </CardBody>
                 <CardFooter className="text-small justify-between">
-                  <b style={{ textTransform: 'uppercase' }}>{item.name}</b>
+                  <b style={{ textTransform: "uppercase" }}>{item.name}</b>
                   <p className="text-default-500">{item.price} €</p>
                 </CardFooter>
               </Card>
             ))}
           </div>
-          <Cart/>
+          <Cart />
         </div>
       )}
     </div>

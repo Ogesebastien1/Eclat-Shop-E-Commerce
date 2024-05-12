@@ -39,7 +39,6 @@ export const AddProduct = () => {
             Authorization: token,
           },
         });
-        console.log(response.data)
         if (!response.data.roles.includes("ROLE_ADMIN")) {
           navigate("/shop");
         }
@@ -48,7 +47,7 @@ export const AddProduct = () => {
         navigate("/shop");
       }
     };
-    fetchUser()
+    fetchUser();
   }, [token]);
 
   const handleAddProduct = async () => {

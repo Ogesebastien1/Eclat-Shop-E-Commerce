@@ -62,7 +62,6 @@ export const ProductList = () => {
             Authorization: token,
           },
         });
-        console.log(response.data)
         if (!response.data.roles.includes("ROLE_ADMIN")) {
           navigate("/shop");
         }
@@ -71,7 +70,7 @@ export const ProductList = () => {
         navigate("/shop");
       }
     };
-    fetchUser()
+    fetchUser();
   }, [token]);
 
   useEffect(() => {
@@ -108,7 +107,9 @@ export const ProductList = () => {
       await axios.delete(`http://localhost:8000/api/products/${id}`);
       setProducts(products.filter((product) => product.id !== id));
     } catch (error) {
-      toast.error("The product could not be deleted, verify if any order is linked to this product.");
+      toast.error(
+        "The product could not be deleted, verify if any order is linked to this product."
+      );
     } finally {
       setDeletingId(null);
     }
@@ -134,7 +135,6 @@ export const ProductList = () => {
             price: selectedProduct.price,
             stock: selectedProduct.stock,
           };
-          console.log("photo is not set");
           // Send the PUT request
           const response = await axios.put(
             `http://localhost:8000/api/products/${selectedProduct.id}`,
@@ -146,7 +146,6 @@ export const ProductList = () => {
             }
           );
 
-          console.log(response.data);
           setProducts(
             products.map((product) =>
               product.id === selectedProduct.id
@@ -168,7 +167,6 @@ export const ProductList = () => {
               stock: selectedProduct.stock,
               photo: base64Image, // send the image as a Base64 string
             };
-            console.log("photo is set");
 
             // Send the PUT request
             const response = await axios.put(
@@ -181,7 +179,6 @@ export const ProductList = () => {
               }
             );
 
-            console.log(response.data);
             setProducts(
               products.map((product) =>
                 product.id === selectedProduct.id

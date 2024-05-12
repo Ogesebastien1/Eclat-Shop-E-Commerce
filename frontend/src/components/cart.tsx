@@ -42,7 +42,6 @@ const Cart = ({ cartUpdated = false }: { cartUpdated?: boolean }) => {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data);
         setCartData(response.data);
       })
       .catch((error) => {
@@ -51,8 +50,6 @@ const Cart = ({ cartUpdated = false }: { cartUpdated?: boolean }) => {
   };
 
   const deleteFromCart = (productId: any, event: any) => {
-    console.log("Product ID:", productId);
-    console.log(cartData);
     axios
       .delete(`http://localhost:8000/api/carts/remove/${productId}`, {
         headers: {
@@ -61,7 +58,6 @@ const Cart = ({ cartUpdated = false }: { cartUpdated?: boolean }) => {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data);
         fetchCartItems();
       })
       .catch((error) => {

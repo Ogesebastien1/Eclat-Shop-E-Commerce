@@ -83,7 +83,6 @@ function DeliveryPage() {
           // Set the initial delivery price from the fetched command
           setDeliveryPrice(response.data.totalPrice);
           // Set the payment details
-          console.log(response.data);
           setPaymentDetails({
             productList: response.data.item.map((item: any) => item.product),
             productPrices: response.data.item.map((item: any) => item.price),

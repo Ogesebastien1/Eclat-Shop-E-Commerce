@@ -50,7 +50,6 @@ export const ModifiePassword = () => {
           content: formData,
         }
       );
-      console.log(response.data);
       localStorage.removeItem("email");
       window.location.href = "/login";
       toast.success("Email has been sent. Please check your inbox.");
