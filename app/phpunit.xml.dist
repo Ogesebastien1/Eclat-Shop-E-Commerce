@@ -41,6 +41,7 @@
         <env name="AWS_KEY" value="not-a-real-key"/>
         <env name="AWS_SECRET" value="@@not-a-real-secret"/>
         <!-- ###- aws/aws-sdk-php-symfony ### -->
+        <env name="KERNEL_CLASS" value="App\Kernel" />
     </php>
 
     <testsuites>
