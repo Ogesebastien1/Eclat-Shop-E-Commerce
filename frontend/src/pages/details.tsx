@@ -29,6 +29,7 @@ export default function Details() {
   const location = useLocation();
   const { item } = location.state as LocationState;
   const imageRef = useRef<HTMLImageElement>(null);
+  const [cartUpdated, setCartUpdated] = useState(false);
 
   useEffect(() => {
     if (imageRef.current) {
@@ -50,6 +51,7 @@ export default function Details() {
       })
       .then((response) => {
         toast.success(`${productName.toUpperCase()} added to cart!`);
+        setCartUpdated(!cartUpdated); // Toggle cartUpdated state
       })
       .catch((error) => {
         toast.error(`There was an error adding ${productName} to the cart.`);
@@ -165,14 +167,13 @@ export default function Details() {
                   }}
                   onClick={async (event) => {
                     await addToCart(Number(item.id), item.name, event);
-                    setTimeout(() => window.location.reload(), 500);
                   }}
                 >
                   Add to card
                 </Button>
               </CardFooter>
             </Card>
-            <Cart />
+            <Cart cartUpdated={cartUpdated} />
           </div>
         </div>
       </div>

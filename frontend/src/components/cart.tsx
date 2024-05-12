@@ -19,7 +19,7 @@ import axios from "axios";
 import { LoginContext } from "../contexts/LoginContext";
 import { useNavigate } from "react-router-dom";
 
-const Cart = () => {
+const Cart = ({ cartUpdated = false }: { cartUpdated?: boolean }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [cartData, setCartData] = useState(null);
   const { token } = useContext(LoginContext);
@@ -27,10 +27,13 @@ const Cart = () => {
 
   useEffect(() => {
     fetchCartItems();
+  }, [cartUpdated]);
+
+  useEffect(() => {
+    fetchCartItems();
   }, []);
 
   const fetchCartItems = async () => {
-
     axios
       .get("http://localhost:8000/api/carts", {
         headers: {
@@ -180,18 +183,13 @@ const Cart = () => {
                         <Accordion
                           key={key}
                           style={{
-                            boxShadow: "0px 0px 1px 1px rgba(129, 32, 236, 0.7)",
+                            boxShadow:
+                              "0px 0px 1px 1px rgba(129, 32, 236, 0.7)",
                             borderRadius: "8px",
                             margin: "10px 0",
                           }}
                         >
-                          <AccordionItem
-                            title={
-                              <div>
-                                {item.name}
-                              </div>
-                            }
-                          >
+                          <AccordionItem title={<div>{item.name}</div>}>
                             <div
                               style={{
                                 display: "flex",
@@ -199,8 +197,10 @@ const Cart = () => {
                                 alignItems: "space-between",
                               }}
                             >
-                              <p style={{ margin: "5px 0", alignSelf: "center" }}>
-                                Quantity 
+                              <p
+                                style={{ margin: "5px 0", alignSelf: "center" }}
+                              >
+                                Quantity
                               </p>
                               <div
                                 style={{
@@ -208,17 +208,16 @@ const Cart = () => {
                                   justifyContent: "space-between",
                                 }}
                               >
-                                
                                 <Button
                                   color="success"
                                   variant="light"
-                                  onClick={(event) => addToCart(key, item.name, event)}
+                                  onClick={(event) =>
+                                    addToCart(key, item.name, event)
+                                  }
                                 >
                                   +
                                 </Button>
-                                <p style={{ margin: "5px" }}>
-                                 {item.quantity}
-                                </p>
+                                <p style={{ margin: "5px" }}>{item.quantity}</p>
                                 <Button
                                   color="danger"
                                   variant="light"
@@ -241,9 +240,7 @@ const Cart = () => {
                                 <Button
                                   color="danger"
                                   variant="light"
-                                  onClick={(event) =>
-                                    purgeFromCard(key, event)
-                                  }
+                                  onClick={(event) => purgeFromCard(key, event)}
                                 >
                                   Delete
                                 </Button>

@@ -13,13 +13,25 @@ import Lottie from "lottie-react";
 import buy_animation from "../animations/buy-animation.json";
 import anime from "animejs";
 
+interface Product {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+interface CheckoutFormProps {
+  sessionId: string;
+  productResume: Product[];
+  totalPrice: number;
+  deliveryPrice: number;
+}
+
 export default function CheckoutForm({
   sessionId,
   productResume,
-}: {
-  sessionId: any;
-  productResume: any;
-}) {
+  totalPrice,
+  deliveryPrice,
+}: CheckoutFormProps) {
   const stripe = useStripe();
   const [buttonClicked, setButtonClicked] = useState(false);
   const buttonRef = useRef(null);
@@ -85,12 +97,26 @@ export default function CheckoutForm({
                 </tr>
               </thead>
               <tbody>
-                {productResume.map((product: any, index: any) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2">{product.name}</td>
-                    <td className="px-4 py-2">{product.price} $</td>
-                  </tr>
-                ))}
+                {productResume.flatMap((product: Product, index: number) =>
+                  Array(product.quantity)
+                    .fill(null)
+                    .map((_, i) => (
+                      <tr key={`${index}-${i}`}>
+                        <td className="px-4 py-2">{product.name}</td>
+                        <td className="px-4 py-2">{product.price} $</td>
+                      </tr>
+                    ))
+                )}
+                <tr>
+                  <td className="px-4 py-2 font-bold">Total</td>
+                  <td className="px-4 py-2 font-bold">
+                    {productResume.reduce(
+                      (total, product) => totalPrice + deliveryPrice,
+                      0
+                    )}{" "}
+                    $
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>

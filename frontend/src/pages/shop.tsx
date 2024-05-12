@@ -128,7 +128,7 @@ export function Shop() {
               </Card>
             ))}
           </div>
-          <Cart />
+          <Cart/>
         </div>
       )}
     </div>

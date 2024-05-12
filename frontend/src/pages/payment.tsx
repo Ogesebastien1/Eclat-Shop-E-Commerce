@@ -15,9 +15,12 @@ const stripePromise = loadStripe(
 
 function Payment() {
   interface PaymentDetails {
-    productList: string[];
-    productPrices: number[];
-    // Add other properties of paymentDetails here
+    products: {
+      name: string;
+      price: number;
+      quantity: number;
+      totalprice: number;
+    }[];
   }
   const location = useLocation(); // Get the current location
   const search = location.search.substring(1); // Remove the '?' symbol
@@ -27,9 +30,10 @@ function Payment() {
   const delivery = decodeURIComponent(searchParams.get("delivery") || "");
   const deliveryPrice = decodeURIComponent(searchParams.get("price") || "");
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({
-    productList: [],
-    productPrices: [],
+    products: [],
   });
+  const [totalPrice, setTotalPrice] = useState(0);
+
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
@@ -41,15 +45,21 @@ function Payment() {
       .get(`http://localhost:8000/api/orders/${commandId}`)
       .then((response) => {
         if (response.data.item) {
-          // Extract productList and productPrices from the item array
-          let productList = response.data.item.map((item: any) => item.product);
-          let productPrices = response.data.item.map((item: any) => item.price);
+          let products = response.data.item.map((item: any) => ({
+            name: item.product,
+            price: item.price,
+            quantity: item.quantity,
+          }));
 
-          // Add delivery to productList and deliveryPrice to productPrices
-          productList = [...productList, delivery];
-          productPrices = [...productPrices, deliveryPrice];
+          // Add delivery to products
+          products = [
+            ...products,
+            { name: delivery, price: deliveryPrice, quantity: 1 },
+          ];
 
-          setPaymentDetails({ productList, productPrices });
+          setPaymentDetails({ products });
+          // Set the total price
+          setTotalPrice(response.data.totalPrice);
         } else {
           console.error("item not defined in response data");
         }
@@ -97,12 +107,16 @@ function Payment() {
         <Elements stripe={stripePromise}>
           <CheckoutForm
             sessionId={sessionId}
-            productResume={paymentDetails?.productList.map(
+            productResume={paymentDetails?.products.map(
               (product: any, index: any) => ({
-                name: product,
-                price: paymentDetails?.productPrices[index],
+                name: product.name,
+                price: product.price,
+                quantity: product.quantity,
               })
             )}
+            // Pass the total price as a prop
+            totalPrice={totalPrice}
+            deliveryPrice={Number(deliveryPrice)}
           />
         </Elements>
       )}
