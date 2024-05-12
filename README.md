@@ -11,11 +11,6 @@ Eclat Shop is a powerful website designed for e-commerce platforms, particularly
 Before you begin, ensure you have the following installed:
 
 - **Docker**: For creating and managing containers.
-- **PHP** (latest version): Required by Symfony.
-- **Node.js**: Needed for the React frontend.
-- **Composer**: For managing PHP dependencies.
-- **Symfony CLI**: For running Symfony commands.
-- **PostgreSQL**: The database used.
 
 ### Clone the project:
 
