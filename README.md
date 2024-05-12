@@ -22,7 +22,10 @@ Before you begin, ensure you have the following installed:
 To clone the repository and start setting up the project, use the following command in your terminal:
 
 Step 1 : Clone the repository
-```git clone https://repository.gith```
+```git clone https://repository.git```
+
+Step 2: Set up the .env configurations. Add one .env file at the root directory and another within the app directory.
+```cd app/```
  
 Step 2: Launch Docker and enter the following command.
 ```docker compose up -d --build```
