@@ -273,7 +273,11 @@ export const ProductList = () => {
                       <div className="flex flex-col">
                         <span className="text-small">{product.name}</span>
                         <span className="text-tiny text-default-400">
-                          {product.description}
+                          {product.description
+                            .split(" ")
+                            .slice(0, 10)
+                            .join(" ")}
+                          ...
                         </span>
                         <span className="text-tiny text-default-400">
                           {product.stock}
