@@ -41,9 +41,13 @@ composer require symfony/runtime || { echo 'Composer require failed'; exit 1; }
 composer dump-autoload || { echo 'Composer dump-autoload failed'; exit 1; }
 
 # Update the database schema
+php bin/console doctrine:schema:drop --force || { echo 'Database schema update failed'; exit 1; }
 php bin/console doctrine:schema:update --force || { echo 'Database schema update failed'; exit 1; }
-php bin/console doctrine:schema:create --env=test || { echo 'Database schema create failed'; exit 1; }
-php bin/console doctrine:migrations:migrate --env=test || { echo 'Database schema update failed'; exit 1; }
+
+# Check if the test database exists and create it if it doesn't
+php bin/console doctrine:database:create --if-not-exists --env=test || { echo 'Test database creation failed'; exit 1; }
+
+php bin/console doctrine:schema:update --env=test --force || { echo 'Database schema create failed'; exit 1; }
 
 # Start Symfony server
 symfony server:start || { echo 'Symfony server start failed'; exit 1; }
