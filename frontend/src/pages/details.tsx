@@ -112,7 +112,13 @@ export default function Details() {
               </AccordionItem>
             </Accordion>
           </div>
-          <div style={{ flex: 1, maxWidth: "50%", padding: "1rem" }}>
+          <div
+            style={{
+              flex: 1,
+              maxWidth: "50%",
+              padding: "1rem",
+            }}
+          >
             <Card
               isFooterBlurred
               radius="lg"
@@ -125,6 +131,7 @@ export default function Details() {
                 width: "100%",
                 height: "80%",
                 position: "relative",
+                maxHeight: "50vh",
               }}
             >
               <Image
